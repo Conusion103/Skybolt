@@ -78,5 +78,41 @@ export let generalFormat = {
 
         // Devolver la contraseña si es válida
         return password1;
-    }
+    },
+    departamentFormat: (departament) => {
+        if(!departament) throw new Error("Departament field can't be empty");
+        return departament;
+    },
+    townFormat: (town) => {
+        if(!town) throw new Error("Town field can't be empty");
+        return town;
+    },
+    phoneNumber: (phone) => {
+        if(!phone) throw new Error("Phone field can't be empty");
+        if(isNaN(phone)) throw new Error("Phone field must has only numbers")
+    },
+    birthday: (birthday) => {
+        if (!birthday) throw new Error("Birthday field can't be empty");
+      
+        // Intentar convertir la cadena a un objeto Date
+        const date = new Date(birthday);
+        // Verificar que sea una fecha válida
+        if (isNaN(date.getTime())) throw new Error("Invalid date format");
+      
+        // Calcular la diferencia de edad
+        const today = new Date();
+        let age = today.getFullYear() - date.getFullYear();
+        const monthDiff = today.getMonth() - date.getMonth();
+        const dayDiff = today.getDate() - date.getDate();
+      
+        // Ajustar edad si no ha cumplido años aún este año
+        if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+          age--;
+        }
+      
+        if (age < 18) throw new Error("You must be at least 18 years old");
+      
+        return date.toISOString().split('T')[0]; // Opcional: devolver fecha en formato YYYY-MM-DD
+      }
+
 };

@@ -129,10 +129,15 @@ export let renderRegister = (ul, main) => {
 
       // Validaciones de los datos usando las funciones del archivo de validación
       generalFormat.nameFormat($name); // Validar nombre
+      generalFormat.hotmailFormat($email); // Validar email
+      generalFormat.phoneNumber($phone); // Validar numero de teléfono
+      generalFormat.birthday($birthday); // Validar fecha de nacimiento
       generalFormat.documenttypeFormat($type); // Validar tipo de documento
       generalFormat.identicationFormat($identification); // Validar identificación
-      generalFormat.hotmailFormat($email); // Validar email
+      generalFormat.departamentFormat($departament); //Validar departamento
+      generalFormat.townFormat($town); // Validar municipio
       generalFormat.passwordFormat($password, $confirmPassword); // Validar contraseñas
+      
 
       // Crear un objeto con la información del usuario
       let user = {

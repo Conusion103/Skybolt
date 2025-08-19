@@ -1,0 +1,31 @@
+// imports
+import dotenv from "dotenv";
+import mysql from "mysql2/promise"
+
+
+// config with environment variables in file .env
+dotenv.config();
+
+
+// Creating constants with database connection information
+export const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    connectionLimit: 10,        
+    waitForConnections: true,   
+    queueLimit: 0               
+})
+
+// function to test connection
+async function probarConexionConLaBaseDeDatos() {
+    try {
+        const connection = await pool.getConnection();
+        console.log("Conexión a la base de datos exitosa");
+        connection.release();
+    } catch (error) {
+        console.error("Error al conectar con la base de datos:", error.message);
+    }
+}
