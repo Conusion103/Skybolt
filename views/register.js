@@ -119,7 +119,7 @@ export let renderRegister = (ul, main) => {
       let $name = document.getElementById('name-register').value.trim();
       let $email = document.getElementById('email-register').value.trim();
       let $phone = document.getElementById('phone-register').value.trim();
-      let $birthday = document.getElementById('birthday-register').value.trim();
+      let $birthdate = document.getElementById('birthday-register').value.trim();
       let $type = document.getElementById('documents-select').value;
       let $identification = document.getElementById('document-register').value.trim();
       let $departament = document.getElementById('departament-register').value.trim();
@@ -131,7 +131,7 @@ export let renderRegister = (ul, main) => {
       generalFormat.nameFormat($name); // Validar nombre
       generalFormat.hotmailFormat($email); // Validar email
       generalFormat.phoneNumber($phone); // Validar numero de teléfono
-      generalFormat.birthday($birthday); // Validar fecha de nacimiento
+      generalFormat.birthdate($birthdate); // Validar fecha de nacimiento
       generalFormat.documenttypeFormat($type); // Validar tipo de documento
       generalFormat.identicationFormat($identification); // Validar identificación
       generalFormat.departamentFormat($departament); //Validar departamento
@@ -144,12 +144,13 @@ export let renderRegister = (ul, main) => {
         name: $name,
         email: $email,
         phone: $phone,
-        bithday: $birthday,
+        birthdate: $birthdate,
         type_of_document: $type,
         document: $identification,
         departament: $departament,
         town: $town,
-        password: $password
+        password: $password,
+        role: 'user'
       };
 
       // Imprimir los datos del usuario en la consola para verificación

@@ -91,11 +91,11 @@ export let generalFormat = {
         if(!phone) throw new Error("Phone field can't be empty");
         if(isNaN(phone)) throw new Error("Phone field must has only numbers")
     },
-    birthday: (birthday) => {
-        if (!birthday) throw new Error("Birthday field can't be empty");
+    birthdate: (birthdate) => {
+        if (!birthdate) throw new Error("Birthdate field can't be empty");
       
         // Intentar convertir la cadena a un objeto Date
-        const date = new Date(birthday);
+        const date = new Date(birthdate);
         // Verificar que sea una fecha válida
         if (isNaN(date.getTime())) throw new Error("Invalid date format");
       
