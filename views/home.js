@@ -199,3 +199,44 @@ main.innerHTML = `
 };
 
 
+footer.innerHTML = `
+    <!-- FOOTER COMPLETO -->
+    <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- DESCRIPCIÓN -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
+                <p class="text-sm">
+                    Your trusted platform to book sports venues in seconds. Technology that connects active communities.
+                </p>
+            </div>
+
+            <!-- ENLACES -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition">Book Now</a></li>
+                    <li><a href="#faq" class="hover:text-yellow-300 transition">FAQ</a></li>
+                    <li><a href="#map" class="hover:text-yellow-300 transition">Location</a></li>
+                </ul>
+            </div>
+
+            <!-- REDES -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-yellow-300 transition">Instagram</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Facebook</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Twitter</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COPYRIGHT -->
+        <div class="text-center text-sm mt-10 text-green-300">
+            © 2025 SKYBOLT. All rights reserved
+        </div>
+    </footer>
+`;
