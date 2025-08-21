@@ -1,4 +1,4 @@
-CREATE DATABASE skybolt;
+-- CREATE DATABASE skybolt;
 
 USE skybolt;
 
@@ -94,11 +94,67 @@ CREATE TABLE reservas (
 );
 
 
--- Insertar datos en la tabla de departamentos
-INSERT INTO departments (name) VALUES ('Departamento 1'), ('Departamento 2');
+-- Insertar departamentos
+INSERT INTO departments (name) VALUES
+('Antioquia'),
+('Cundinamarca'),
+('Valle del Cauca'),
+('Atlántico'),
+('Santander'),
+('Bolívar');
 
--- Insertar datos en la tabla de municipios
-INSERT INTO municipalities (name) VALUES ('Municipio 1'), ('Municipio 2');
+-- Insertar municipios para cada departamento
+-- Antioquia (id_department = 1)
+INSERT INTO municipalities (name) VALUES
+('Medellín'),
+('Envigado'),
+('Bello'),
+('Itagüí'),
+('Rionegro'),
+('Apartadó');
+
+-- Cundinamarca (id_department = 2)
+INSERT INTO municipalities (name) VALUES
+('Bogotá'),
+('Soacha'),
+('Chía'),
+('Zipaquirá'),
+('Girardot'),
+('Fusagasugá');
+
+-- Valle del Cauca (id_department = 3)
+INSERT INTO municipalities (name) VALUES
+('Cali'),
+('Palmira'),
+('Buenaventura'),
+('Tuluá'),
+('Cartago'),
+('Yumbo');
+
+-- Atlántico (id_department = 4)
+INSERT INTO municipalities (name) VALUES
+('Barranquilla'),
+('Soledad'),
+('Malambo'),
+('Sabanalarga'),
+('Puerto Colombia');
+
+-- Santander (id_department = 5)
+INSERT INTO municipalities (name) VALUES
+('Bucaramanga'),
+('Floridablanca'),
+('Girón'),
+('Piedecuesta'),
+('Barrancabermeja');
+
+-- Bolívar (id_department = 6)
+INSERT INTO municipalities (name) VALUES
+('Cartagena'),
+('Magangué'),
+('Turbaco'),
+('Arjona'),
+('El Carmen de Bolívar');
+
 
 -- Insertar datos en la tabla de juegos
 INSERT INTO games (name) VALUES ('Fútbol'), ('Baloncesto');
