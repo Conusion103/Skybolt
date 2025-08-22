@@ -156,3 +156,9 @@
   margin-top: 0.5rem; 
   color: #374151; 
 }
+
+@media (max-width: 940px) {
+  body {
+    background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('../img/image.png') center/cover no-repeat;
+  }
+}
