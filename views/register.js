@@ -203,7 +203,7 @@ export let renderRegister = (ul, main) => {
         id_department: Number($departament),
         id_municipality: Number($town),
         password_: $password,
-        rol: "user",
+        rol: "admin",
       };
 
       // Validar si usuario ya existe consultando usuarios

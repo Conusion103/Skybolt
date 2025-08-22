@@ -2,8 +2,12 @@
 import { renderHome } from "../views/home";
 import { renderRegister } from "../views/register";
 import { renderLogin } from "../views/login";
+import { renderDashboardUser } from "../views/dashboardUser";
+import { renderDashboardAdmin } from "../views/dashboardAdmin";
+import { locaL } from "../src/scripts/LocalStorage";
 
 // Se seleccionan los elementos HTML donde se van a renderizar las vistas
+let $header = document.getElementById('header')
 let $nav = document.getElementById('nav'); // Barra de navegación
 let $main = document.getElementById('main'); // Área principal de contenido
 
@@ -12,18 +16,38 @@ let routes = {
     '/skybolt/home': () => renderHome($nav, $main),        // Ruta para la vista Home
     '/skybolt/login': () => renderLogin($nav, $main),      // Ruta para la vista Login
     '/skybolt/register': () => renderRegister($nav, $main),// Ruta para la vista Register
-    '/skybolt/dashboarduser': () => renderDashboardUser($nav, $main),  // Ruta para el Dashboard del usuario
-    '/skybolt/dashboardowner': () => renderDashboardOwner($nav, $main) // Ruta para el Dashboard del propietario
+    '/skybolt/dashboarduser': () => renderDashboardUser($header,$nav, $main),  // Ruta para el Dashboard del usuario
+    '/skybolt/dashboardowner': () => renderDashboardOwner($header,$nav, $main), // Ruta para el Dashboard del propietario
+    '/skybolt/dashboardowner/edit': () => renderDashboardOwnerEdit($header,$nav, $main),
+    '/skybolt/dashboardadmin': () => renderDashboardAdmin($header,$nav, $main),
+    '/skybolt/dashboardadmin/edit': () => renderDashboardAdminEdit($header,$nav, $main)
 };
 
 // Función para renderizar la ruta actual
 export let renderRoute = () => {
     let path = window.location.pathname; // Obtiene el path de la URL actual
-
+    let user = locaL.get('active_user')
+    if(user){
+        if(user.rol === 'user'){
+            history.pushState(null, null, '/skybolt/dashboarduser')
+            if(!['/skybolt/dashboarduser'].includes(path)) history.pushState(null, null, '/skybolt/dashboarduser')
+        }else if(user.rol === 'owner'){
+            history.pushState(null, null, '/skybolt/dashboardowner')
+            if(!['/skybolt/dashboardowner','/skybolt/dashboardowner/edit'].includes(path)) history.pushState(null, null, '/skybolt/dashboardowner')
+        }else if(user.rol === 'admin'){
+            history.pushState(null, null, '/skybolt/dashboardadmin')
+            if(!['/skybolt/dashboardadmin','/skybolt/dashboardadmin/edit'].includes(path)) history.pushState(null, null, '/skybolt/dashboard')
+        }
+        else{
+            console.log(`This role doesn't exist`)
+        }
+    }
     // Si el path es raíz ('/') o está vacío, se redirige a '/skybolt/home'
-    if (path === '/' || !path) {
+    else if (path === '/' || !path) {
         history.pushState(null, null, '/skybolt/home'); // Modifica la URL sin recargar la página
     }
+
+
 
     // Se obtiene nuevamente el path para asegurarse que se actualizó
     path = window.location.pathname;
