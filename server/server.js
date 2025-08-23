@@ -34,10 +34,10 @@ app.get("/api/users", async (req, res) => {
 });
 
 // Obtener un usuario por ID
-app.get("/api/users/:id", async (req, res) => {
+app.get("/api/users/:id_user", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [
-      req.params.id,
+    const [rows] = await pool.query("SELECT * FROM users WHERE id_user = ?", [
+      req.params.id_user,
     ]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found" });
@@ -159,10 +159,10 @@ app.put("/api/users/:id", async (req, res) => {
 });
 
 // Eliminar usuario
-app.delete("/api/users/:id", async (req, res) => {
+app.delete("/api/users/:id_user", async (req, res) => {
   try {
-    const [result] = await pool.query("DELETE FROM users WHERE id = ?", [
-      req.params.id,
+    const [result] = await pool.query("DELETE FROM users WHERE id_user = ?", [
+      req.params.id_user,
     ]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "User not found" });
