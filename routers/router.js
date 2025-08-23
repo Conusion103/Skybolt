@@ -43,4 +43,13 @@ export let renderRoute = () => {
         <h1>HTTP NOT FOUND</h1> <!-- Error 404 -->
         `;
     }
+
+    // Si la url tiene #faq o #map, hace scroll suave hasta ese elemento
+    if (window.location.hash === "#faq") {
+        document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+    }
+    if (window.location.hash === "#map") {
+        document.getElementById("map")?.scrollIntoView({ behavior: "smooth" });
+    }
+
 }
