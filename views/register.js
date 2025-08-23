@@ -1,164 +1,235 @@
 import { generalFormat } from "../src/scripts/validationMethods";
+import { Api } from "../src/scripts/methodsApi";
+
+// Datos de departamentos con sus municipios y IDs
+const departamentos = [
+  {
+    id: 1,
+    name: "Antioquia",
+    municipios: [
+      { id: 1, name: "Medellín" },
+      { id: 2, name: "Envigado" },
+      { id: 3, name: "Bello" },
+      { id: 4, name: "Itagüí" },
+      { id: 5, name: "Rionegro" },
+      { id: 6, name: "Apartadó" },
+    ],
+  },
+  {
+    id: 2,
+    name: "Cundinamarca",
+    municipios: [
+      { id: 7, name: "Bogotá" },
+      { id: 8, name: "Soacha" },
+      { id: 9, name: "Chía" },
+      { id: 10, name: "Zipaquirá" },
+      { id: 11, name: "Girardot" },
+      { id: 12, name: "Fusagasugá" },
+    ],
+  },
+  {
+    id: 3,
+    name: "Valle del Cauca",
+    municipios: [
+      { id: 13, name: "Cali" },
+      { id: 14, name: "Palmira" },
+      { id: 15, name: "Buenaventura" },
+      { id: 16, name: "Tuluá" },
+      { id: 17, name: "Cartago" },
+      { id: 18, name: "Yumbo" },
+    ],
+  },
+  {
+    id: 4,
+    name: "Atlántico",
+    municipios: [
+      { id: 19, name: "Barranquilla" },
+      { id: 20, name: "Soledad" },
+      { id: 21, name: "Malambo" },
+      { id: 22, name: "Sabanalarga" },
+      { id: 23, name: "Puerto Colombia" },
+    ],
+  },
+  {
+    id: 5,
+    name: "Santander",
+    municipios: [
+      { id: 24, name: "Bucaramanga" },
+      { id: 25, name: "Floridablanca" },
+      { id: 26, name: "Girón" },
+      { id: 27, name: "Piedecuesta" },
+      { id: 28, name: "Barrancabermeja" },
+    ],
+  },
+  {
+    id: 6,
+    name: "Bolívar",
+    municipios: [
+      { id: 29, name: "Cartagena" },
+      { id: 30, name: "Magangué" },
+      { id: 31, name: "Turbaco" },
+      { id: 32, name: "Arjona" },
+      { id: 33, name: "El Carmen de Bolívar" },
+    ],
+  },
+];
 
 // Función para renderizar el formulario de registro
 export let renderRegister = (ul, main) => {
-
   // Cambiar fondo y clases del body y main
-  let $body = document.getElementById('body');
-  $body.style.backgroundImage = "";  // Eliminar imagen de fondo
-  $body.classList.remove('bg-cover', 'bg-center', 'bg-no-repeat'); // Eliminar clases de fondo
-  main.classList.remove('flex', 'justify-center', 'items-center', 'w-full', 'h-[94.570%]'); // Eliminar clases de centrado
+  let $body = document.getElementById("body");
+  $body.style.backgroundImage = "";
+  $body.classList.remove("bg-cover", "bg-center", "bg-no-repeat");
+  main.classList.remove(
+    "flex",
+    "justify-center",
+    "items-center",
+    "w-full",
+    "h-[94.570%]"
+  );
 
-  // Contenido del menú (ul)
+  // Menú de navegación
   ul.innerHTML = `
-      <a href="/skybolt/home" data-link>Home</a>
-      <a href="/skybolt/login" data-link>Log in</a>
+    <a href="/skybolt/home" data-link>Home</a>
+    <a href="/skybolt/login" data-link>Log in</a>
   `;
 
-  // Contenido del formulario en el main
+  // Formulario de registro
   main.innerHTML = `
     <form class="form-example">
-      <section class="form-example">
-        <input type="text" name="name-register" id="name-register" placeholder="Full Name" required />
-      </section>
-      <section class="form-example">
-        <input type="email" name="email-register" id="email-register" placeholder="Email" required />
-      </section>
-      <section class="form-example">
-        <input type="number" name="phone-register" id="phone-register" placeholder="Phone number" required />
-      </section>
-      <section class="form-example">
-        <input type="date" name="birthday-register" id="birthday-register" required />
-      </section>
-      <section class="form-example">
-        <select name="type-of-documents" id="documents-select" required>
+      <section><input type="text" id="name-register" placeholder="Full Name" required /></section>
+      <section><input type="email" id="email-register" placeholder="Email" required /></section>
+      <section><input type="number" id="phone-register" placeholder="Phone number" required /></section>
+      <section><input type="date" id="birthday-register" required /></section>
+      <section>
+        <select id="documents-select" required>
           <option value="">--Type of document--</option>
           <option value="CC">Cédula de ciudadanía</option>
           <option value="CE">Cédula de extranjería</option>
           <option value="PEP">Permiso especial de permanencia</option>
         </select>
       </section>
-      <section class="form-example">
-        <input type="number" name="document-register" id="document-register" placeholder="Document" required />
-      </section>
-
-      <!-- Selección de departamento -->
-      <section class="form-example">
+      <section><input type="number" id="document-register" placeholder="Document" required /></section>
+      <section>
         <select id="departament-register" required>
           <option value="">--Selecciona un departamento--</option>
         </select>
       </section>
-
-      <!-- Selección de municipio -->
-      <section class="form-example">
+      <section>
         <select id="town-register" required>
           <option value="">--Selecciona un municipio--</option>
         </select>
       </section>
-
-      <!-- Campos de contraseñas -->
-      <section class="form-example">
-        <input type="password" name="password-register" id="password-register" placeholder="Password" required />
-      </section>
-      <section class="form-example">
-        <input type="password" name="password-register_" id="password-register_" placeholder="Confirm Password" required />
-      </section>
-      
-      <!-- Botón de registro -->
-      <section class="form-example">
-        <button type="submit" id="button-register">Register</button>
-      </section>
+      <section><input type="password" id="password-register" placeholder="Password" required /></section>
+      <section><input type="password" id="password-register_" placeholder="Confirm Password" required /></section>
+      <section><button type="submit" id="button-register">Register</button></section>
     </form>
   `;
 
-  // --- Script dinámico para llenar los departamentos y municipios ---
-
-  // Lista de departamentos y sus municipios
-  const departamentos = {
-    "Antioquia": ["Medellín", "Envigado", "Bello", "Itagüí", "Rionegro", "Apartadó"],
-    "Cundinamarca": ["Bogotá", "Soacha", "Chía", "Zipaquirá", "Girardot", "Fusagasugá"],
-    "Valle del Cauca": ["Cali", "Palmira", "Buenaventura", "Tuluá", "Cartago", "Yumbo"],
-    "Atlántico": ["Barranquilla", "Soledad", "Malambo", "Sabanalarga", "Puerto Colombia"],
-    "Santander": ["Bucaramanga", "Floridablanca", "Girón", "Piedecuesta", "Barrancabermeja"],
-    "Bolívar": ["Cartagena", "Magangué", "Turbaco", "Arjona", "El Carmen de Bolívar"]
-  };
-
+  // Referencias a selects
   const departamentoSelect = document.getElementById("departament-register");
   const municipioSelect = document.getElementById("town-register");
 
-  // Llenar el select de departamentos
-  Object.keys(departamentos).forEach(dep => {
+  // Llenar select de departamentos con IDs como value
+  departamentos.forEach((dep) => {
     const option = document.createElement("option");
-    option.value = dep;
-    option.textContent = dep;
+    option.value = dep.id; // valor es el ID
+    option.textContent = dep.name; // texto visible es el nombre
     departamentoSelect.appendChild(option);
   });
 
-  // Evento cuando se cambia el departamento seleccionado
+  // Evento para actualizar municipios cuando se selecciona un departamento
   departamentoSelect.addEventListener("change", (e) => {
-    const selectedDep = e.target.value;
-    municipioSelect.innerHTML = '<option value="">--Selecciona un municipio--</option>'; // Limpiar municipios previos
+    const selectedDepId = Number(e.target.value);
+    municipioSelect.innerHTML =
+      '<option value="">--Selecciona un municipio--</option>';
 
-    // Si el departamento seleccionado tiene municipios, agregar opciones al select de municipios
-    if (selectedDep && departamentos[selectedDep]) {
-      departamentos[selectedDep].forEach(muni => {
-        const option = document.createElement("option");
-        option.value = muni;
-        option.textContent = muni;
-        municipioSelect.appendChild(option);
-      });
-    }
+    if (!selectedDepId) return; // No seleccionado
+
+    const departamento = departamentos.find((dep) => dep.id === selectedDepId);
+    if (!departamento) return;
+
+    departamento.municipios.forEach((muni) => {
+      const option = document.createElement("option");
+      option.value = muni.id; // valor es el id del municipio
+      option.textContent = muni.name; // texto visible es el nombre
+      municipioSelect.appendChild(option);
+    });
   });
 
   // Evento para el botón de registro
-  document.getElementById('button-register').addEventListener('click', (e) => {
-    e.preventDefault(); // Prevenir el envío por defecto del formulario
+  document.getElementById("button-register").addEventListener("click", (e) => {
+    e.preventDefault();
 
     try {
-      // Obtener los valores de los campos del formulario
-      let $name = document.getElementById('name-register').value.trim();
-      let $email = document.getElementById('email-register').value.trim();
-      let $phone = document.getElementById('phone-register').value.trim();
-      let $birthday = document.getElementById('birthday-register').value.trim();
-      let $type = document.getElementById('documents-select').value;
-      let $identification = document.getElementById('document-register').value.trim();
-      let $departament = document.getElementById('departament-register').value.trim();
-      let $town = document.getElementById('town-register').value.trim();
-      let $password = document.getElementById('password-register').value.trim();
-      let $confirmPassword = document.getElementById('password-register_').value.trim();
+      let $name = document.getElementById("name-register").value.trim();
+      let $email = document.getElementById("email-register").value.trim();
+      let $phone = document.getElementById("phone-register").value.trim();
+      let $birthdate = document
+        .getElementById("birthday-register")
+        .value.trim();
+      let $type = document.getElementById("documents-select").value;
+      let $identification = document
+        .getElementById("document-register")
+        .value.trim();
+      let $departament = document
+        .getElementById("departament-register")
+        .value.trim();
+      let $town = document.getElementById("town-register").value.trim();
+      let $password = document.getElementById("password-register").value.trim();
+      let $confirmPassword = document
+        .getElementById("password-register_")
+        .value.trim();
 
-      // Validaciones de los datos usando las funciones del archivo de validación
-      generalFormat.nameFormat($name); // Validar nombre
-      generalFormat.hotmailFormat($email); // Validar email
-      generalFormat.phoneNumber($phone); // Validar numero de teléfono
-      generalFormat.birthday($birthday); // Validar fecha de nacimiento
-      generalFormat.documenttypeFormat($type); // Validar tipo de documento
-      generalFormat.identicationFormat($identification); // Validar identificación
-      generalFormat.departamentFormat($departament); //Validar departamento
-      generalFormat.townFormat($town); // Validar municipio
-      generalFormat.passwordFormat($password, $confirmPassword); // Validar contraseñas
-      
+      // Validaciones (ajusta para aceptar números como string si es necesario)
+      generalFormat.nameFormat($name);
+      generalFormat.hotmailFormat($email);
+      generalFormat.phoneNumber($phone);
+      generalFormat.birthdate($birthdate);
+      generalFormat.documenttypeFormat($type);
+      generalFormat.identicationFormat($identification);
+      generalFormat.departamentFormat($departament);
+      generalFormat.townFormat($town);
+      generalFormat.passwordFormat($password, $confirmPassword);
 
-      // Crear un objeto con la información del usuario
+      // Armar el usuario con IDs numéricos para departamento y municipio
       let user = {
-        name: $name,
+        full_name: $name,
         email: $email,
         phone: $phone,
-        bithday: $birthday,
-        type_of_document: $type,
-        document: $identification,
-        departament: $departament,
-        town: $town,
-        password: $password
+        birthdate: $birthdate,
+        document_type: $type,
+        id_document: $identification,
+        id_department: Number($departament),
+        id_municipality: Number($town),
+        password_: $password,
+        rol: "admin",
       };
 
-      // Imprimir los datos del usuario en la consola para verificación
-      console.table(user);
+      // Validar si usuario ya existe consultando usuarios
+      Api.get("/api/users")
+        .then((users) => {
+          let user_exist = users.some(
+            (d) =>
+              d.email === user.email ||
+              (d.document_type === user.document_type &&
+                d.id_document === user.id_document)
+          );
+
+          if (user_exist) throw new Error("User already exists");
+
+          return Api.post("/api/users", user);
+        })
+        .then((res) => {
+          // En tu método Api.request ya devuelves json, no res.ok
+          alert("Usuario registrado correctamente");
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
     } catch (error) {
-      // Si ocurre algún error en las validaciones, mostrar el mensaje de error en la consola
       console.error(error.message);
+      alert(error.message);
     }
   });
-
-}
-
+};
