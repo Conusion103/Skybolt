@@ -67,7 +67,7 @@ export let renderRegister = (ul, main) => {
 
   // Formulario de registro
   main.innerHTML = `
-    <section class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <section class="flex flex-col items-center justify-center min-h-screen">
       <div class="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 space-y-6">
         
         <!-- Header -->
