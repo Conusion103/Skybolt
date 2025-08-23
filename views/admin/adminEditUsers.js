@@ -1,5 +1,6 @@
 import { locaL } from "../../src/scripts/LocalStorage"
 import { Api } from "../../src/scripts/methodsApi"
+
 export let renderDashboardAdminEditUsers = (ul, main) => {
 
     // nav.innerHTML = `
@@ -44,7 +45,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
                 Api.delete(`/api/users/${userID}`)
                 .then(()=> {
                     e.target.parentElement.remove();
-                    alert('User deleted sucessfully');
+                    alert('User deleted successfully');
                 })
                 .catch(error => alert(error.message))
             }
@@ -54,7 +55,4 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
     .catch(error => {
         alert(error.message)
     })
-
-
-
 }
