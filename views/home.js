@@ -3,48 +3,48 @@ export let renderHome = (ul, main) => {
 
     // Configuración del menú de navegación
     ul.innerHTML = `
-  <!-- HEADER  -->
-<header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <h1 class="text-3xl font-bold text-gray-800">
-                <a href="#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
-            </h1>
+    <!-- HEADER  -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <a href="#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
+                </h1>
 
-            <nav class="hidden md:flex space-x-6">
-                <a href="#about-us" class="nav-link">About us</a>
-                <a href="#testimonials" class="nav-link">Testimonials</a>
-                <a href="#faq" class="nav-link">FAQ</a>
-                <a href="#map" class="nav-link"">Find Us</a>
-                <a href="#contact" class="nav-link">Contact Us</a>
-                <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
-                <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#about-us" class="nav-link">About us</a>
+                    <a href="#testimonials" class="nav-link">Testimonials</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                    <a href="#map" class="nav-link"">Find Us</a>
+                    <a href="#contact" class="nav-link">Contact Us</a>
+                    <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
+                    <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
 
-            </nav>
+                </nav>
 
-            <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
-                <span class="w-6 h-0.5 bg-gray-800"></span>
-                <span class="w-6 h-0.5 bg-gray-800"></span>
-                <span class="w-6 h-0.5 bg-gray-800"></span>
-            </button>
-        </div>
-  </div>
-
-    <!-- MENÚ MÓVIL -->
-    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-        <a href="#about-us" class="nav-link">About us</a>
-        <a href="#testimonials" class="nav-link">Testimonials</a>
-        <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#map" class="nav-link">Find Us</a>
-        <a href="#contact" class="nav-link">Contact Us</a>
-        <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
-        <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+                <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+                    <span class="w-6 h-0.5 bg-gray-800"></span>
+                    <span class="w-6 h-0.5 bg-gray-800"></span>
+                    <span class="w-6 h-0.5 bg-gray-800"></span>
+                </button>
+            </div>
     </div>
 
-</header>
+        <!-- MENÚ MÓVIL -->
+        <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+            <a href="#about-us" class="nav-link">About us</a>
+            <a href="#testimonials" class="nav-link">Testimonials</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="#map" class="nav-link">Find Us</a>
+            <a href="#contact" class="nav-link">Contact Us</a>
+            <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
+            <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+        </div>
 
-<!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
-<div id="top" class="h-16"></div>
+    </header>
+
+    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <div id="top" class="h-16"></div>
 
 `;
 

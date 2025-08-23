@@ -1,7 +1,81 @@
 import { generalFormat } from "../src/scripts/validationMethods";
+import { Api } from "../src/scripts/methodsApi";
+
+// Datos de departamentos con sus municipios y IDs
+const departamentos = [
+  {
+    id: 1,
+    name: "Antioquia",
+    municipios: [
+      { id: 1, name: "Medellín" },
+      { id: 2, name: "Envigado" },
+      { id: 3, name: "Bello" },
+      { id: 4, name: "Itagüí" },
+      { id: 5, name: "Rionegro" },
+      { id: 6, name: "Apartadó" },
+    ],
+  },
+  {
+    id: 2,
+    name: "Cundinamarca",
+    municipios: [
+      { id: 7, name: "Bogotá" },
+      { id: 8, name: "Soacha" },
+      { id: 9, name: "Chía" },
+      { id: 10, name: "Zipaquirá" },
+      { id: 11, name: "Girardot" },
+      { id: 12, name: "Fusagasugá" },
+    ],
+  },
+  {
+    id: 3,
+    name: "Valle del Cauca",
+    municipios: [
+      { id: 13, name: "Cali" },
+      { id: 14, name: "Palmira" },
+      { id: 15, name: "Buenaventura" },
+      { id: 16, name: "Tuluá" },
+      { id: 17, name: "Cartago" },
+      { id: 18, name: "Yumbo" },
+    ],
+  },
+  {
+    id: 4,
+    name: "Atlántico",
+    municipios: [
+      { id: 19, name: "Barranquilla" },
+      { id: 20, name: "Soledad" },
+      { id: 21, name: "Malambo" },
+      { id: 22, name: "Sabanalarga" },
+      { id: 23, name: "Puerto Colombia" },
+    ],
+  },
+  {
+    id: 5,
+    name: "Santander",
+    municipios: [
+      { id: 24, name: "Bucaramanga" },
+      { id: 25, name: "Floridablanca" },
+      { id: 26, name: "Girón" },
+      { id: 27, name: "Piedecuesta" },
+      { id: 28, name: "Barrancabermeja" },
+    ],
+  },
+  {
+    id: 6,
+    name: "Bolívar",
+    municipios: [
+      { id: 29, name: "Cartagena" },
+      { id: 30, name: "Magangué" },
+      { id: 31, name: "Turbaco" },
+      { id: 32, name: "Arjona" },
+      { id: 33, name: "El Carmen de Bolívar" },
+    ],
+  },
+];
 
 // Función para renderizar el formulario de registro
-export let renderRegister = (ul, main) => {
+export let renderRegister = (ul, main, footer) => {
   // Cambiar fondo y clases del body y main
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
@@ -32,7 +106,6 @@ export let renderRegister = (ul, main) => {
             <a href="/skybolt/home#map" class="nav-link"">Find Us</a>
             <a href="#contact" class="nav-link">Contact Us</a>
             <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
-
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -52,100 +125,60 @@ export let renderRegister = (ul, main) => {
             <a href="#contact" class="nav-link">Contact Us</a>
             <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
         </div>
-
     </header>
-
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
     <div id="top" class="h-16"></div>
   `;
 
   // Toggle menú móvil
-    document.getElementById("menu-btn").addEventListener("click", () => {
-        const menu = document.getElementById("mobile-menu");
-        menu.classList.toggle("hidden");
-    });
+  document.getElementById("menu-btn").addEventListener("click", () => {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("hidden");
+  });
 
   // Formulario de registro
   main.innerHTML = `
     <section class="flex flex-col items-center justify-center min-h-screen">
       <div class="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 space-y-6">
-        
-        <!-- Header -->
         <header class="text-center">
           <h1 class="text-4xl font-bold text-green-400">REGISTER</h1>
         </header>
-
-        <!-- Formulario -->
         <form id="form-register" class="space-y-4">
-
-          <input type="text" id="name-register" placeholder="Full Name" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <input type="email" id="email-register" placeholder="Email" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <input type="number" id="phone-register" placeholder="Phone number" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <input type="date" id="birthday-register" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <select id="documents-select" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+          <input type="text" id="name-register" placeholder="Full Name" required class="input" />
+          <input type="email" id="email-register" placeholder="Email" required class="input" />
+          <input type="number" id="phone-register" placeholder="Phone number" required class="input" />
+          <input type="date" id="birthday-register" required class="input" />
+          <select id="documents-select" required class="input">
             <option value="">--Type of document--</option>
             <option value="CC">Cédula de ciudadanía</option>
             <option value="CE">Cédula de extranjería</option>
             <option value="PEP">Permiso especial de permanencia</option>
           </select>
-
-          <input type="number" id="document-register" placeholder="Document" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <select id="departament-register" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+          <input type="number" id="document-register" placeholder="Document" required class="input"/>
+          <select id="departament-register" required class="input">
             <option value="">--Select a department--</option>
           </select>
-
-          <select id="town-register" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+          <select id="town-register" required class="input">
             <option value="">--Select a municipality--</option>
           </select>
-
-          <input type="password" id="password-register" placeholder="Password" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <input type="password" id="password-register_" placeholder="Confirm Password" required
-            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-
-          <!-- Botón -->
-          <button type="submit" id="button-register"
-            class="w-full py-3 bg-green-400 text-white font-bold rounded-full hover:bg-green-500 transition flex items-center justify-center gap-2">
-            REGISTER
-          </button>
-
-          <!-- Login redirect -->
-          <p class="text-center text-sm text-gray-600">
-            Already a member? <a href="/skybolt/login" class="text-blue-500 font-semibold">Log in</a>
+          <input type="password" id="password-register" placeholder="Password" required class="input"/>
+          <input type="password" id="password-register_" placeholder="Confirm Password" required class="input"/>
+          <button type="submit" id="button-register" class="btn-primary w-full">REGISTER</button>
+          <p class="text-center text-sm text-gray-600">Already a member? 
+            <a href="/skybolt/login" class="text-blue-500 font-semibold">Log in</a>
           </p>
         </form>
       </div>
     </section>
   `;
 
+  // Footer
   footer.innerHTML = `
-    <!-- FOOTER COMPLETO -->
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <!-- DESCRIPCIÓN -->
             <div>
                 <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
-                <p class="text-sm">
-                    Your trusted platform to book sports venues in seconds. Technology that connects active communities.
-                </p>
+                <p class="text-sm">Your trusted platform to book sports venues in seconds. Technology that connects active communities.</p>
             </div>
-
-            <!-- ENLACES -->
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
                 <ul class="space-y-2 text-sm">
@@ -154,8 +187,6 @@ export let renderRegister = (ul, main) => {
                     <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition">Location</a></li>
                 </ul>
             </div>
-
-            <!-- REDES -->
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
                 <div class="flex gap-4">
@@ -164,13 +195,8 @@ export let renderRegister = (ul, main) => {
                     <a href="#" class="hover:text-yellow-300 transition">Twitter</a>
                 </div>
             </div>
-
         </div>
-
-        <!-- COPYRIGHT -->
-        <div class="text-center text-sm mt-10 text-green-300">
-            © 2025 SKYBOLT. All rights reserved
-        </div>
+        <div class="text-center text-sm mt-10 text-green-300">© 2025 SKYBOLT. All rights reserved</div>
     </footer>
   `;
 
@@ -178,29 +204,25 @@ export let renderRegister = (ul, main) => {
   const departamentoSelect = document.getElementById("departament-register");
   const municipioSelect = document.getElementById("town-register");
 
-  // Llenar select de departamentos con IDs como value
+  // Llenar select de departamentos
   departamentos.forEach((dep) => {
     const option = document.createElement("option");
-    option.value = dep.id; // valor es el ID
-    option.textContent = dep.name; // texto visible es el nombre
+    option.value = dep.id;
+    option.textContent = dep.name;
     departamentoSelect.appendChild(option);
   });
 
-  // Evento para actualizar municipios cuando se selecciona un departamento
+  // Evento para actualizar municipios
   departamentoSelect.addEventListener("change", (e) => {
     const selectedDepId = Number(e.target.value);
-    municipioSelect.innerHTML =
-      '<option value="">--Selecciona un municipio--</option>';
-
-    if (!selectedDepId) return; // No seleccionado
-
+    municipioSelect.innerHTML = '<option value="">--Select a municipality--</option>';
+    if (!selectedDepId) return;
     const departamento = departamentos.find((dep) => dep.id === selectedDepId);
     if (!departamento) return;
-
     departamento.municipios.forEach((muni) => {
       const option = document.createElement("option");
-      option.value = muni.id; // valor es el id del municipio
-      option.textContent = muni.name; // texto visible es el nombre
+      option.value = muni.id;
+      option.textContent = muni.name;
       municipioSelect.appendChild(option);
     });
   });
@@ -208,28 +230,19 @@ export let renderRegister = (ul, main) => {
   // Evento para el botón de registro
   document.getElementById("button-register").addEventListener("click", (e) => {
     e.preventDefault();
-
     try {
       let $name = document.getElementById("name-register").value.trim();
       let $email = document.getElementById("email-register").value.trim();
       let $phone = document.getElementById("phone-register").value.trim();
-      let $birthdate = document
-        .getElementById("birthday-register")
-        .value.trim();
+      let $birthdate = document.getElementById("birthday-register").value.trim();
       let $type = document.getElementById("documents-select").value;
-      let $identification = document
-        .getElementById("document-register")
-        .value.trim();
-      let $departament = document
-        .getElementById("departament-register")
-        .value.trim();
+      let $identification = document.getElementById("document-register").value.trim();
+      let $departament = document.getElementById("departament-register").value.trim();
       let $town = document.getElementById("town-register").value.trim();
       let $password = document.getElementById("password-register").value.trim();
-      let $confirmPassword = document
-        .getElementById("password-register_")
-        .value.trim();
+      let $confirmPassword = document.getElementById("password-register_").value.trim();
 
-      // Validaciones (ajusta para aceptar números como string si es necesario)
+      // Validaciones
       generalFormat.nameFormat($name);
       generalFormat.hotmailFormat($email);
       generalFormat.phoneNumber($phone);
@@ -240,7 +253,7 @@ export let renderRegister = (ul, main) => {
       generalFormat.townFormat($town);
       generalFormat.passwordFormat($password, $confirmPassword);
 
-      // Armar el usuario con IDs numéricos para departamento y municipio
+      // Usuario
       let user = {
         full_name: $name,
         email: $email,
@@ -254,22 +267,18 @@ export let renderRegister = (ul, main) => {
         rol: "user",
       };
 
-      // Validar si usuario ya existe consultando usuarios
+      // Validar y enviar
       Api.get("/api/users")
         .then((users) => {
           let user_exist = users.some(
             (d) =>
               d.email === user.email ||
-              (d.document_type === user.document_type &&
-                d.id_document === user.id_document)
+              (d.document_type === user.document_type && d.id_document === user.id_document)
           );
-
           if (user_exist) throw new Error("User already exists");
-
           return Api.post("/api/users", user);
         })
-        .then((res) => {
-          // En tu método Api.request ya devuelves json, no res.ok
+        .then(() => {
           alert("Usuario registrado correctamente");
         })
         .catch((error) => {
