@@ -80,6 +80,7 @@ export let renderRegister = (ul, main) => {
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
   $body.classList.remove("bg-cover", "bg-center", "bg-no-repeat");
+  $body.classList.add("bg-gray-100", "min-h-screen");
   main.classList.remove(
     "flex",
     "justify-center",
@@ -90,41 +91,162 @@ export let renderRegister = (ul, main) => {
 
   // Menú de navegación
   ul.innerHTML = `
-    <a href="/skybolt/home" data-link>Home</a>
-    <a href="/skybolt/login" data-link>Log in</a>
+     <!-- HEADER  -->
+<header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <h1 class="text-3xl font-bold text-gray-800">
+        <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
+      </h1>
+
+      <nav class="hidden md:flex space-x-6">
+        <a href="/skybolt/home#about-us" class="nav-link">About us</a>
+        <a href="/skybolt/home#testimonials" class="nav-link">Testimonials</a>
+        <a href="/skybolt/home#faq" class="nav-link">FAQ</a>
+        <a href="/skybolt/home#map" class="nav-link"">Find Us</a>
+        <a href="#contact" class="nav-link">Contact Us</a>
+        <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
+
+      </nav>
+
+      <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+        <span class="w-6 h-0.5 bg-gray-800"></span>
+        <span class="w-6 h-0.5 bg-gray-800"></span>
+        <span class="w-6 h-0.5 bg-gray-800"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MENÚ MÓVIL -->
+    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+        <a href="#about-us" class="nav-link">About us</a>
+        <a href="#testimonials" class="nav-link">Testimonials</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="#map" class="nav-link">Find Us</a>
+        <a href="#contact" class="nav-link">Contact Us</a>
+        <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+    </div>
+
+</header>
+
+<!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+<div id="top" class="h-16"></div>
   `;
+
+  // Toggle menú móvil
+    document.getElementById("menu-btn").addEventListener("click", () => {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
 
   // Formulario de registro
   main.innerHTML = `
-    <form class="form-example">
-      <section><input type="text" id="name-register" placeholder="Full Name" required /></section>
-      <section><input type="email" id="email-register" placeholder="Email" required /></section>
-      <section><input type="number" id="phone-register" placeholder="Phone number" required /></section>
-      <section><input type="date" id="birthday-register" required /></section>
-      <section>
-        <select id="documents-select" required>
+  <section class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 space-y-6">
+      
+      <!-- Header -->
+      <header class="text-center">
+        <h1 class="text-4xl font-bold text-green-400">REGISTER</h1>
+      </header>
+
+      <!-- Formulario -->
+      <form id="form-register" class="space-y-4">
+
+        <input type="text" id="name-register" placeholder="Full Name" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <input type="email" id="email-register" placeholder="Email" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <input type="number" id="phone-register" placeholder="Phone number" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <input type="date" id="birthday-register" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <select id="documents-select" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
           <option value="">--Type of document--</option>
           <option value="CC">Cédula de ciudadanía</option>
           <option value="CE">Cédula de extranjería</option>
           <option value="PEP">Permiso especial de permanencia</option>
         </select>
-      </section>
-      <section><input type="number" id="document-register" placeholder="Document" required /></section>
-      <section>
-        <select id="departament-register" required>
-          <option value="">--Selecciona un departamento--</option>
+
+        <input type="number" id="document-register" placeholder="Document" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <select id="departament-register" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+          <option value="">--Select a department--</option>
         </select>
-      </section>
-      <section>
-        <select id="town-register" required>
-          <option value="">--Selecciona un municipio--</option>
+
+        <select id="town-register" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+          <option value="">--Select a municipality--</option>
         </select>
-      </section>
-      <section><input type="password" id="password-register" placeholder="Password" required /></section>
-      <section><input type="password" id="password-register_" placeholder="Confirm Password" required /></section>
-      <section><button type="submit" id="button-register">Register</button></section>
-    </form>
+
+        <input type="password" id="password-register" placeholder="Password" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <input type="password" id="password-register_" placeholder="Confirm Password" required
+          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+
+        <!-- Botón -->
+        <button type="submit" id="button-register"
+          class="w-full py-3 bg-green-400 text-white font-bold rounded-full hover:bg-green-500 transition flex items-center justify-center gap-2">
+          REGISTER
+        </button>
+
+        <!-- Login redirect -->
+        <p class="text-center text-sm text-gray-600">
+          Already a member? <a href="/skybolt/login" class="text-blue-500 font-semibold">Log in</a>
+        </p>
+      </form>
+    </div>
+  </section>
   `;
+
+    footer.innerHTML = `
+    <!-- FOOTER COMPLETO -->
+    <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- DESCRIPCIÓN -->
+            <div>
+                <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
+                <p class="text-sm">
+                    Your trusted platform to book sports venues in seconds. Technology that connects active communities.
+                </p>
+            </div>
+
+            <!-- ENLACES -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition">Book Now</a></li>
+                    <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition">FAQ</a></li>
+                    <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition">Location</a></li>
+                </ul>
+            </div>
+
+            <!-- REDES -->
+            <div>
+                <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-yellow-300 transition">Instagram</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Facebook</a>
+                    <a href="#" class="hover:text-yellow-300 transition">Twitter</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COPYRIGHT -->
+        <div class="text-center text-sm mt-10 text-green-300">
+            © 2025 SKYBOLT. All rights reserved
+        </div>
+    </footer>
+`;
 
   // Referencias a selects
   const departamentoSelect = document.getElementById("departament-register");
@@ -203,7 +325,7 @@ export let renderRegister = (ul, main) => {
         id_department: Number($departament),
         id_municipality: Number($town),
         password_: $password,
-        rol: "admin",
+        rol: "user",
       };
 
       // Validar si usuario ya existe consultando usuarios
