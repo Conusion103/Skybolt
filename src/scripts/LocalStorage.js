@@ -2,8 +2,6 @@ export let locaL = {
     post: (nickname,object) => {
         if(object){
             localStorage.setItem(nickname, JSON.stringify(object));
-        }else{
-            console.log(`There isn't a user logged`)
         }
         
     },
@@ -12,9 +10,6 @@ export let locaL = {
         if(user){
             user = JSON.parse(user);
             return user
-        }
-        else{
-            console.log(`There isn't a user logged`);
         }
     },
     delete: (nickname) => {

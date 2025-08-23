@@ -30,36 +30,44 @@ export let renderLogin = (ul, main) => {
         let $email = document.getElementById('email-login').value.trim();
         let $password = document.getElementById('password-login').value.trim();
         Api.get('/api/users')
-        .then(data => {
-            // 123546879LUcas@
-            let user_login = data.find(d => $email === d.email && (bcrypt.compare($password, d.password_)));
-            if(user_login){
-                locaL.post('active_user',user_login);
-                if(user_login.rol === 'user'){
-                    history.pushState(null, null, '/skybolt/dashboarduser')
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                }else if(user_login.rol === 'owner'){
-                    history.pushState(null, null, '/skybolt/dashboardowner')
-                    window.dispatchEvent(new PopStateEvent('popstate'));
+            .then(async data => {
+                // Buscar usuario por email
+                let user = data.find(d => $email === d.email);
+                // 123456789LUcas@
+                if (user) {
+                    // Verificar contraseña de forma segura
+                    const isPasswordCorrect = await bcrypt.compare($password, user.password_);
 
-                }else if(user_login.rol === 'admin'){
-                    history.pushState(null, null, '/skybolt/dashboardadmin')
-                    window.dispatchEvent(new PopStateEvent('popstate'));
+                    if (isPasswordCorrect) {
+                        locaL.post('active_user', user);
+
+                        switch (user.rol) {
+                            case 'user':
+                                history.pushState(null, null, '/skybolt/dashboarduser');
+                                break;
+                            case 'owner':
+                                history.pushState(null, null, '/skybolt/dashboardowner');
+                                break;
+                            case 'admin':
+                                history.pushState(null, null, '/skybolt/dashboardadmin/fields');
+                                break;
+                            default:
+                                console.log(`This role doesn't exist`);
+                                return;
+                        }
+
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                    } else {
+                        alert("Contraseña incorrecta");
+                    }
+                } else {
+                    alert("Usuario no encontrado");
                 }
-                else{
-                    console.log(`This role doesn't exist`)
-                }
-            }else{
+            })
+            .catch(error => {
+                alert("Error al iniciar sesión: " + error.message);
+            });
 
-
-
-            }
-            
-
-        })
-        .catch(error => {
-            alert(error.message)
-        })
 
 
 

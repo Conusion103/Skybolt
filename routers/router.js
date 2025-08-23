@@ -2,8 +2,10 @@
 import { renderHome } from "../views/home";
 import { renderRegister } from "../views/register";
 import { renderLogin } from "../views/login";
-import { renderDashboardUser } from "../views/dashboardUser";
-import { renderDashboardAdmin } from "../views/dashboardAdmin";
+import { renderDashboardUser } from "../views/users/dashboardUser";
+import { renderDashboardAdminFields } from "../views/admin/dashboardAdmin";
+import { renderDashboardAdminEditUsers } from "../views/admin/adminEditUsers";
+import { renderDashboardAdminEditOwners } from "../views/admin/adminEditOwner";
 import { locaL } from "../src/scripts/LocalStorage";
 
 // Se seleccionan los elementos HTML donde se van a renderizar las vistas
@@ -16,31 +18,55 @@ let routes = {
     '/skybolt/home': () => renderHome($nav, $main),        // Ruta para la vista Home
     '/skybolt/login': () => renderLogin($nav, $main),      // Ruta para la vista Login
     '/skybolt/register': () => renderRegister($nav, $main),// Ruta para la vista Register
-    '/skybolt/dashboarduser': () => renderDashboardUser($header,$nav, $main),  // Ruta para el Dashboard del usuario
-    '/skybolt/dashboardowner': () => renderDashboardOwner($header,$nav, $main), // Ruta para el Dashboard del propietario
-    '/skybolt/dashboardowner/edit': () => renderDashboardOwnerEdit($header,$nav, $main),
-    '/skybolt/dashboardadmin': () => renderDashboardAdmin($header,$nav, $main),
-    '/skybolt/dashboardadmin/edit': () => renderDashboardAdminEdit($header,$nav, $main)
+    '/skybolt/dashboarduser': () => renderDashboardUser($nav, $main), // Ruta para el Dashboard del usuario
+    '/skybolt/dashboarduser/profile': () => renderDashboardUserProfile($nav, $main), 
+    '/skybolt/dashboardowner': () => renderDashboardOwner($nav, $main), // Ruta para el Dashboard del propietario
+    '/skybolt/dashboardowner/edit': () => renderDashboardOwnerEdit($nav, $main),
+    '/skybolt/dashboardadmin/fields': () => renderDashboardAdminFields($nav, $main),
+    '/skybolt/dashboardadmin/users': () => renderDashboardAdminEditUsers($nav, $main),
+    '/skybolt/dashboardadmin/owners': () => renderDashboardAdminEditOwners($nav, $main)
 };
 
 // Función para renderizar la ruta actual
 export let renderRoute = () => {
     let path = window.location.pathname; // Obtiene el path de la URL actual
     let user = locaL.get('active_user')
+    console.log(user)
     if(user){
-        if(user.rol === 'user'){
-            history.pushState(null, null, '/skybolt/dashboarduser')
-            if(!['/skybolt/dashboarduser'].includes(path)) history.pushState(null, null, '/skybolt/dashboarduser')
-        }else if(user.rol === 'owner'){
-            history.pushState(null, null, '/skybolt/dashboardowner')
-            if(!['/skybolt/dashboardowner','/skybolt/dashboardowner/edit'].includes(path)) history.pushState(null, null, '/skybolt/dashboardowner')
-        }else if(user.rol === 'admin'){
-            history.pushState(null, null, '/skybolt/dashboardadmin')
-            if(!['/skybolt/dashboardadmin','/skybolt/dashboardadmin/edit'].includes(path)) history.pushState(null, null, '/skybolt/dashboard')
+        switch (user.rol) {
+            case 'user':
+                path = window.location.pathname;
+                if (!['/skybolt/dashboarduser'].includes(path)) {
+                    history.pushState(null, null, '/skybolt/dashboarduser');
+                } else {
+                    history.pushState(null, null, path);
+                }
+                break;
+        
+            case 'owner':
+                path = window.location.pathname;
+                if (!['/skybolt/dashboardowner', '/skybolt/dashboardowner/edit'].includes(path)) {
+                    history.pushState(null, null, '/skybolt/dashboardowner');
+                } else {
+                    history.pushState(null, null, path);
+                }
+                break;
+        
+            case 'admin':
+                path = window.location.pathname;
+                if (![
+                    '/skybolt/dashboardadmin/fields',
+                    '/skybolt/dashboardadmin/users',
+                    '/skybolt/dashboardadmin/owners'
+                ].includes(path)) {
+                    history.pushState(null, null, '/skybolt/dashboardadmin/fields');
+                } else {
+                    history.pushState(null, null, path);
+                }
+                break;
         }
-        else{
-            console.log(`This role doesn't exist`)
-        }
+        
+
     }
     // Si el path es raíz ('/') o está vacío, se redirige a '/skybolt/home'
     else if (path === '/' || !path) {
