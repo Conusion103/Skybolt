@@ -75,7 +75,7 @@ main.innerHTML = `
       </header>
 
       <!-- Formulario -->
-      <form class="space-y-5">
+      <form id="login-form" class="space-y-5">
         
         <!-- Email -->
         <div class="relative">
@@ -127,6 +127,12 @@ main.innerHTML = `
     </div>
   </section>
 `;
+
+document.getElementById("login-form").addEventListener("submit", function(e) {
+    e.preventDefault(); // Evita que se recargue la página
+    
+    window.location.href = "/skybolt/dashboarduser"; // Redirige al dashboard
+  });
 
 footer.innerHTML = `
   <!-- FOOTER COMPLETO -->

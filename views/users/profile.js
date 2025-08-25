@@ -1,11 +1,7 @@
-import { locaL } from "../../src/scripts/LocalStorage"
-export let renderDashboardUser = (ul, main) => {
-
-    // nav.innerHTML = `
-    // <img src="./img/skybolt.webp" alt="Skybolt Logo">
-    // `
+import { locaL } from "../../src/scripts/LocalStorage";
+export let renderDashboardUserProfile = (ul, main) => {
     ul.innerHTML = `
-    <a href="/skybolt/dashboarduser/profile" data-link>Profile</a>
+    <a href="/skybolt/dashboarduser/profile" data-link>Back</a>
     <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>
     `
     main.innerHTML = `
@@ -15,4 +11,5 @@ export let renderDashboardUser = (ul, main) => {
         e.preventDefault();
         locaL.delete('active_user');
     })
+
 }
