@@ -2,7 +2,7 @@ import { generalFormat } from "../src/scripts/validationMethods";
 import { Api } from "../src/scripts/methodsApi";
 
 // Datos de departamentos con sus municipios y IDs
-const departamentos = [
+export const departamentos = [
   {
     id: 1,
     name: "Antioquia",
@@ -96,16 +96,16 @@ export let renderRegister = (ul, main) => {
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <h1 class="text-3xl font-bold text-gray-800">
-        <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
+        <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
       </h1>
 
       <nav class="hidden md:flex space-x-6">
-        <a href="/skybolt/home#about-us" class="nav-link">About us</a>
-        <a href="/skybolt/home#testimonials" class="nav-link">Testimonials</a>
-        <a href="/skybolt/home#faq" class="nav-link">FAQ</a>
-        <a href="/skybolt/home#map" class="nav-link"">Find Us</a>
-        <a href="#contact" class="nav-link">Contact Us</a>
-        <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
+        <a href="/skybolt/home#about-us" class="nav-link" data-link>About us</a>
+        <a href="/skybolt/home#testimonials" class="nav-link" data-link>Testimonials</a>
+        <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
+        <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
+        <a href="#contact" class="nav-link" data-link>Contact Us</a>
+        <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>
 
       </nav>
 
@@ -199,7 +199,7 @@ export let renderRegister = (ul, main) => {
 
         <!-- Login redirect -->
         <p class="text-center text-sm text-gray-600">
-          Already a member? <a href="/skybolt/login" class="text-blue-500 font-semibold">Log in</a>
+          Already a member? <a href="/skybolt/login" class="text-blue-500 font-semibold" data-link>Log in</a>
         </p>
       </form>
     </div>
@@ -223,9 +223,9 @@ export let renderRegister = (ul, main) => {
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition">Book Now</a></li>
-                    <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition">FAQ</a></li>
-                    <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition">Location</a></li>
+                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
+                    <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition" data-link>FAQ</a></li>
+                    <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition" data-link>Location</a></li>
                 </ul>
             </div>
 
@@ -233,9 +233,9 @@ export let renderRegister = (ul, main) => {
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
                 <div class="flex gap-4">
-                    <a href="#" class="hover:text-yellow-300 transition">Instagram</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Facebook</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Twitter</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Instagram</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
                 </div>
             </div>
 

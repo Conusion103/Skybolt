@@ -1,3 +1,6 @@
+import { Api } from "../src/scripts/methodsApi";
+import bcrypt from "bcryptjs";
+import { locaL } from "../src/scripts/LocalStorage";
 export let renderLogin = (ul, main) => {
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
@@ -19,16 +22,16 @@ export let renderLogin = (ul, main) => {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <h1 class="text-3xl font-bold text-gray-800">
-          <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
+          <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
         </h1>
 
         <nav class="hidden md:flex space-x-6">
-          <a href="/skybolt/home#about-us" class="nav-link">About us</a>
-          <a href="/skybolt/home#testimonials" class="nav-link">Testimonials</a>
-          <a href="/skybolt/home#faq" class="nav-link">FAQ</a>
-          <a href="/skybolt/home#map" class="nav-link"">Find Us</a>
-          <a href="#contact" class="nav-link">Contact Us</a>
-          <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+          <a href="/skybolt/home#about-us" class="nav-link" data-link>About us</a>
+          <a href="/skybolt/home#testimonials" class="nav-link" data-link>Testimonials</a>
+          <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
+          <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
+          <a href="#contact" class="nav-link" data-link>Contact Us</a>
+          <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
         </nav>
 
         <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -41,12 +44,12 @@ export let renderLogin = (ul, main) => {
 
     <!-- MENÚ MÓVIL -->
     <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-      <a href="#about-us" class="nav-link">About us</a>
-      <a href="#testimonials" class="nav-link">Testimonials</a>
-      <a href="#faq" class="nav-link">FAQ</a>
-      <a href="#map" class="nav-link">Find Us</a>
-      <a href="#contact" class="nav-link">Contact Us</a>
-      <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+      <a href="#about-us" class="nav-link" data-link>About us</a>
+      <a href="#testimonials" class="nav-link" data-link>Testimonials</a>
+      <a href="#faq" class="nav-link" data-link>FAQ</a>
+      <a href="#map" class="nav-link" data-link>Find Us</a>
+      <a href="#contact" class="nav-link" data-link>Contact Us</a>
+      <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
     </div>
 
   </header>
@@ -75,7 +78,9 @@ main.innerHTML = `
       </header>
 
       <!-- Formulario -->
-      <form id="login-form" class="space-y-5">
+
+      <form class="space-y-5" id="login-form">
+
         
         <!-- Email -->
         <div class="relative">
@@ -121,7 +126,7 @@ main.innerHTML = `
 
         <!-- Register -->
         <p class="text-center text-sm text-gray-600">
-          New Member? <a href="/skybolt/register" class="text-blue-500 font-semibold">Register now</a>
+          New Member? <a href="/skybolt/register" class="text-blue-500 font-semibold" data-link>Register now</a>
         </p>
       </form>
     </div>
@@ -151,7 +156,7 @@ footer.innerHTML = `
         <div>
           <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
           <ul class="space-y-2 text-sm">
-            <li><a href="/skybolt/login" class="hover:text-yellow-300 transition">Book Now</a></li>
+            <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
             <li><a href="/skybolt/home#faq" data-link class="hover:text-yellow-300 transition">FAQ</a></li>
             <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition">Location</a></li>
           </ul>
@@ -176,4 +181,53 @@ footer.innerHTML = `
       </div>
   </footer>
 `;
+
+
+document.getElementById('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        let $email = document.getElementById('email-login').value.trim();
+        let $password = document.getElementById('password-login').value.trim();
+        Api.get('/api/users')
+            .then(async data => {
+                // Buscar usuario por email
+                let user = data.find(d => $email === d.email);
+                // 123456789LUcas@
+                if (user) {
+                    // Verificar contraseña de forma segura
+                    const isPasswordCorrect = await bcrypt.compare($password, user.password_);
+
+                    if (isPasswordCorrect) {
+                        locaL.post('active_user', user);
+
+                        switch (user.rol) {
+                            case 'user':
+                                history.pushState(null, null, '/skybolt/dashboarduser');
+                                break;
+                            case 'owner':
+                                history.pushState(null, null, '/skybolt/dashboardowner');
+                                break;
+                            case 'admin':
+                                history.pushState(null, null, '/skybolt/dashboardadmin/fields');
+                                break;
+                            default:
+                                console.log(`This role doesn't exist`);
+                                return;
+                        }
+
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                    } else {
+                        alert("Contraseña incorrecta");
+                    }
+                } else {
+                    alert("Usuario no encontrado");
+                }
+            })
+            .catch(error => {
+                alert("Error al iniciar sesión: " + error.message);
+            });
+
+
+
+
+    })
 };
