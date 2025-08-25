@@ -4,33 +4,36 @@ import bcrypt from "bcryptjs";
 import { pool } from "./conexion_db.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
 
-// Testear conexión DB
+// ----------------- HELPER FUNCTIONS -----------------
+
+// Verificar conexión con DB
 const testDbConnection = async () => {
   try {
     const connection = await pool.getConnection();
-    console.log("Conexión a la base de datos exitosa");
+    console.log("✅ Conexión a la base de datos exitosa");
     connection.release();
   } catch (err) {
-    console.error("Error de conexión a la base de datos:", err.message);
+    console.error("❌ Error de conexión a la base de datos:", err.message);
     process.exit(1);
   }
 };
-
 testDbConnection();
 
-// Función para responder errores en formato estándar
-const sendError = (res, status, message, details = null) => {
+// Función estándar de error
+const sendError = (res, req, status, message, details = null) => {
   res.status(status).json({
     status,
+    endpoint: req.originalUrl,
+    method: req.method,
     message,
     details,
   });
 };
 
-// Validar campos obligatorios para crear o actualizar usuario
+// Validación de campos
 const validateUserFields = (data, isUpdate = false) => {
   const requiredFields = [
     "full_name",
@@ -42,51 +45,50 @@ const validateUserFields = (data, isUpdate = false) => {
   ];
 
   if (!isUpdate) {
-    // En creación, password es obligatorio
-    requiredFields.push("password_");
+    requiredFields.push("password_"); // password obligatorio solo al crear
   }
 
-  const missingFields = requiredFields.filter((field) => !data[field]);
-  return missingFields;
+  return requiredFields.filter((field) => !data[field]);
 };
 
-// ------------------ CRUD USERS ----------------------
+// ----------------- RUTAS USERS CRUD -----------------
 
-// Obtener todos los usuarios
+// GET todos los usuarios
 app.get("/api/users", async (req, res) => {
   try {
-    const [rows] = await pool.query(`SELECT * FROM users`);
+    const [rows] = await pool.query("SELECT * FROM users");
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, "Error al obtener usuarios", err.message);
+    sendError(res, req, 500, "Error al obtener usuarios", err.message);
   }
 });
 
-// Obtener usuario por id_user
+// GET un usuario por id
 app.get("/api/users/:id_user", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id_user = ?", [
       req.params.id_user,
     ]);
     if (rows.length === 0) {
-      return sendError(res, 404, `Usuario con id ${req.params.id_user} no encontrado`);
+      return sendError(res, req, 404, `Usuario ${req.params.id_user} no encontrado`);
     }
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, "Error al obtener usuario", err.message);
+    sendError(res, req, 500, "Error al obtener usuario", err.message);
   }
 });
 
-// Crear usuario
+// POST crear usuario
 app.post("/api/users", async (req, res) => {
   try {
     const missingFields = validateUserFields(req.body);
     if (missingFields.length > 0) {
       return sendError(
         res,
+        req,
         400,
         "Faltan campos obligatorios",
-        `Campos faltantes: ${missingFields.join(", ")}`
+        `Campos: ${missingFields.join(", ")}`
       );
     }
 
@@ -125,24 +127,27 @@ app.post("/api/users", async (req, res) => {
 
     res.status(201).json({
       status: 201,
+      endpoint: req.originalUrl,
+      method: req.method,
       message: "Usuario creado correctamente",
       id_user: result.insertId,
     });
   } catch (err) {
-    sendError(res, 500, "Error al crear usuario", err.message);
+    sendError(res, req, 500, "Error al crear usuario", err.message);
   }
 });
 
-// Actualizar usuario
+// PUT actualizar usuario
 app.put("/api/users/:id_user", async (req, res) => {
   try {
     const missingFields = validateUserFields(req.body, true);
     if (missingFields.length > 0) {
       return sendError(
         res,
+        req,
         400,
         "Faltan campos obligatorios",
-        `Campos faltantes: ${missingFields.join(", ")}`
+        `Campos: ${missingFields.join(", ")}`
       );
     }
 
@@ -159,12 +164,6 @@ app.put("/api/users/:id_user", async (req, res) => {
       rol,
     } = req.body;
 
-    let hashedPassword = null;
-    if (password_) {
-      hashedPassword = await bcrypt.hash(password_, 10);
-    }
-
-    // Construir query dinámico según si hay password o no
     let query = `
       UPDATE users SET
         full_name = ?,
@@ -175,8 +174,7 @@ app.put("/api/users/:id_user", async (req, res) => {
         id_document = ?,
         id_department = ?,
         id_municipality = ?,
-        rol = ?
-    `;
+        rol = ?`;
 
     const params = [
       full_name,
@@ -190,7 +188,8 @@ app.put("/api/users/:id_user", async (req, res) => {
       rol,
     ];
 
-    if (hashedPassword) {
+    if (password_) {
+      const hashedPassword = await bcrypt.hash(password_, 10);
       query += `, password_ = ?`;
       params.push(hashedPassword);
     }
@@ -201,50 +200,55 @@ app.put("/api/users/:id_user", async (req, res) => {
     const [result] = await pool.query(query, params);
 
     if (result.affectedRows === 0) {
-      return sendError(res, 404, `Usuario con id ${req.params.id_user} no encontrado`);
+      return sendError(res, req, 404, `Usuario ${req.params.id_user} no encontrado`);
     }
 
     res.json({
       status: 200,
+      endpoint: req.originalUrl,
+      method: req.method,
       message: "Usuario actualizado correctamente",
     });
   } catch (err) {
-    sendError(res, 500, "Error al actualizar usuario", err.message);
+    sendError(res, req, 500, "Error al actualizar usuario", err.message);
   }
 });
 
-// Eliminar usuario
+// DELETE usuario
 app.delete("/api/users/:id_user", async (req, res) => {
   try {
     const [result] = await pool.query("DELETE FROM users WHERE id_user = ?", [
       req.params.id_user,
     ]);
     if (result.affectedRows === 0) {
-      return sendError(res, 404, `Usuario con id ${req.params.id_user} no encontrado`);
+      return sendError(res, req, 404, `Usuario ${req.params.id_user} no encontrado`);
     }
     res.json({
       status: 200,
+      endpoint: req.originalUrl,
+      method: req.method,
       message: "Usuario eliminado correctamente",
     });
   } catch (err) {
-    sendError(res, 500, "Error al eliminar usuario", err.message);
+    sendError(res, req, 500, "Error al eliminar usuario", err.message);
   }
 });
 
-// Middleware para rutas no encontradas (404)
+// 404 Not Found
 app.use((req, res) => {
-  sendError(res, 404, `Ruta ${req.originalUrl} no encontrada en el servidor`);
+  sendError(res, req, 404, `Ruta no encontrada`);
 });
 
-// Middleware global de manejo de errores inesperados (500)
+// 500 Internal Error
 app.use((err, req, res, next) => {
   console.error("Error inesperado:", err.stack);
-  sendError(res, 500, "Error interno del servidor", err.message);
+  sendError(res, req, 500, "Error interno del servidor", err.message);
 });
 
+// ----------------- SERVER -----------------
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor en ejecución en el puerto ${PORT}`);
+  console.log(`🚀 Servidor en http://localhost:${PORT}`);
 });
 
 
