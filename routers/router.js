@@ -3,6 +3,7 @@ import { renderHome } from "../views/home";
 import { renderRegister } from "../views/register";
 import { renderLogin } from "../views/login";
 import { renderDashboardUser } from "../views/users/dashboardUser";
+import { renderDashboardUserProfile } from "../views/users/profile";
 import { renderDashboardAdminFields } from "../views/admin/dashboardAdmin";
 import { renderDashboardAdminEditUsers } from "../views/admin/adminEditUsers";
 import { renderDashboardAdminEditOwners } from "../views/admin/adminEditOwner";
