@@ -3,6 +3,7 @@ import { renderHome } from "../views/home";
 import { renderRegister } from "../views/register";
 import { renderLogin } from "../views/login";
 import { renderDashboardUser } from "../views/users/dashboardUser";
+import { renderDashboardUserProfile } from "../views/users/profile";
 import { renderDashboardAdminFields } from "../views/admin/dashboardAdmin";
 import { renderDashboardAdminEditUsers } from "../views/admin/adminEditUsers";
 import { renderDashboardAdminEditOwners } from "../views/admin/adminEditOwner";
@@ -36,7 +37,9 @@ export let renderRoute = () => {
         switch (user.rol) {
             case 'user':
                 path = window.location.pathname;
-                if (!['/skybolt/dashboarduser','/api/fields/availability'].includes(path)) {
+
+                if (!['/skybolt/dashboarduser' , '/skybolt/dashboarduser/profile'].includes(path)) {
+
                     history.pushState(null, null, '/skybolt/dashboarduser');
                 } else {
                     history.pushState(null, null, path);

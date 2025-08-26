@@ -7,7 +7,9 @@ export let renderDashboardUser = (ul, main) => {
     // `
     ul.innerHTML = `
     <a href="/skybolt/dashboarduser/profile" data-link>Profile</a>
-    <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>    
+
+    <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>
+
     `
     main.innerHTML = `
     <h2>Hola ${locaL.get('active_user').full_name}</h2>
