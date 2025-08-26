@@ -45,7 +45,7 @@ export let renderRoute = () => {
         
             case 'owner':
                 path = window.location.pathname;
-                if (!['/skybolt/dashboardowner', '/skybolt/dashboardowner/edit'].includes(path)) {
+                if (!['/skybolt/dashboardowner', '/skybolt/dashboardowner/profile'].includes(path)) {
                     history.pushState(null, null, '/skybolt/dashboardowner');
                 } else {
                     history.pushState(null, null, path);
