@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ------------------------------- Conexión a la base de datos ------------------------
+// Testear conexión DB
 const testDbConnection = async () => {
   try {
     const connection = await pool.getConnection();
@@ -69,42 +69,53 @@ app.post("/api/login", async (req, res) => {
 // Obtener todos los usuarios
 app.get("/api/users", async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM users");
+    const [rows] = await pool.query(`SELECT * FROM users`);
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    sendError(res, 500, "Error al obtener usuarios", err.message);
   }
 });
 
-// Obtener un usuario por ID
+// Obtener usuario por id_user
 app.get("/api/users/:id_user", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users WHERE id_user = ?", [
       req.params.id_user,
     ]);
     if (rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      return sendError(res, 404, `Usuario con id ${req.params.id_user} no encontrado`);
     }
     res.json(rows[0]);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    sendError(res, 500, "Error al obtener usuario", err.message);
   }
 });
 
 // Crear nuevo usuario con contraseña hasheada
 // Crear nuevo usuario
 app.post("/api/users", async (req, res) => {
-  const {
-    full_name,
-    email,
-    phone,
-    birthdate,
-    document_type,
-    id_document,
-    id_municipality,
-    password_,
-    rol,
-  } = req.body;
+  try {
+    const missingFields = validateUserFields(req.body);
+    if (missingFields.length > 0) {
+      return sendError(
+        res,
+        400,
+        "Faltan campos obligatorios",
+        `Campos faltantes: ${missingFields.join(", ")}`
+      );
+    }
+
+    const {
+      full_name,
+      email,
+      phone,
+      birthdate,
+      document_type,
+      id_document,
+        id_municipality,
+      password_,
+      rol,
+    } = req.body;
 
   if (
     !full_name ||
@@ -127,6 +138,9 @@ app.post("/api/users", async (req, res) => {
       `INSERT INTO users 
       (full_name, email, phone, birthdate, document_type, id_document, id_municipality, password_, rol) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO users 
+      (full_name, email, phone, birthdate, document_type, id_document, id_department, id_municipality, password_, rol) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         full_name,
         email,
@@ -206,12 +220,15 @@ app.put("/api/users/:id_user", async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "User not found" });
+      return sendError(res, 404, `Usuario con id ${req.params.id_user} no encontrado`);
     }
 
-    res.json({ success: true });
+    res.json({
+      status: 200,
+      message: "Usuario actualizado correctamente",
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    sendError(res, 500, "Error al actualizar usuario", err.message);
   }
 });
 

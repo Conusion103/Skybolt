@@ -8,17 +8,17 @@ export let renderHome = (ul, main) => {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <h1 class="text-3xl font-bold text-gray-800">
-                    <a href="#top" class="hover:text-sky-600 transition-colors duration-200">SkyBolt</a>
+                    <a href="#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
                 </h1>
 
                 <nav class="hidden md:flex space-x-6">
-                    <a href="#about-us" class="nav-link">About us</a>
-                    <a href="#testimonials" class="nav-link">Testimonials</a>
-                    <a href="#faq" class="nav-link">FAQ</a>
-                    <a href="#map" class="nav-link"">Find Us</a>
-                    <a href="#contact" class="nav-link">Contact Us</a>
-                    <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
-                    <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+                    <a href="#about-us" class="nav-link" data-link>About us</a>
+                    <a href="#testimonials" class="nav-link" data-link>Testimonials</a>
+                    <a href="#faq" class="nav-link" data-link>FAQ</a>
+                    <a href="#map" class="nav-link" data-link>Find Us</a>
+                    <a href="#contact" class="nav-link" data-link>Contact Us</a>
+                    <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>
+                    <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
 
                 </nav>
 
@@ -226,9 +226,9 @@ footer.innerHTML = `
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition">Book Now</a></li>
-                    <li><a href="#faq" class="hover:text-yellow-300 transition">FAQ</a></li>
-                    <li><a href="#map" class="hover:text-yellow-300 transition">Location</a></li>
+                    <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
+                    <li><a href="#faq" class="hover:text-yellow-300 transition" data-link>FAQ</a></li>
+                    <li><a href="#map" class="hover:text-yellow-300 transition" data-link>Location</a></li>
                 </ul>
             </div>
 
@@ -236,9 +236,9 @@ footer.innerHTML = `
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
                 <div class="flex gap-4">
-                    <a href="#" class="hover:text-yellow-300 transition">Instagram</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Facebook</a>
-                    <a href="#" class="hover:text-yellow-300 transition">Twitter</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Instagram</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
+                    <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
                 </div>
             </div>
 
