@@ -55,16 +55,16 @@ document.getElementById("menu-btn").addEventListener("click", () => {
 });
 
     // Establecer la imagen de fondo en el body
-$body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../img/image.png') center/cover no-repeat ";
+$body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/image.webp') center/cover no-repeat ";
 $body.classList.add("bg-cover", "bg-center", "bg-no-repeat", "min-h-[80vh]", "overflow-x-hidden");
 $body.style.transition = "background-size 0.3s ease-out";
 
     // Funcion para quitar el gradient cuando este en 952 (pantalla pequeña)
 function setBackground() {
     if (window.innerWidth <= 952) {
-            $body.style.background = "url('../img/image.png') center/cover no-repeat";
+            $body.style.background = "url('/image.webp') center/cover no-repeat";
     } else {
-            $body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../img/image.png') center/cover no-repeat";
+            $body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/image.webp') center/cover no-repeat";
     }
 }
 setBackground(); // Ejecutar al cargar
