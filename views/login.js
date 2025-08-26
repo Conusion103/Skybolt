@@ -199,7 +199,7 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
                     if (isPasswordCorrect) {
                         locaL.post('active_user', user);
 
-                        switch (user.rol) {
+                        switch (user.roles[0].name_role) {
                             case 'user':
                                 history.pushState(null, null, '/skybolt/dashboarduser');
                                 break;
