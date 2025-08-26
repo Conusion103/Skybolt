@@ -112,35 +112,31 @@ app.post("/api/users", async (req, res) => {
       birthdate,
       document_type,
       id_document,
-        id_municipality,
+      id_municipality,
       password_,
       rol,
     } = req.body;
 
-  if (
-    !full_name ||
-    !email ||
-    !phone ||
-    !birthdate ||
-    !document_type ||
-    !id_document ||
-    !id_municipality ||
-    !password_ ||
-    !rol
-  ) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
+    if (
+      !full_name ||
+      !email ||
+      !phone ||
+      !birthdate ||
+      !document_type ||
+      !id_document ||
+      !id_municipality ||
+      !password_ ||
+      !rol
+    ) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
 
-  try {
     const hashedPassword = await bcrypt.hash(password_, 10);
 
     const [result] = await pool.query(
       `INSERT INTO users 
       (full_name, email, phone, birthdate, document_type, id_document, id_municipality, password_, rol) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      `INSERT INTO users 
-      (full_name, email, phone, birthdate, document_type, id_document, id_department, id_municipality, password_, rol) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         full_name,
         email,
@@ -159,6 +155,7 @@ app.post("/api/users", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 // Actualizar un usuario con contraseña hasheada
