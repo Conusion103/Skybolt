@@ -90,6 +90,7 @@ export let generalFormat = {
     phoneNumber: (phone) => {
         if(!phone) throw new Error("Phone field can't be empty");
         if(isNaN(phone)) throw new Error("Phone field must has only numbers")
+        return phone
     },
     birthdate: (birthdate) => {
         if (!birthdate) throw new Error("Birthdate field can't be empty");
