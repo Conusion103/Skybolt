@@ -37,7 +37,9 @@ export let renderRoute = () => {
         switch (user.rol) {
             case 'user':
                 path = window.location.pathname;
+
                 if (!['/skybolt/dashboarduser' , '/skybolt/dashboarduser/profile'].includes(path)) {
+
                     history.pushState(null, null, '/skybolt/dashboarduser');
                 } else {
                     history.pushState(null, null, path);
