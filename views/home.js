@@ -1,3 +1,5 @@
+import balls from '../src/img/balls.webp';
+
 export let renderHome = (ul, main) => {
     let $body = document.getElementById("body");
 
@@ -55,16 +57,16 @@ document.getElementById("menu-btn").addEventListener("click", () => {
 });
 
     // Establecer la imagen de fondo en el body
-$body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../img/image.png') center/cover no-repeat ";
+$body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/image.webp') center/cover no-repeat ";
 $body.classList.add("bg-cover", "bg-center", "bg-no-repeat", "min-h-[80vh]", "overflow-x-hidden");
 $body.style.transition = "background-size 0.3s ease-out";
 
     // Funcion para quitar el gradient cuando este en 952 (pantalla pequeña)
 function setBackground() {
     if (window.innerWidth <= 952) {
-            $body.style.background = "url('../img/image.png') center/cover no-repeat";
+            $body.style.background = "url('/image.webp') center/cover no-repeat";
     } else {
-            $body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../img/image.png') center/cover no-repeat";
+            $body.style.background = "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/image.webp') center/cover no-repeat";
     }
 }
 setBackground(); // Ejecutar al cargar
@@ -93,8 +95,8 @@ $body.classList.add("bg-cover", "bg-center", "bg-no-repeat", "min-h-[80vh]", "ov
 main.innerHTML = `
     <div class="flex justify-center w-full min-h-screen relative pt-2 sm:pt-4 md:pt-6 ">
         <section class="w-full max-w-3xl flex flex-col items-center px-4 min-h-[72vh] md:min-h-[85vh]">
-            <img src="../img/CapturaFigma.png" alt="Balls of sports"
-                class="max-w-full w-[260px] sm:w-[370px] md:w-[400px] h-auto max-h-[100px] mt-[100px] sm:mt-[100px]">
+            <img src="${balls}" alt="Balls of sports"
+         class="max-w-full w-[260px] sm:w-[370px] md:w-[400px] h-auto max-h-[100px] mt-[100px] sm:mt-[100px]">
             <a href="/skybolt/login" data-link class="p-2 my-4 rounded-xl bg-white
                     mt-[450px] sm:mt-[330px] md:mt-[350px] lg:mt-[400px] xl:mt-[470px]
                     text-sm sm:text-base md:text-lg">
