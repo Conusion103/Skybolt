@@ -1,9 +1,10 @@
 import { locaL } from "../../src/scripts/LocalStorage";
-import { renderDashboardUser } from "./dashboardUser"; // función que renderiza el dashboard principal
+import { renderDashboardOwner } from "./dashboardOwner"; // función que renderiza el dashboard principal
 import { Api } from "../../src/scripts/methodsApi";
+import { renderLogin } from "../login";
 
 
-export let renderDashboardUserProfile = (ul, main) => {
+export let renderDashboardOwnerProfile = (ul, main) => {
     const activeUser = locaL.get('active_user');
     if (!activeUser) {
         history.pushState(null, null, "/skybolt/login");
@@ -11,7 +12,7 @@ export let renderDashboardUserProfile = (ul, main) => {
     }
     // Render del menú y saludo
     ul.innerHTML = `
-        <a href="/skybolt/dashboarduser" data-link id="back-dashboard" >Back</a>
+        <a href="/skybolt/dashboardowner" data-link id="back-dashboard" >Dashboard</a>
         <a href="/skybolt/home" data-link id="log-out-user" >Log out</a>
     `;
 
@@ -40,16 +41,13 @@ export let renderDashboardUserProfile = (ul, main) => {
   `;
 
     // Cargar reservas
-    Api.get(`/api/users/${user.id_user}/reservas`)
+    Api.get(`/api/users/${activeUser.id_user}/reservas`)
         .then((reservas) => {
             document.getElementById("countReservas").textContent = reservas.length
                 .toString()
                 .padStart(2, "0");
         })
         .catch(console.error);
-
-    // Para reviews no hay endpoint específico, solo muestra 00
-    document.getElementById("countReviews").textContent = "00";
 
     // Logout
     document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -61,12 +59,12 @@ export let renderDashboardUserProfile = (ul, main) => {
     main.querySelector('#log-out-user').addEventListener('click', (e) => {
         e.preventDefault();
         locaL.delete('active_user');
-        renderDashboardUser(ul, main); // al cerrar sesión, renderizamos el dashboard general
+        renderLogin(ul, main); // al cerrar sesión, renderizamos el dashboard general
     });
 
     // Back dinámico
     main.querySelector('#back-dashboard').addEventListener('click', (e) => {
         e.preventDefault();
-        renderDashboardUser(ul, main); // vuelve al dashboard principal sin recargar
+        renderDashboardOwner(ul, main); // vuelve al dashboard principal sin recargar
     });
 };
