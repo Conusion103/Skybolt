@@ -5,7 +5,11 @@ import { renderLogin } from "../views/login";
 import { renderDashboardUser } from "../views/users/dashboardUser";
 import { renderDashboardAdminFields } from "../views/admin/dashboardAdmin";
 import { renderDashboardAdminEditUsers } from "../views/admin/adminEditUsers";
+import { renderDashboardUserProfile } from "../views/users/profileUser";
 import { renderDashboardAdminEditOwners } from "../views/admin/adminEditOwner";
+import { renderResgiterRequestOwner } from "../views/users/requestOwner";
+import { renderDashboardAdminRequest } from "../views/admin/requestOwner";
+import { renderDashboardOwner } from "../views/owner/dashboardOwner";
 import { locaL } from "../src/scripts/LocalStorage";
 
 // Se seleccionan los elementos HTML donde se van a renderizar las vistas
@@ -20,11 +24,13 @@ let routes = {
     '/skybolt/register': () => renderRegister($nav, $main),// Ruta para la vista Register
     '/skybolt/dashboarduser': () => renderDashboardUser($nav, $main), // Ruta para el Dashboard del usuario
     '/skybolt/dashboarduser/profile': () => renderDashboardUserProfile($nav, $main), 
+    '/skybolt/dashboarduser/profile/request': () => renderResgiterRequestOwner($nav, $main),
     '/skybolt/dashboardowner': () => renderDashboardOwner($nav, $main), // Ruta para el Dashboard del propietario
     '/skybolt/dashboardowner/edit': () => renderDashboardOwnerEdit($nav, $main),
     '/skybolt/dashboardadmin/fields': () => renderDashboardAdminFields($nav, $main),
     '/skybolt/dashboardadmin/users': () => renderDashboardAdminEditUsers($nav, $main),
-    '/skybolt/dashboardadmin/owners': () => renderDashboardAdminEditOwners($nav, $main)
+    '/skybolt/dashboardadmin/owners': () => renderDashboardAdminEditOwners($nav, $main),
+    '/skybolt/dashboardadmin/request': () => renderDashboardAdminRequest($nav, $main),
 };
 
 // Función para renderizar la ruta actual
@@ -36,7 +42,10 @@ export let renderRoute = () => {
         switch (user.roles[0].name_role) {
             case 'user':
                 path = window.location.pathname;
-                if (!['/skybolt/dashboarduser'].includes(path)) {
+                if (!['/skybolt/dashboarduser',
+                    '/skybolt/dashboarduser/profile',
+                    '/skybolt/dashboarduser/profile/request']
+                    .includes(path)) {
                     history.pushState(null, null, '/skybolt/dashboarduser');
                 } else {
                     history.pushState(null, null, path);
@@ -57,7 +66,9 @@ export let renderRoute = () => {
                 if (![
                     '/skybolt/dashboardadmin/fields',
                     '/skybolt/dashboardadmin/users',
-                    '/skybolt/dashboardadmin/owners'
+                    '/skybolt/dashboardadmin/owners',
+                    '/skybolt/dashboardadmin/request'
+
                 ].includes(path)) {
                     history.pushState(null, null, '/skybolt/dashboardadmin/fields');
                 } else {

@@ -11,8 +11,11 @@ export let renderDashboardUserProfile = (ul, main) => {
     }
     // Render del menú y saludo
     ul.innerHTML = `
-        <a href="/skybolt/dashboarduser" data-link id="back-dashboard" >Back</a>
-        <a href="/skybolt/home" data-link id="log-out-user" >Log out</a>
+        <a href="/skybolt/dashboarduser" data-link id="back-dashboard" >Fields</a>
+        <a href="/skybolt/dashboarduser/profile/request" data-link>Be owner</a>
+        <a data-link><button>Payments</button></a>
+        <a data-link><button>Contacts</button></a>
+        <a href="/skybolt/login" data-link id="log-out-user" >Log out</a>
     `;
 
     main.innerHTML = `
@@ -22,20 +25,13 @@ export let renderDashboardUserProfile = (ul, main) => {
         <h2>${activeUser.full_name}</h2>
         <p>${activeUser.email || "No email"}</p>
         <p>CR: ${activeUser.id_user}</p>
-        <p>User: ${activeUser.rol}</p>
+        <p>Rol: ${activeUser.roles[0].name_role}</p>
       </div>
 
       <div class="profile-stats">
         <div><strong id="countReservas">00</strong><span>reservations</span></div>
         <div><strong id="countReviews">00</strong><span>reviews</span></div>
       </div>
-
-      <ul class="profile-actions">
-        <li><button>Send Notifications</button></li>
-        <li><button>Payments</button></li>
-        <li><button>Contacts</button></li>
-        <li><button id="logoutBtn">Logout</button></li>
-      </ul>
     </section>
   `;
 
@@ -58,7 +54,7 @@ export let renderDashboardUserProfile = (ul, main) => {
     });
 
     // Logout dinámico
-    main.querySelector('#log-out-user').addEventListener('click', (e) => {
+    document.getElementById('log-out-user').addEventListener('click', (e) => {
         e.preventDefault();
         locaL.delete('active_user');
         renderDashboardUser(ul, main); // al cerrar sesión, renderizamos el dashboard general

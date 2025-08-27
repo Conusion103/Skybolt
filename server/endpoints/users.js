@@ -6,10 +6,28 @@ import { sendError, validateUserFields, getUserRoles, bcrypt } from "../utils.js
 const router = express.Router();
 
 /* ==========================
-   📌 Listar usuarios (con roles)
+   📌 Listar usuarios (con filtro opcional por rol)
    ========================== */
-router.get("/users", async (_req, res) => {
+router.get("/users", async (req, res) => {
+  const { role } = req.query;
+
   try {
+    if (role) {
+      // 🔍 Filtrar por rol
+      const [rows] = await pool.query(
+        `
+        SELECT u.*, r.name_role 
+        FROM users u
+        JOIN user_roles ur ON u.id_user = ur.id_user
+        JOIN roles r ON ur.id_role = r.id_role
+        WHERE r.name_role = ?
+        `,
+        [role]
+      );
+      return res.json(rows);
+    }
+
+    // 🔍 Si no hay role, devolver todos con array de roles
     const [rows] = await pool.query("SELECT * FROM users");
     const withRoles = await Promise.all(
       rows.map(async (u) => ({
@@ -24,31 +42,8 @@ router.get("/users", async (_req, res) => {
 });
 
 /* ==========================
-   📌 Obtener usuario por ID (con roles)
-   ========================== */
-router.get("/users/:id_user", async (req, res) => {
-  try {
-    const [rows] = await pool.query("SELECT * FROM users WHERE id_user = ?", [
-      req.params.id_user,
-    ]);
-    if (rows.length === 0)
-      return sendError(
-        res,
-        404,
-        `Usuario con id ${req.params.id_user} no encontrado`
-      );
-    const user = rows[0];
-    user.roles = await getUserRoles(user.id_user);
-    res.json(user);
-  } catch (err) {
-    sendError(res, 500, "Error al obtener usuario", err.message);
-  }
-});
-
-/* ==========================
    📌 Crear usuario (rol "user" por defecto)
    ========================== */
-// Crear usuario (rol "user" por defecto)
 router.post("/users", async (req, res) => {
   const missing = validateUserFields(req.body);
   if (missing.length > 0) {
@@ -88,22 +83,22 @@ router.post("/users", async (req, res) => {
 
     const newUserId = result.insertId;
 
-    // ✅ Asignar rol "user" por defecto (ya existe en la tabla `roles`)
+    // ✅ Asignar rol "user" por defecto
     await pool.query(
       `INSERT INTO user_roles (id_user, id_role)
        VALUES (?, (SELECT id_role FROM roles WHERE name_role = 'user'))`,
       [newUserId]
     );
 
-    res
-      .status(201)
-      .json({ message: "Usuario creado con rol user", id_user: newUserId });
+    res.status(201).json({
+      message: "Usuario creado con rol user",
+      id_user: newUserId,
+    });
   } catch (error) {
     console.error(error);
     return sendError(res, 500, "Error al crear el usuario", error.message);
   }
 });
-
 
 /* ==========================
    📌 Actualizar usuario
@@ -158,7 +153,7 @@ router.put("/users/:id_user", async (req, res) => {
       ]
     );
 
-    // Actualizar roles si vienen en el body
+    // ✅ Actualizar roles si vienen en el body
     if (Array.isArray(roles)) {
       await pool.query("DELETE FROM user_roles WHERE id_user = ?", [
         req.params.id_user,
@@ -208,4 +203,5 @@ router.delete("/users/:id_user", async (req, res) => {
 });
 
 export default router;
+
 

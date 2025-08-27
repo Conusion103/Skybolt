@@ -5,7 +5,7 @@ export let renderDashboardUser = (ul, main) => {
     // <img src="./img/skybolt.webp" alt="Skybolt Logo">
     // `
     ul.innerHTML = `
-    <a href="/skybolt/user/profile" data-link>Profile</a>
+    <a href="/skybolt/dashboarduser/profile" data-link>Profile</a>
     <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>
     `
     main.innerHTML = `

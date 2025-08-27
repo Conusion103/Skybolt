@@ -6,8 +6,10 @@ import { generalFormat } from "../../src/scripts/validationMethods";
 export let renderDashboardAdminEditUsers = (ul, main) => {
     // Menu
     ul.innerHTML = `
+        
         <a href="/skybolt/dashboardadmin/fields" data-link class="text-green-600 hover:text-green-800 font-semibold">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="text-green-600 hover:text-green-800 font-semibold">Owners</a>
+        <a href="/skybolt/dashboardadmin/request" data-link class="text-green-600 hover:text-green-800 font-semibold">Requests</a>
         <a href="/skybolt/login" id="log-out-user" data-link class="text-red-500 hover:text-red-700 font-semibold">Log out</a>
     `;
 

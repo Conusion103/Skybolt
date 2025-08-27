@@ -6,9 +6,10 @@ export let renderDashboardAdminFields = (ul, main) => {
     // <img src="./img/skybolt.webp" alt="Skybolt Logo">
     // `
     ul.innerHTML = `
-    <a href="/skybolt/dashboardadmin/users" data-link>Users</a>
-    <a href="/skybolt/dashboardadmin/owners" data-link>Owners</a>
-    <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>
+    <a href="/skybolt/dashboardadmin/users" data-link class="text-green-600 hover:text-green-800 font-semibold">Users</a>
+    <a href="/skybolt/dashboardadmin/owners" data-link class="text-green-600 hover:text-green-800 font-semibold">Owners</a>
+    <a href="/skybolt/dashboardadmin/request" data-link class="text-green-600 hover:text-green-800 font-semibold">Requests</a>
+    <a href="/skybolt/login" id="log-out-user" data-link class="text-red-500 hover:text-red-700 font-semibold">Log out</a>
     `
 
     main.innerHTML = `
