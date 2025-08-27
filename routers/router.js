@@ -33,7 +33,7 @@ export let renderRoute = () => {
     let user = locaL.get('active_user')
     console.log(user)
     if(user){
-        switch (user.rol) {
+        switch (user.roles[0].name_role) {
             case 'user':
                 path = window.location.pathname;
                 if (!['/skybolt/dashboarduser'].includes(path)) {

@@ -324,8 +324,7 @@ export let renderRegister = (ul, main) => {
         id_document: $identification,
         id_department: Number($departament),
         id_municipality: Number($town),
-        password_: $password,
-        rol: "user",
+        password_: $password
       };
 
       // Validar si usuario ya existe consultando usuarios
