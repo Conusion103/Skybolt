@@ -88,4 +88,32 @@ router.delete("/departments/:id", async (req, res) => {
   }
 });
 
+
+// 📌 Obtener un departamento con sus municipios
+router.get("/departments/:id/municipalities", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Primero, verificar si el departamento existe
+    const [deptRows] = await pool.query("SELECT * FROM departments WHERE id_department = ?", [id]);
+    if (deptRows.length === 0) {
+      return sendError(res, 404, "Departamento no encontrado");
+    }
+
+    // Luego, obtener los municipios relacionados con ese departamento
+    const [municipalities] = await pool.query(
+      "SELECT id_municipality, name_municipality FROM municipalities WHERE id_department = ?",
+      [id]
+    );
+
+    res.json({
+      department: deptRows[0],
+      municipalities
+    });
+  } catch (err) {
+    sendError(res, 500, "Error al obtener el departamento con sus municipios", err.message);
+  }
+});
+
+
 export default router;
