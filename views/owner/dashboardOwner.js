@@ -117,38 +117,44 @@ export let renderDashboardOwner = (ul, main) => {
   };
 
   // Cargar datos de juegos, municipios y disponibilidad desde API
-async function loadSelectData() {
-  try {
-    // Carga juegos
+  async function loadSelectData() {
+    try {
+      // Carga juegos
 
-    console.log("esta cargando la data ")
-    games = await Api.get("/api/games");
-    console.log("Juegos cargados:", games);
+      console.log("esta cargando la data ")
+      games = await Api.get("/api/games");
+      console.log("Juegos cargados:", games);
 
-    // Carga municipios
-    municipalities = await Api.get("/api/municipalities");
-    console.log("Municipios cargados:", municipalities);
+      // Carga municipios
+      municipalities = await Api.get("/api/municipalities");
+      console.log("Municipios cargados:", municipalities);
 
-    // Carga disponibilidad
-    availabilityStates = await Api.get("/api/availability");
-    console.log("Disponibilidad cargada:", availabilityStates);
+      // Carga disponibilidad
+      availabilityStates = await Api.get("/api/availability");
+      console.log("Disponibilidad cargada:", availabilityStates);
 
-    // Ajustar estados legibles para disponibilidad
-    availabilityStates = availabilityStates.map(a => ({
-      id_availability: a.id_availability,
-      estado: availabilityLabels[a.estado] || a.estado
-    }));
+      // Ajustar estados legibles para disponibilidad
+      // availabilityStates = availabilityStates.map(a => ({
+      //   id_availability: a.id_availability,
+      //   estado: availabilityLabels[a.estado] || a.estado
+      // }));
 
-    // Cargar selects
-    loadSelectOptions(fieldGameSelect, games, "id_game", "name_game");
-    loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
-    loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
+      availabilityStates = availabilityStates.map(a => ({
+        id_availability: a.id_availability,
+        estado: `${availabilityLabels[a.estado] || a.estado} - ${a.day_of_week} ${a.hora_inicio} - ${a.hora_final}`
+      }));
 
-  } catch (error) {
-    alert("Error cargando datos para los selects");
-    console.error("Error al cargar selects:", error);
+
+      // Cargar selects
+      loadSelectOptions(fieldGameSelect, games, "id_game", "name_game");
+      loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
+      loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
+
+    } catch (error) {
+      alert("Error cargando datos para los selects");
+      console.error("Error al cargar selects:", error);
+    }
   }
-}
 
   // Funciones CRUD usando Api para canchas
   function loadFields() {
