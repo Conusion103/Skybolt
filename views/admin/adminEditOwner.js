@@ -89,7 +89,7 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
                 <!-- Departamento -->
                 <select id="edit-id_department" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
                 <option value="">--Select a department--</option>
-                    ${departamentos.map(dep => `<option value="${dep.id}">${dep.name}</option>`).join("")}
+                    
                 </select>
 
                 <!-- Municipio -->
@@ -256,9 +256,9 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
       document.getElementById("edit-birthdate").value = ownerData.birthdate?.split("T")[0] || "";
       document.getElementById("edit-document_type").value = ownerData.document_type;
       document.getElementById("edit-id_document").value = ownerData.id_document;
-      document.getElementById("edit-id_department").value = ownerData.id_department;
-      loadMunicipalities(ownerData.id_department);
-      document.getElementById("edit-id_municipality").value = ownerData.id_municipality;
+      /* document.getElementById("edit-id_department").value = ownerData.id_department; */
+      /* loadMunicipalities(ownerData.id_department);
+      document.getElementById("edit-id_municipality").value = ownerData.id_municipality; */
       document.getElementById("edit-rol").value = ownerData.roles[0]?.name_role || "";
       document.getElementById("edit-password_").value = "";
 
@@ -269,8 +269,8 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
       const ownerData = ownersList.find((u) => u.id_user === ownerID);
       if (!ownerData) return;
 
-      const depName = getDepartmentName(ownerData.id_department);
-      const munName = getMunicipalityName(ownerData.id_department, ownerData.id_municipality);
+      /* const depName = getDepartmentName(ownerData.id_department);
+      const munName = getMunicipalityName(ownerData.id_department, ownerData.id_municipality); */
 
       document.getElementById("modal-owner-content").innerHTML = `
         <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>ID:</strong> ${ownerData.id_user}</p>
@@ -278,8 +278,8 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
         <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Email:</strong> ${ownerData.email}</p>
         <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Teléfono:</strong> ${ownerData.phone || "N/A"}</p>
         <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Cumpleaños:</strong> ${ownerData.birthdate?.split("T")[0] || "N/A"}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>${ownerData.document_type}:</strong> ${ownerData.id_document}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Ubicación:</strong> ${depName} - ${munName}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>:</strong></p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Ubicación:</strong></p>
         <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Roles:</strong> ${ownerData.roles.map(r => r.name_role).join(", ")}</p>
       `;
       document.getElementById("modal-owner").classList.remove("hidden");
@@ -307,8 +307,8 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
       const birthdate = generalFormat.birthdate(document.getElementById("edit-birthdate").value);
       const document_type = generalFormat.documenttypeFormat(document.getElementById("edit-document_type").value.trim());
       const id_document = generalFormat.identicationFormat(document.getElementById("edit-id_document").value.trim());
-      const id_department = generalFormat.departamentFormat(Number(document.getElementById("edit-id_department").value));
-      const id_municipality = generalFormat.townFormat(Number(document.getElementById("edit-id_municipality").value));
+     /*  const id_department = generalFormat.departamentFormat(Number(document.getElementById("edit-id_department").value));
+      const id_municipality = generalFormat.townFormat(Number(document.getElementById("edit-id_municipality").value)); */
       const rol = document.getElementById("edit-rol").value.trim();
 
       const updatedOwner = {
@@ -351,7 +351,7 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
   });
 
   // ---------- HELPERS ----------
-  const getDepartmentName = (id) => {
+  /* const getDepartmentName = (id) => {
     const dep = departamentos.find((d) => d.id === Number(id));
     return dep ? dep.name : "Desconocido";
   };
@@ -376,5 +376,5 @@ export let renderDashboardAdminEditOwners= (ul, main) => {
   document.getElementById("edit-id_department").addEventListener("change", (e) => {
     const depId = Number(e.target.value);
     loadMunicipalities(depId);
-  });
+  }); */
 };
