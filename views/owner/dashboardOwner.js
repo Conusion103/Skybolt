@@ -105,52 +105,42 @@ export let renderDashboardOwner = (ul, main) => {
   let municipalities = [];
   let availabilityStates = [];
 
-  // Función para llenar selects
-  function loadSelectOptions(select, items, valueKey, textKey) {
-    select.innerHTML = items.map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`).join("");
-  }
+  // Formato de hora legible
+  const formatTime = time => time?.slice(0, 5);
 
-  // Mapeo para mostrar en frontend estados de disponibilidad legibles
+  // Estados legibles
   const availabilityLabels = {
     available: "Disponible",
     not_available: "No disponible"
   };
 
-  // Cargar datos de juegos, municipios y disponibilidad desde API
-async function loadSelectData() {
-  try {
-    // Carga juegos
-
-    console.log("esta cargando la data ")
-    games = await Api.get("/api/games");
-    console.log("Juegos cargados:", games);
-
-    // Carga municipios
-    municipalities = await Api.get("/api/municipalities");
-    console.log("Municipios cargados:", municipalities);
-
-    // Carga disponibilidad
-    availabilityStates = await Api.get("/api/availability");
-    console.log("Disponibilidad cargada:", availabilityStates);
-
-    // Ajustar estados legibles para disponibilidad
-    availabilityStates = availabilityStates.map(a => ({
-      id_availability: a.id_availability,
-      estado: availabilityLabels[a.estado] || a.estado
-    }));
-
-    // Cargar selects
-    loadSelectOptions(fieldGameSelect, games, "id_game", "name_game");
-    loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
-    loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
-
-  } catch (error) {
-    alert("Error cargando datos para los selects");
-    console.error("Error al cargar selects:", error);
+  // Función para llenar selects
+  function loadSelectOptions(select, items, valueKey, textKey) {
+    select.innerHTML = items.map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`).join("");
   }
-}
 
-  // Funciones CRUD usando Api para canchas
+  // Cargar datos de juegos, municipios y disponibilidad desde API
+  async function loadSelectData() {
+    try {
+      games = await Api.get("/api/games");
+      municipalities = await Api.get("/api/municipalities");
+      availabilityStates = await Api.get("/api/availability");
+
+      availabilityStates = availabilityStates.map(a => ({
+        id_availability: a.id_availability,
+        estado: `${availabilityLabels[a.estado] || a.estado} - ${a.day_of_week} ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`
+      }));
+
+      loadSelectOptions(fieldGameSelect, games, "id_game", "name_game");
+      loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
+      loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
+    } catch (error) {
+      alert("Error cargando datos para los selects");
+      console.error("Error al cargar selects:", error);
+    }
+  }
+
+  // Cargar canchas del propietario
   function loadFields() {
     Api.get("/api/fields_")
       .then(fields => {
@@ -172,11 +162,7 @@ async function loadSelectData() {
     tbody.innerHTML = fields.map(field => {
       const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
       const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-
-      // Para disponibilidad buscamos el objeto original para obtener el estado "available"/"not_available"
-      // y luego mostramos la versión amigable ya en availabilityStates
-      const availabilityObj = availabilityStates.find(a => a.id_availability === field.id_availability);
-      const availabilityName = availabilityObj ? availabilityObj.estado : "N/A";
+      const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
 
       return `
         <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
@@ -219,7 +205,6 @@ async function loadSelectData() {
             if (res.success) {
               alert("Cancha eliminada");
               loadFields();
-              // Limpiar formulario si editando esa cancha
               if (fieldIdInput.value == id) cancelEditBtn.click();
             }
           })
@@ -271,6 +256,7 @@ async function loadSelectData() {
     }
   };
 
+  // Cancelar edición
   cancelEditBtn.onclick = () => {
     fieldForm.reset();
     fieldIdInput.value = "";
@@ -284,6 +270,6 @@ async function loadSelectData() {
     window.location.href = "/skybolt/login";
   });
 
-  // Cargar selects y canchas
+  // Cargar datos iniciales
   loadSelectData().then(loadFields);
 };

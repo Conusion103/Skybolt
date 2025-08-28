@@ -1,4 +1,5 @@
 import { locaL } from "../../src/scripts/LocalStorage"
+import { Api } from "../../src/scripts/methodsApi"
 
 export let renderDashboardAdminFields = (ul, main) => {
 
@@ -14,10 +15,16 @@ export let renderDashboardAdminFields = (ul, main) => {
 
     main.innerHTML = `
     <h2>Hola Admin ${locaL.get('active_user').full_name}</h2>
+
+
     `
 
     document.getElementById('log-out-user').addEventListener('click', (e) => {
         e.preventDefault();
         locaL.delete('active_user');
     })
+
+
+
+
 }
