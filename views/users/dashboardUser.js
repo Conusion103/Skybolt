@@ -2,14 +2,14 @@ import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
 export function renderDashboardUser(nav, main) {
-    // Navegación
-    nav.innerHTML = `
+  // Navegación
+  nav.innerHTML = `
     <a href="/skybolt/dashboarduser/profile" data-link class="text-green-600 font-semibold">Profile</a>
     <a href="/skybolt/login" id="log-out-user" data-link class="ml-4 text-red-500">Log out</a>
   `;
 
-    // Contenido principal
-    main.innerHTML = `
+  // Contenido principal
+  main.innerHTML = `
     <h2 class="text-xl font-bold mb-4">Hola ${locaL.get("active_user").full_name}</h2>
 
     <button id="openFilterBtn" class="mb-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Filtrar</button>
@@ -47,113 +47,134 @@ export function renderDashboardUser(nav, main) {
     <div id="fieldsContainer" class="grid gap-4"></div>
   `;
 
-    let selectedTime = "";
+  let selectedTime = "";
 
-    // Botones de hora seleccionable
-    document.querySelectorAll(".time-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".time-btn").forEach((b) =>
-                b.classList.remove("bg-green-400", "text-white")
-            );
-            btn.classList.add("bg-green-400", "text-white");
-            selectedTime = btn.dataset.value;
-        });
+  // Botones de hora seleccionable
+  document.querySelectorAll(".time-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".time-btn").forEach((b) =>
+        b.classList.remove("bg-green-400", "text-white")
+      );
+      btn.classList.add("bg-green-400", "text-white");
+      selectedTime = btn.dataset.value;
     });
+  });
 
-    // Mostrar/ocultar panel de filtros
-    const filterPanel = document.getElementById("filterPanel");
-    document.getElementById("openFilterBtn").addEventListener("click", () => {
-        filterPanel.classList.toggle("hidden");
-    });
+  // Mostrar/ocultar panel de filtros
+  const filterPanel = document.getElementById("filterPanel");
+  document.getElementById("openFilterBtn").addEventListener("click", () => {
+    filterPanel.classList.toggle("hidden");
+  });
 
-    // Cargar categorías dinámicas
-    Api.get("/api/games")
-        .then((games) => {
-            const select = document.getElementById("categorySelect");
-            select.innerHTML += games
-                .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
-                .join("");
-        })
-        .catch(console.error);
+  // Cargar categorías dinámicas
+  Api.get("/api/games")
+    .then((games) => {
+      const select = document.getElementById("categorySelect");
+      select.innerHTML += games
+        .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
+        .join("");
+    })
+    .catch(console.error);
 
-    // Función para renderizar canchas
-    function renderFields(fields) {
-        const container = document.getElementById("fieldsContainer");
-        container.innerHTML = fields.length
-            ? fields
-                .map(
-                    (f) => `
-              <article class="bg-white shadow rounded-lg p-4">
-                <h3 class="font-bold text-green-600">${f.field_name}</h3>
-                <p class="text-sm text-gray-600">${f.municipality_name}, ${f.department_name}</p>
-                <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
-                <p class="text-sm">Estado: ${f.estado}</p>
-                <p class="text-sm">Reservas: ${f.num_reservations}</p>
-                <button data-id="${f.id_field || ""}"
-                  class="mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
-              </article>
-            `
-                )
-                .join("")
-            : "<p>No se encontraron resultados</p>";
-    }
+  // Renderizar canchas
+  function renderFields(fields) {
+    const container = document.getElementById("fieldsContainer");
+    container.innerHTML = fields.length
+      ? fields
+          .map(
+            (f) => `
+          <article class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-bold text-green-600">${f.field_name}</h3>
+            <p class="text-sm text-gray-600">${f.municipality_name}, ${f.department_name}</p>
+            <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
+            <p class="text-sm">Estado: ${f.estado}</p>
+            <p class="text-sm">Reservas: ${f.num_reservations}</p>
+            <button data-id="${f.id_field || ""}"
+              class="reserve-btn mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
+          </article>
+        `
+          )
+          .join("")
+      : "<p>No se encontraron resultados</p>";
 
-    // // Cargar canchas inicialmente
-    // Api.get("/api/fields/disponibilidad")
-    //     .then((fields) => renderFields(fields))
-    //     .catch((err) => {
-    //         console.error(err);
-    //         main.innerHTML += `<p>Error cargando canchas</p>`;
-    //     });
+    // Añadir eventos a los botones de reserva
+    document.querySelectorAll(".reserve-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const idField = e.target.dataset.id;
+        const user = locaL.get("active_user");
 
-    // Aplicar filtros
-    document.getElementById("applyFilterBtn").addEventListener("click", () => {
-        const category = document.getElementById("categorySelect").value;
-        const availableOnly = document.getElementById("availabilityToggle").checked;
-
-        Api.get("/api/fields/disponibilidad")
-            .then((fields) => {
-                let filtered = fields;
-
-                if (category) filtered = filtered.filter((f) => f.id_game == category);
-                if (availableOnly) filtered = filtered.filter((f) => f.estado === "available");
-
-                if (selectedTime) {
-                    const timeRanges = {
-                        morning: { start: "06:00:00", end: "12:00:00" },
-                        afternoon: { start: "12:00:01", end: "18:00:00" },
-                        night: { start: "18:00:01", end: "23:59:59" }
-                    };
-                    const { start, end } = timeRanges[selectedTime];
-                    filtered = filtered.filter(
-                        (f) => f.hora_inicio >= start && f.hora_final <= end
-                    );
-                }
-
-                renderFields(filtered);
-                filterPanel.classList.add("hidden");
-            })
-            .catch((err) => {
-                console.error(err);
-                document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
-            });
-    });
-
-    // Limpiar filtros
-    document.getElementById("cleanBtn").addEventListener("click", () => {
-        document.getElementById("placeInput").value = "";
-        document.getElementById("categorySelect").value = "";
-        document.getElementById("availabilityToggle").checked = true;
-        selectedTime = "";
-        document.querySelectorAll(".time-btn").forEach((b) =>
-            b.classList.remove("bg-green-400", "text-white")
+        // Aquí pedimos el horario (ejemplo simple con prompt, se puede mejorar con un input datetime-local en modal)
+        const reserve_schedule = prompt(
+          "Ingrese fecha y hora de la reserva (YYYY-MM-DD HH:MM:SS):"
         );
-    });
 
-    // Logout
-    document.getElementById("log-out-user").addEventListener("click", (e) => {
-        e.preventDefault();
-        locaL.delete("active_user");
-        history.pushState(null, null, "/skybolt/login");
+        if (!reserve_schedule) return alert("Debes ingresar una fecha y hora");
+
+        const payload = {
+          reserve_schedule,
+          id_user: user.id_user,
+          id_field: idField,
+        };
+
+        try {
+          await Api.post("/reservations", payload);
+          alert("Reserva creada con éxito ✅");
+        } catch (err) {
+          console.error("Error al reservar:", err.message);
+          alert("Error al reservar ❌");
+        }
+      });
     });
+  }
+
+  // Aplicar filtros
+  document.getElementById("applyFilterBtn").addEventListener("click", () => {
+    const category = document.getElementById("categorySelect").value;
+    const availableOnly = document.getElementById("availabilityToggle").checked;
+
+    Api.get("/api/fields/disponibilidad")
+      .then((fields) => {
+        let filtered = fields;
+
+        if (category) filtered = filtered.filter((f) => f.id_game == category);
+        if (availableOnly) filtered = filtered.filter((f) => f.estado === "available");
+
+        if (selectedTime) {
+          const timeRanges = {
+            morning: { start: "06:00:00", end: "12:00:00" },
+            afternoon: { start: "12:00:01", end: "18:00:00" },
+            night: { start: "18:00:01", end: "23:59:59" },
+          };
+          const { start, end } = timeRanges[selectedTime];
+          filtered = filtered.filter(
+            (f) => f.hora_inicio >= start && f.hora_final <= end
+          );
+        }
+
+        renderFields(filtered);
+        filterPanel.classList.add("hidden");
+      })
+      .catch((err) => {
+        console.error(err);
+        document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
+      });
+  });
+
+  // Limpiar filtros
+  document.getElementById("cleanBtn").addEventListener("click", () => {
+    document.getElementById("placeInput").value = "";
+    document.getElementById("categorySelect").value = "";
+    document.getElementById("availabilityToggle").checked = true;
+    selectedTime = "";
+    document.querySelectorAll(".time-btn").forEach((b) =>
+      b.classList.remove("bg-green-400", "text-white")
+    );
+  });
+
+  // Logout
+  document.getElementById("log-out-user").addEventListener("click", (e) => {
+    e.preventDefault();
+    locaL.delete("active_user");
+    history.pushState(null, null, "/skybolt/login");
+  });
 }
