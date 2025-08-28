@@ -200,4 +200,221 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
       </div>
     </footer>
   `;
+
+  // ---------- LOGOUT ----------
+  document.getElementById("log-out-user").addEventListener("click", (e) => {
+    e.preventDefault();
+    locaL.delete("active_user");
+  });
+
+  let usersList = [];
+
+  // ---------- CARGAR USUARIOS ----------
+  Api.get("/api/users").then((data) => {
+    usersList = data;
+    renderUsers(data);
+  });
+
+  // ---------- RENDER USERS ----------
+  const renderUsers = (data) => {
+    const tbody = document.getElementById("user-table-body");
+    tbody.innerHTML = "";
+    // Filtra solo los usuarios con rol 'user'
+    const onlyUsers = data.filter((u) =>
+      u.roles.some((r) => r.name_role === "user")
+    );
+
+    if (onlyUsers.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">There are no users with role <strong>user</strong>.</td></tr>`;
+      return;
+    }
+    // Crea las filas de la tabla
+    onlyUsers.forEach((user) => {
+      const row = document.createElement("tr");
+      row.classList.add("border-b", "hover:bg-gray-50");
+
+      row.innerHTML = `
+        <td class="px-4 py-2">${user.id_user}</td>
+        <td class="px-4 py-2">${user.full_name}</td>
+        <td class="px-4 py-2">${user.email}</td>
+        <td class="px-4 py-2">${user.phone}</td>
+        <!--- <td class="px-4 py-2">${user.roles.map(r => r.name_role).join(", ")}</td>--->
+
+        <td class="px-4 py-2 text-center">
+          <button class="btn-view bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition" data-id="${user.id_user}">See more</button>
+          <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">Edit</button>
+          <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" data-id="${user.id_user}">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  };
+
+  // ---------- SEARCH ----------
+  document.getElementById("user-search").addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filtered = usersList.filter((u) =>
+      u.email.toLowerCase().includes(searchTerm)
+    );
+    renderUsers(filtered);
+  });
+
+  // ---------- EVENTOS TABLA ----------
+  // Maneja clics en botones de Ver, Editar y Eliminar
+  document.getElementById("user-table-body").addEventListener("click", (e) => {
+    const userID = Number(e.target.getAttribute("data-id"));
+    if (!userID) return;
+
+    // Eliminar usuario
+    if (e.target.classList.contains("btn-delete")) {
+      if (!confirm("Delete this user?")) return;
+      Api.delete(`/api/users/${userID}`)
+        .then(() => {
+          usersList = usersList.filter((u) => u.id_user !== userID);
+          renderUsers(usersList);
+          alert("User successfully deleted");
+        })
+        .catch((err) => alert(err.message));
+    }
+    // Editar usuario
+    if (e.target.classList.contains("btn-edit")) {
+      const userData = usersList.find((u) => u.id_user === userID);
+      if (!userData) return;
+
+      // Llenar formulario de edición
+      document.getElementById("edit-user-id").value = userData.id_user;
+      document.getElementById("edit-full_name").value = userData.full_name;
+      document.getElementById("edit-email").value = userData.email;
+      document.getElementById("edit-phone").value = userData.phone || "";
+      document.getElementById("edit-birthdate").value = userData.birthdate?.split("T")[0] || "";
+      document.getElementById("edit-document_type").value = userData.document_type;
+      document.getElementById("edit-id_document").value = userData.id_document;
+      document.getElementById("edit-id_department").value = userData.id_department;
+      loadMunicipalities(userData.id_department);
+      document.getElementById("edit-id_municipality").value = userData.id_municipality;
+      document.getElementById("edit-rol").value = userData.roles[0]?.name_role || "";
+      document.getElementById("edit-password_").value = "";
+
+      document.getElementById("edit-user-form-container").classList.remove("hidden");
+    }
+    // Ver detalles del usuario
+    if (e.target.classList.contains("btn-view")) {
+      const userData = usersList.find((u) => u.id_user === userID);
+      if (!userData) return;
+
+      const depName = getDepartmentName(userData.id_department);
+      const munName = getMunicipalityName(userData.id_department, userData.id_municipality);
+
+      // Rellenar modal con información
+      document.getElementById("modal-user-content").innerHTML = `
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" ><strong>ID:</strong> ${userData.id_user}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Name:</strong> ${userData.full_name}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Email:</strong> ${userData.email}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Phone:</strong> ${userData.phone || "N/A"}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Birthday:</strong> ${userData.birthdate?.split("T")[0] || "N/A"}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>${userData.document_type}:</strong> ${userData.id_document}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Location:</strong> ${depName} - ${munName}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Roles:</strong> ${userData.roles.map(r => r.name_role).join(", ")}</p>
+      `;
+      document.getElementById("modal-user").classList.remove("hidden");
+      document.getElementById("modal-user").classList.add("flex");
+    }
+  });
+
+  // ---------- CANCEL EDIT ----------
+  document.getElementById("cancel-edit").addEventListener("click", () => {
+    document.getElementById("edit-user-form").reset();
+    document.getElementById("edit-user-id").value = "";
+    document.getElementById("edit-user-form-container").classList.add("hidden");
+  });
+
+  // ---------- SUBMIT EDIT ----------
+  document.getElementById("edit-user-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    try {
+      const userID = Number(document.getElementById("edit-user-id").value);
+
+      // Validaciones con generalFormat
+      const full_name = generalFormat.nameFormat(document.getElementById("edit-full_name").value.trim());
+      const email = generalFormat.hotmailFormat(document.getElementById("edit-email").value.trim());
+      const phone = generalFormat.phoneNumber(document.getElementById("edit-phone").value.trim());
+      const birthdate = generalFormat.birthdate(document.getElementById("edit-birthdate").value);
+      const document_type = generalFormat.documenttypeFormat(document.getElementById("edit-document_type").value.trim());
+      const id_document = generalFormat.identicationFormat(document.getElementById("edit-id_document").value.trim());
+      const id_department = generalFormat.departamentFormat(Number(document.getElementById("edit-id_department").value));
+      const id_municipality = generalFormat.townFormat(Number(document.getElementById("edit-id_municipality").value));
+      const rol = document.getElementById("edit-rol").value.trim();
+
+      const updatedUser = {
+        full_name,
+        email,
+        phone,
+        birthdate,
+        document_type,
+        id_document,
+        id_department,
+        id_municipality,
+        rol
+      };
+
+      // Validación de password solo si se cambia
+      const newPassword = document.getElementById("edit-password_").value;
+      if (newPassword) {
+        updatedUser.password_ = generalFormat.passwordFormat(newPassword, newPassword);
+      }
+       // Llamada a la API para actualizar usuario
+      Api.put(`/api/users/${userID}`, updatedUser)
+        .then(() => {
+          alert("Usuario actualizado correctamente");
+          document.getElementById("edit-user-form-container").style.display = "none";
+          return Api.get("/api/users");
+        })
+        .then((data) => {
+          usersList = data;
+          renderUsers(usersList);
+        })
+        .catch((err) => alert(err.message));
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+    
+
+  // ---------- MODAL CLOSE ----------
+    document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("modal-user").classList.add("hidden");
+    document.getElementById("modal-user").classList.remove("flex");
+  });
+
+  // ---------- HELPERS ----------
+    // Obtiene el nombre del departamento
+  const getDepartmentName = (id) => {
+    const dep = departamentos.find((d) => d.id === Number(id));
+    return dep ? dep.name : "Unknown";
+  };
+   // Obtiene el nombre del municipio
+  const getMunicipalityName = (depId, muniId) => {
+    const dep = departamentos.find((d) => d.id === Number(depId));
+    if (!dep) return "Unknown";
+    const muni = dep.municipios.find((m) => m.id === Number(muniId));
+    return muni ? muni.name : "Unknown";
+  };
+  // Carga los municipios en el select según departamento seleccionado
+  const loadMunicipalities = (depId) => {
+    const select = document.getElementById("edit-id_municipality");
+    select.innerHTML = '<option value="">Select a municipality</option>';
+    const dep = departamentos.find((d) => d.id === Number(depId));
+    if (!dep) return;
+    dep.municipios.forEach((m) => {
+      const option = document.createElement("option");
+        option.value = m.id;
+        option.textContent = m.name;
+        select.appendChild(option);
+    });
+  };
+    // Detecta cambio de departamento y actualiza municipios
+  document.getElementById("edit-id_department").addEventListener("change", (e) => {
+    const depId = Number(e.target.value);
+    loadMunicipalities(depId);
+  });
 };
