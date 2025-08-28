@@ -4,252 +4,200 @@ import { departamentos } from "../register";
 import { generalFormat } from "../../src/scripts/validationMethods";
 
 export let renderDashboardAdminEditUsers = (ul, main) => {
-    // Menu
-    ul.innerHTML = `
-        
-        <a href="/skybolt/dashboardadmin/fields" data-link class="text-green-600 hover:text-green-800 font-semibold">Fields</a>
-        <a href="/skybolt/dashboardadmin/owners" data-link class="text-green-600 hover:text-green-800 font-semibold">Owners</a>
-        <a href="/skybolt/dashboardadmin/request" data-link class="text-green-600 hover:text-green-800 font-semibold">Requests</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="text-red-500 hover:text-red-700 font-semibold">Log out</a>
-    `;
 
-    main.innerHTML = `
-        <section class="p-6">
-            <h2 class="text-2xl font-bold text-green-600 mb-4">
-                Hola Admin, estás editando usuarios: ${locaL.get('active_user').full_name}
-            </h2>
+  document.body.style.background = "white";
 
-            <input type="text" id="user-search" placeholder="Buscar por correo..."
-                class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"/>
+  // ---------- NAV ----------
+   ul.innerHTML = `
 
-            <div id="edit-user-form-container" style="display:none;" class="bg-white border border-gray-200 shadow-md p-6 mb-6 rounded-xl max-w-xl">
-                <h3 class="text-xl font-semibold text-green-500 mb-4">Editar Usuario</h3>
-                <form id="edit-user-form" class="space-y-4">
-                    <input type="hidden" id="edit-user-id" />
-                    <input type="text" id="edit-full_name" placeholder="Full Name" class="input" />
-                    <input type="email" id="edit-email" placeholder="Email" class="input" />
-                    <input type="text" id="edit-phone" placeholder="Phone" class="input" />
-                    <input type="date" id="edit-birthdate" class="input" />
-                    <input type="text" id="edit-document_type" placeholder="Document Type" class="input" />
-                    <input type="text" id="edit-id_document" placeholder="ID Document" class="input" />
-                    <select id="edit-id_department" class="input">
-                        <option value="">Selecciona un departamento</option>
-                        ${departamentos.map(dep => `<option value="${dep.id}">${dep.name}</option>`).join('')}
-                    </select>
-                    <select id="edit-id_municipality" class="input">
-                        <option value="">Selecciona un municipio</option>
-                    </select>
-                    <input type="text" id="edit-rol" placeholder="Role" class="input" />
-                    <input type="password" id="edit-password_" placeholder="New Password (optional)" class="input" />
-                    <div class="flex gap-4">
-                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Guardar</button>
-                        <button type="button" id="cancel-edit" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition">Cancelar</button>
-                    </div>
-                </form>
+   <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <h1 class="text-3xl font-bold text-gray-800">
+          <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
+        </h1>
+
+        <nav class="hidden md:flex space-x-6">
+          <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
+          <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
+          <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
+          <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
+          <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+  
+        </nav>
+
+        <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+          <span class="w-6 h-0.5 bg-gray-800"></span>
+          <span class="w-6 h-0.5 bg-gray-800"></span>
+          <span class="w-6 h-0.5 bg-gray-800"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MENÚ MÓVIL -->
+    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+  <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
+          <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
+          <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
+          <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
+          <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+    </div>
+
+  </header>
+
+  <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+  <div id="top" class="h-16"></div>
+
+`;
+    document.getElementById("menu-btn").addEventListener("click", () => {
+      const menu = document.getElementById("mobile-menu");
+      menu.classList.toggle("hidden");
+    });
+
+  // ---------- MAIN ----------
+  main.innerHTML = `
+    <section class="p-6 sm:p-6">
+       <h2 class="text-lg sm:text-2xl font-bold text-green-600 mb-4 text-center sm:text-left">
+        Hello Admin, you are editing users: ${locaL.get("active_user").full_name}
+      </h2>
+
+       <input type="text" id="user-search" placeholder="Search by email..."
+        class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"/>
+
+      <!-- Tabla -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+          <thead class="bg-green-500 text-white">
+            <tr>
+              <th class="px-4 py-2 text-left">ID</th>
+              <th class="px-4 py-2 text-left">Name</th>
+              <th class="px-4 py-2 text-left">Phone</th>
+              <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+        <tbody id="user-table-body"></tbody>
+        </table>
+      </div>
+
+          
+      <!-- FORM EDITAR -->
+      <div id="edit-user-form-container"
+        class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-sm sm:max-w-lg md:max-w-2xl mx-auto
+                    max-h-[90vh] overflow-y-auto sm:max-h-none sm:overflow-visible">
+          <h3 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4 text-center">
+            Edit User
+          </h3>
+
+          <form id="edit-user-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm sm:text-base">
+            <input type="hidden" id="edit-user-id" />
+
+            <!-- Columna izquierda / derecha (responsive) -->
+            <input type="text" id="edit-full_name" placeholder="Full Name"
+              class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="email" id="edit-email" placeholder="Email"
+              class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="text" id="edit-phone" placeholder="Phone"
+              class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="date" id="edit-birthdate"
+              class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="text" id="edit-document_type" placeholder="Document Type"
+              class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="text" id="edit-id_document" placeholder="ID Document"
+              class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <!-- Departamento -->
+            <select id="edit-id_department"
+              class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300">
+              <option value="">--Select a department--</option>
+              ${departamentos.map(dep => `<option value="${dep.id}">${dep.name}</option>`).join("")}
+            </select>
+
+            <!-- Municipio -->
+            <select id="edit-id_municipality"
+              class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300">
+              <option value="">--Select a municipality--</option>
+            </select>
+
+            <input type="text" id="edit-rol" placeholder="Role"
+              class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <input type="password" id="edit-password_" placeholder="New Password (optional)"
+              class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
+
+            <!-- Botones -->
+            <div class="flex flex-col sm:flex-row justify-end gap-3 mt-4 col-span-1 sm:col-span-2">
+              <button type="submit"
+                class="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                Save
+              </button>
+              <button type="button" id="cancel-edit"
+                class="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                Cancel
+              </button>
             </div>
+          </form>
+        </div>
+      </div>
+      <!-- MODAL VER MÁS -->
 
-            <section id="user-section" class="grid gap-4"></section>
-        </section>
-    `;
+      <div id="modal-user" class="fixed inset-0  bg-opacity-50 hidden flex items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
+        <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
+          <h3 class="text-xl font-bold text-green-600 mb-4">User Details</h3>
+          <div id="modal-user-content" class="space-y-2 text-gray-700"></div>
+          <div class="text-right mt-4">
+            <button id="close-modal" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
 
-    // Log out
-    document.getElementById("log-out-user").addEventListener("click", (e) => {
-        e.preventDefault();
-        locaL.delete("active_user");
-    });
+  footer.innerHTML = `
+    <!-- FOOTER COMPLETO -->
+    <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+        <!-- DESCRIPCIÓN -->
+        <div>
+          <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
+          <p class="text-sm">
+            Your trusted platform to book sports venues in seconds. Technology that connects active communities.
+          </p>
+        </div>
 
-    let usersList = [];
+        <!-- ENLACES -->
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
+            <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition" data-link>FAQ</a></li>
+            <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition" data-link>Location</a></li>
+          </ul>
+        </div>
 
-    // Cargar usuarios
-    Api.get("/api/users").then((data) => {
-        usersList = data;
-        renderUsers(data);
-    });
-
-    const renderUsers = (data) => {
-        const section = document.getElementById("user-section");
-        section.innerHTML = "";
-
-        data.forEach((user) => {
-            if (user.rol === "user") {
-                const depName = getDepartmentName(user.id_department);
-                const munName = getMunicipalityName(user.id_department, user.id_municipality);
-
-                const $article = document.createElement("article");
-                $article.classList.add(
-                    "bg-white", "rounded-xl", "shadow-md", "p-4", "border", "border-gray-200", "space-y-2"
-                );
-                $article.innerHTML = `
-                    <h2 class="text-lg font-bold text-gray-800">Nombre: ${user.full_name} <span class="text-sm text-gray-500">ID: ${user.id_user}</span></h2>
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Teléfono:</strong> ${user.phone}</p>
-                    <p><strong>Cumpleaños:</strong> ${formatDateForDisplay(user.birthdate)}</p>
-                    <p><strong>${user.document_type}:</strong> ${user.id_document}</p>
-                    <p><strong>Ubicación:</strong> ${depName} - ${munName}</p>
-                    <p><strong>Rol:</strong> ${user.rol}</p>
-                    <div class="flex gap-3 pt-2">
-                        <button class="btn-delete px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition" data-id="${user.id_user}">Eliminar</button>
-                        <button class="btn-edit px-3 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">Editar</button>
-                    </div>
-                `;
-                section.appendChild($article);
-            }
-        });
-    };
-
-    // Filtro por correo
-    document.getElementById("user-search").addEventListener("input", (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filtered = usersList.filter(u => u.email.toLowerCase().includes(searchTerm));
-        renderUsers(filtered);
-    });
-
-    // Cambiar departamento -> cargar municipios
-    document.getElementById("edit-id_department").addEventListener("change", (e) => {
-        loadMunicipalities(Number(e.target.value));
-    });
-
-    // Click en usuario: editar o eliminar
-    document.getElementById("user-section").addEventListener("click", (e) => {
-        if (e.target.classList.contains("btn-delete")) {
-            const userID = Number(e.target.getAttribute("data-id"));
-            if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
-
-            Api.delete(`/api/users/${userID}`)
-                .then(() => {
-                    usersList = usersList.filter(u => u.id_user !== userID);
-                    renderUsers(usersList);
-                    alert("Usuario eliminado exitosamente");
-                })
-                .catch(err => alert(err.message));
-        }
-
-        if (e.target.classList.contains("btn-edit")) {
-            const userID = Number(e.target.getAttribute("data-id"));
-            const userData = usersList.find(u => u.id_user === userID);
-            if (!userData) return;
-
-            // Llenar formulario
-            document.getElementById("edit-user-id").value = userData.id_user;
-            document.getElementById("edit-full_name").value = userData.full_name;
-            document.getElementById("edit-email").value = userData.email;
-            document.getElementById("edit-phone").value = userData.phone || "";
-            document.getElementById("edit-birthdate").value = formatDateForInput(formatDateForDisplay(userData.birthdate));
-            document.getElementById("edit-document_type").value = userData.document_type;
-            document.getElementById("edit-id_document").value = userData.id_document;
-            document.getElementById("edit-id_department").value = userData.id_department;
-            loadMunicipalities(userData.id_department);
-            document.getElementById("edit-id_municipality").value = userData.id_municipality;
-            document.getElementById("edit-rol").value = userData.rol;
-            document.getElementById("edit-password_").value = userData.password_;
-
-            document.getElementById("edit-user-form-container").style.display = "block";
-        }
-    });
-
-    // Cancelar edición
-    document.getElementById("cancel-edit").addEventListener("click", () => {
-        document.getElementById("edit-user-form").reset();
-        document.getElementById("edit-user-id").value = "";
-        document.getElementById("edit-user-form-container").style.display = "none";
-    });
-
-    // Submit edición
-    document.getElementById("edit-user-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        try {
-            const userID = Number(document.getElementById("edit-user-id").value);
-            const id_department = Number(document.getElementById("edit-id_department").value);
-            const id_municipality = Number(document.getElementById("edit-id_municipality").value);
-
-            const dep = departamentos.find(d => d.id === id_department);
-            if (!dep || !dep.municipios.some(m => m.id === id_municipality)) {
-                alert("Departamento o municipio inválido");
-                return;
-            }
-
-            const updatedUser = {
-                full_name: generalFormat.nameFormat(document.getElementById("edit-full_name").value.trim()),
-                email: generalFormat.hotmailFormat(document.getElementById("edit-email").value.trim()),
-                phone: generalFormat.phoneNumber(document.getElementById("edit-phone").value.trim()),
-                birthdate: generalFormat.birthdate(document.getElementById("edit-birthdate").value),
-                document_type: generalFormat.documenttypeFormat(document.getElementById("edit-document_type").value.trim()),
-                id_document: generalFormat.identicationFormat(document.getElementById("edit-id_document").value.trim()),
-                id_department: generalFormat.departamentFormat(id_department),
-                id_municipality: generalFormat.townFormat(id_municipality),
-                rol: document.getElementById("edit-rol").value.trim()
-            };
-
-            const newPassword = document.getElementById("edit-password_").value;
-            if (newPassword && newPassword !== usersList.find(u => u.id_user === userID).password_) {
-                updatedUser.password_ = newPassword; // Solo cambiar si es distinto
-            }
-            console.table(updatedUser);
-
-            Api.put(`/api/users/${userID}`, updatedUser)
-                .then(() => {
-                    alert("Usuario actualizado correctamente");
-                    document.getElementById("edit-user-form-container").style.display = "none";
-                    Api.get("/api/users").then((data) => {
-                        usersList = data;
-                        renderUsers(usersList);
-                    });
-                })
-                .catch(err => alert(err.message));
-        } catch (err) {
-            alert(err.message);
-        }
-    });
-
-    // Helpers
-    const getDepartmentName = (id) => {
-        const dep = departamentos.find(d => d.id === Number(id));
-        return dep ? dep.name : "Desconocido";
-    };
-    const getMunicipalityName = (depId, muniId) => {
-        const dep = departamentos.find(d => d.id === Number(depId));
-        if (!dep) return "Desconocido";
-        const muni = dep.municipios.find(m => m.id === Number(muniId));
-        return muni ? muni.name : "Desconocido";
-    };
-    const loadMunicipalities = (depId) => {
-        const select = document.getElementById("edit-id_municipality");
-        select.innerHTML = '<option value="">Selecciona un municipio</option>';
-        const dep = departamentos.find(d => d.id === Number(depId));
-        if (!dep) return;
-        dep.municipios.forEach(m => {
-            const option = document.createElement("option");
-            option.value = m.id;
-            option.textContent = m.name;
-            select.appendChild(option);
-        });
-    };
-    const formatDateForDisplay = (isoDate) => {
-        if (!isoDate) return "Desconocido";
-        const d = new Date(isoDate);
-        if (isNaN(d)) return isoDate;
-        const day = String(d.getDate()).padStart(2, "0");
-        const month = String(d.getMonth() + 1).padStart(2, "0");
-        const year = d.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
-    const formatDateForInput = (dateStr) => {
-        if (!dateStr) return "";
-        const parts = dateStr.split("/");
-        if (parts.length !== 3) return "";
-        const [day, month, year] = parts;
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-    };
+        <!-- REDES -->
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
+          <div class="flex gap-4">
+            <a href="#" class="hover:text-yellow-300 transition" data-link>Instagram</a>
+            <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
+            <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
+          </div>
+        </div>
+      </div>
+      <!-- COPYRIGHT -->
+      <div class="text-center text-sm mt-10 text-green-300">
+        © 2025 SKYBOLT. All rights reserved
+      </div>
+    </footer>
+  `;
 };
-
-
-
-
-
-
-
-
-
-
-
