@@ -5,14 +5,34 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
+// router.get('/availability', async (_req, res) => {
+//   try {
+//     const [rows] = await pool.query('SELECT * FROM availability');
+//     res.json(rows);
+//   } catch (err) {
+//     sendError(res, 500, 'Error al obtener availability', err.message);
+//   }
+// });
+
 router.get('/availability', async (_req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM availability');
+    const [rows] = await pool.query(`
+      SELECT 
+        a.id_availability,
+        a.day_of_week,
+        a.estado,
+        t.id_tiempo,
+        t.hora_inicio,
+        t.hora_final
+      FROM availability a
+      JOIN time_ t ON a.id_tiempo = t.id_tiempo
+    `);
     res.json(rows);
   } catch (err) {
     sendError(res, 500, 'Error al obtener availability', err.message);
   }
 });
+
 
 router.get('/availability/:id_availability', async (req, res) => {
   try {
