@@ -37,6 +37,31 @@ router.get('/fields_', async (_req, res) => {
   }
 });
 
+router.get('/fields/availability', async (_req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        f.id_field,
+        f.name_field,
+        g.name_game,
+        m.name_municipality,
+        a.day_of_week,
+        t.hora_inicio,
+        t.hora_final,
+        a.estado
+      FROM fields_ f
+      JOIN municipalities m ON f.id_municipality = m.id_municipality
+      JOIN games g ON f.id_game = g.id_game
+      JOIN availability a ON f.id_availability = a.id_availability
+      JOIN time_ t ON a.id_tiempo = t.id_tiempo
+      WHERE a.estado = 'available';
+    `);
+    res.json(rows);
+  } catch (err) {
+    sendError(res, 500, 'Error al obtener canchas disponibles', err.message);
+  }
+});
+
 
 router.get('/fields_/:id_field', async (req, res) => {
   try {
@@ -100,5 +125,7 @@ router.delete('/fields_/:id_field', async (req, res) => {
     sendError(res, 500, 'Error al eliminar field', err.message);
   }
 });
+
+
 
 export default router;
