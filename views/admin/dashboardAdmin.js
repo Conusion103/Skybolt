@@ -194,19 +194,19 @@ export let renderDashboardAdminFields = (ul, main) => {
     }
 
     function loadFields() {
-    Promise.all([
-        Api.get("/api/fields_"),
-        Api.get("/api/reservations")
-    ])
-    .then(([fields, reservations]) => {
-        allFields = fields;
-        allReservations = reservations;
-        renderFields(fields, reservations);
-    })
-    .catch(() => {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
-    });
-}
+        Promise.all([
+            Api.get("/api/fields_"),
+            Api.get("/api/reservations")
+        ])
+        .then(([fields, reservations]) => {
+            allFields = fields;
+            allReservations = reservations;
+            renderFields(fields, reservations);
+        })
+        .catch(() => {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
+        });
+    }
 
     function renderFields(fields, reservations) {
         // Filtrado por nombre y estado
@@ -246,7 +246,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                         <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️</button>
                     </td>
                 </tr>
-            `;
+        `;
         }).join("");
 
         main.querySelector("#field-search").addEventListener("input", (e) => {
@@ -268,28 +268,32 @@ export let renderDashboardAdminFields = (ul, main) => {
                 })
                 .catch(() => alert("Error loading field for editing"));
             };
-        });
+        });        
 
-        // Eventos eliminar
-        tbody.querySelectorAll(".btn-delete").forEach(btn => {
-            btn.onclick = e => {
-                const id = +e.target.closest("tr").dataset.id;
-                if (!confirm("Delete this field?")) return;
-                Api.delete(`/api/fields_/${id}`)
-                    .then(res => {
-                        if (res.success) {
-                            alert("Field eliminated");
-                            loadFields();
-                            editFormContainer.innerHTML = "";
-                        }
-                    })
-                .catch(() => alert("Error deleting field"));
-            };
-        });
     }
 
+    //eliminar canchas
+    tbody.onclick = function(e) {
+        if (e.target.classList.contains("btn-delete")) {
+            const id = +e.target.closest("tr").dataset.id;
+            if (!confirm("Delete this field?")) return;
+            Api.delete(`/api/fields_/${id}`)
+                .then(() => {
+                    alert("Field eliminated");
+                    loadFields();
+                   
+                    const modal = document.getElementById("edit-field-form-container");
+                    if (modal) {
+                        modal.classList.add("hidden");
+                        modal.classList.remove("flex");
+                    }
+                })
+                .catch(() => alert("Error deleting field"));
+        }
+    };
+
     function showEditForm(field) {
-        // Llena los selects con las opciones actuales
+        // Llenamos los selects con las opciones actuales
         const gameOptions = games.map(g => `<option value="${g.id_game}" ${g.id_game === field.id_game ? "selected" : ""}>${g.name_game}</option>`).join("");
         const municipalityOptions = municipalities.map(m => `<option value="${m.id_municipality}" ${m.id_municipality === field.id_municipality ? "selected" : ""}>${m.name_municipality}</option>`).join("");
         const availabilityOptions = availabilityStates.map(a => `<option value="${a.id_availability}" ${a.id_availability === field.id_availability ? "selected" : ""}>${a.estado}</option>`).join("");
