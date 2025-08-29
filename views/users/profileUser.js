@@ -9,12 +9,24 @@ export let renderDashboardUserProfile = (ul, main) => {
     history.pushState(null, null, "/skybolt/login");
     return;
   }
+
+  const image = activeUser.image && activeUser.image.trim() !== ""
+    ? activeUser.image: "../../img/profiledefault.png";
+
   // Render del menú y saludo
-  ul.innerHTML = `
+    ul.innerHTML = `
+      <a href="/skybolt/dashboarduser" data-link id="back-dashboard">Fields</a>
+      <a href="/skybolt/dashboarduser/profile/request" data-link>Be owner</a>
+      <a data-link><button>Payments</button></a>
+      <a data-link><button>Contacts</button></a>
+      <a href="/skybolt/login" data-link id="log-out-user">Log out</a>
+`;
+
+  main.innerHTML = `
    <section class="p-6 max-w-md mx-auto">
         <h1 class="text-2xl font-semibold mb-6">Profile</h1>
         <div class="flex flex-col items-center text-center">
-            <img src="avatar-default.png" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md" />
+            <img src="${image}" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md" />
             <h2 class="text-lg font-bold">${activeUser.full_name}</h2>
             <p class="text-gray-600 text-sm">${activeUser.email || "No email"}</p>
             <p class="text-gray-600 text-sm">CR: ${activeUser.id_user}</p>
