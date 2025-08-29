@@ -94,14 +94,44 @@ export let renderRoute = () => {
         routes[path](); // Llama a la función que renderiza la vista para esta ruta
     }
     else {
+        document.body.style.background = "white";
         // Si la ruta no es válida, muestra un mensaje de error
         $nav.innerHTML = `
-        <a href="/skybolt/home" data-link>Home</a>
-        <a href="/skybolt/login" data-link>Log in</a>
-        <a href="/skybolt/register" data-link>Sign up</a>
+        <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <h1 class="text-3xl font-bold text-gray-800">
+                        <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
+                    </h1>
+                    <nav class="hidden md:flex space-x-6">
+                        <a href="/skybolt/home" data-link class="btn-primary" data-link>Home</a>
+                        <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>
+                        <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
+
+                    </nav>
+                    <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+                        <span class="w-6 h-0.5 bg-gray-800"></span>
+                        <span class="w-6 h-0.5 bg-gray-800"></span>
+                        <span class="w-6 h-0.5 bg-gray-800"></span>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+                <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
+                <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
+                <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
+                <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
+                <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            </div>
+        </header>
+        <div id="top" class="h-16"></div>
         `;
         $main.innerHTML = `
-        <h1>HTTP NOT FOUND</h1> <!-- Error 404 -->
+        <section class="flex flex-col items-center justify-center min-h-[60vh]">
+            <h2 class="text-6xl font-bold text-red-500 mb-4">404</h2>
+            <p class="text-2xl text-gray-700 mb-6">Página no encontrada</p>
+            <a href="/skybolt/home#top" data-link class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Volver al inicio</a>
+        </section>
         `;
     }
 
