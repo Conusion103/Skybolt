@@ -117,11 +117,9 @@ export let renderRoute = () => {
                 </div>
             </div>
             <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-                <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
-                <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
-                <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
-                <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-                <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+                <a href="/skybolt/home" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Home</a>
+                <a href="/skybolt/login" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Log in</a>
+                <a href="/skybolt/register" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Sign up</a>
             </div>
         </header>
         <div id="top" class="h-16"></div>
@@ -133,6 +131,10 @@ export let renderRoute = () => {
             <a href="/skybolt/home#top" data-link class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Volver al inicio</a>
         </section>
         `;
+          document.getElementById("menu-btn").addEventListener("click", () => {
+            const menu = document.getElementById("mobile-menu");
+            menu.classList.toggle("hidden");
+        });
     }
 
     // Si la url tiene #faq o #map, hace scroll suave hasta ese elemento
