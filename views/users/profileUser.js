@@ -11,14 +11,52 @@ export let renderDashboardUserProfile = (ul, main) => {
   const image = activeUser.image && activeUser.image.trim() !== ""
     ? activeUser.image : "../../img/profiledefault.png";
 
-  // Render del menú y saludo
-  ul.innerHTML = `
-    <a href="/skybolt/dashboarduser" data-link id="back-dashboard">Fields</a>
-    <a href="/skybolt/dashboarduser/profile/request" data-link>Be owner</a>
-    <a data-link><button>Payments</button></a>
-    <a data-link><button>Contacts</button></a>
-    <a href="/skybolt/login" data-link id="log-out-user">Log out</a>
+  // Render menu and welcome
+  document.body.style.background = "white";
+
+    ul.innerHTML = `
+
+    <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <h1 class="text-3xl font-bold text-gray-800">
+            <a href="/skybolt/home#top" class="hover:text-sky-600 transition-colors duration-200" data-link>SkyBolt</a>
+          </h1>
+
+          <nav class="hidden md:flex space-x-6">
+            <a href="/skybolt/dashboarduser" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
+            <!--- <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Payments</a>
+            <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Contact us</a> --->
+            <a href="/skybolt/dashboarduser/profile/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Be Owners</a>
+            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+          </nav>
+
+          <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+            <span class="w-6 h-0.5 bg-gray-800"></span>
+            <span class="w-6 h-0.5 bg-gray-800"></span>
+            <span class="w-6 h-0.5 bg-gray-800"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MENÚ MÓVIL -->
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+        <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
+        <!--- <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Payments</a>
+        <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Contact us</a> --->
+        <a href="/skybolt/dashboarduser/profile/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Be Owners</a>
+        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+      </div>
+    </header>
+
+    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <div id="top" class="h-16"></div>
+
   `;
+  document.getElementById("menu-btn").addEventListener("click", () => {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("hidden");
+  });
 
   main.innerHTML = `
     <section class="p-6 max-w-md mx-auto">
@@ -30,17 +68,28 @@ export let renderDashboardUserProfile = (ul, main) => {
         <p class="text-gray-600 text-sm">CR: ${activeUser.id_user}</p>
         <p class="text-gray-500 text-sm">User: ${activeUser.roles?.[0]?.name_role || "N/A"}</p>
       </div>
-      <div class="flex justify-around mt-6">
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
-          <span id="countReservas" class="font-semibold">00</span>
-          <span class="text-gray-500 text-xs">reservations</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
-          <span id="countReviews" class="font-semibold">00</span>
-          <span class="text-gray-500 text-xs">reviews</span>
-        </div>
+
+
+        <div class="flex justify-around mt-6">
+  <!-- Reservas -->
+  <div class="flex flex-col items-center">
+    <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
+      <img src="../../img/bookings.png" alt="Reservations Icon" class="w-8 h-8" />
+    </div>
+    <span id="countReservas" class="font-semibold text-lg">00</span>
+    <span class="text-gray-500 text-xs">reservations</span>
+  </div>
+
+  <!-- Reseñas -->
+  <div class="flex flex-col items-center">
+    <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
+      <img src="../../img/reviews.png" alt="Reviews Icon" class="w-8 h-8" />
+    </div>
+    <span id="countReviews" class="font-semibold text-lg">00</span>
+    <span class="text-gray-500 text-xs">reviews</span>
+  </div>
+</div>
+
       </div>
       <div class="w-full bg-green-400 rounded-2xl shadow-md mt-6 divide-y divide-green-300">
         <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
@@ -60,21 +109,6 @@ export let renderDashboardUserProfile = (ul, main) => {
     </section>
   `;
 
-  // Contador de reservas
-// Api.get(`/api/users/${activeUser.id_user}/reservations`)
-//   .then((reservations) => {
-//     let count = 0;
-//     if (Array.isArray(reservations) && reservations.length > 0) {
-//       count = reservations[0].total || 0;
-//     } else if (reservations?.data && Array.isArray(reservations.data)) {
-//       count = reservations.data.length;
-//     }
-//     document.getElementById("countReservas").textContent = count.toString().padStart(2, "0");
-//   })
-//   .catch((err) => {
-//     console.error("Error cargando reservas:", err);
-//     document.getElementById("countReservas").textContent = "00";
-//   });
 
 Api.get(`/api/users/${activeUser.id_user}/reservations`)
   .then((reservations) => {
@@ -83,7 +117,7 @@ Api.get(`/api/users/${activeUser.id_user}/reservations`)
     let count = 0;
     if (Array.isArray(reservations) && reservations.length > 0) {
       // Si devuelve un arreglo de objetos con reservas
-      count = reservations.length;
+      count = reservations[0].total_reservations || 0;
     } else if (Array.isArray(reservations?.data)) {
       count = reservations.data.length;
     } else if (reservations?.total !== undefined) {
@@ -99,14 +133,13 @@ Api.get(`/api/users/${activeUser.id_user}/reservations`)
   });
 
 
-
   // Contador de reseñas
 Api.get(`/api/users/${activeUser.id_user}/reviews`)
   .then((reviews) => {
     console.log("Respuesta del endpoint:", reviews);
 
     // Si la respuesta es un arreglo con objetos que tienen total
-    let count = 0;
+    let count = reviews[0].total_reviews;
     if (Array.isArray(reviews) && reviews.length > 0) {
       // asumimos que el primer elemento tiene el total real
       count = reviews[0].total || 0;
@@ -151,9 +184,14 @@ Api.get(`/api/users/${activeUser.id_user}/reviews`)
     logoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
       locaL.remove('active_user');
-      window.location.href = "/skybolt/login";
     });
   }
+
+    document.getElementById("log-out-user").addEventListener("click", (e) => {
+  e.preventDefault();
+  locaL.delete("active_user");
+
+});
 
   // Back dinámico
   const backBtn = main.querySelector('#back-dashboard');

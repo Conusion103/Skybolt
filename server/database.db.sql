@@ -152,11 +152,11 @@ CREATE TABLE reviews (
     FOREIGN KEY (id_field) REFERENCES fields_(id_field)
 );
 
-CREATE TABLE owner_status (
-    id_user INT PRIMARY KEY,
-    status ENUM('active', 'suspended') DEFAULT 'active',
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
-);
+-- CREATE TABLE owner_status (
+--     id_user INT PRIMARY KEY,
+--     status ENUM('active', 'suspended') DEFAULT 'active',
+--     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
+-- );
 
 -- Insertar departamentos
 INSERT INTO departments (name_department) VALUES
