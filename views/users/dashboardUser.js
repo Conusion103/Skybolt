@@ -67,21 +67,21 @@ export async function renderDashboardUser(nav, main) {
   });
 
   // Cargar categorías dinámicas
-  Api.get("/api/games")
-    .then((games) => {
-      const select = document.getElementById("categorySelect");
-      select.innerHTML += games
-        .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
-        .join("");
-    })
-    .catch(console.error);
+  try {
+    const games = await Api.get("/api/games");
+    const select = document.getElementById("categorySelect");
+    select.innerHTML += games
+      .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
+      .join("");
+  } catch (err) {
+    console.error("Error cargando categorías:", err);
+  }
 
   // Función para cargar reservas activas del usuario
   async function loadUserReservations() {
     const user = locaL.get("active_user");
     try {
       const reservations = await Api.get("/api/reservations/full");
-      // Filtrar reservas del usuario activo
       return reservations.filter(r => r.id_user === user.id_user);
     } catch (err) {
       console.error("Error cargando reservas del usuario:", err);
@@ -91,7 +91,6 @@ export async function renderDashboardUser(nav, main) {
 
   // Renderizar canchas con lógica para reservar/cancelar
   async function renderFields(fields) {
-    const user = locaL.get("active_user");
     const userReservations = await loadUserReservations();
 
     const container = document.getElementById("fieldsContainer");
@@ -135,9 +134,10 @@ export async function renderDashboardUser(nav, main) {
         // Construir fecha actual + hora inicio para reserve_schedule
         const now = new Date();
         const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
 
+        // Formato 'YYYY-MM-DD HH:mm:ss'
         const reserve_schedule = `${yyyy}-${mm}-${dd} ${horaInicio}`;
 
         const payload = {
@@ -149,7 +149,7 @@ export async function renderDashboardUser(nav, main) {
         try {
           await Api.post("/api/reservations", payload);
           alert("Reserva creada con éxito ✅");
-          loadAvailableFields(); // recargar canchas para actualizar botones
+          await loadAvailableFields(); // recargar canchas para actualizar botones
         } catch (err) {
           console.error("Error al reservar:", err.message || err);
           alert("Error al reservar ❌");
@@ -166,7 +166,7 @@ export async function renderDashboardUser(nav, main) {
         try {
           await Api.delete(`/api/reservations/${idReserve}`);
           alert("Reserva cancelada ✅");
-          loadAvailableFields(); // recargar canchas para actualizar botones
+          await loadAvailableFields(); // recargar canchas para actualizar botones
         } catch (err) {
           console.error("Error al cancelar reserva:", err.message || err);
           alert("Error al cancelar reserva ❌");
@@ -175,12 +175,12 @@ export async function renderDashboardUser(nav, main) {
     });
   }
 
-  // Función para cargar canchas disponibles al inicio
+  // Función para cargar canchas disponibles al inicio y luego según filtro
   async function loadAvailableFields() {
     try {
       const fields = await Api.get("/api/availability/fields/detailed");
       const availableFields = fields.filter((f) => f.estado === "available");
-      renderFields(availableFields);
+      await renderFields(availableFields);
     } catch (err) {
       console.error("Error al cargar canchas disponibles:", err);
       document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
@@ -188,7 +188,7 @@ export async function renderDashboardUser(nav, main) {
   }
 
   // Al iniciar la vista cargamos las canchas disponibles
-  loadAvailableFields();
+  await loadAvailableFields();
 
   // Aplicar filtros
   document.getElementById("applyFilterBtn").addEventListener("click", async () => {
@@ -196,12 +196,14 @@ export async function renderDashboardUser(nav, main) {
     const availableOnly = document.getElementById("availabilityToggle").checked;
 
     try {
-      const fields = await Api.get("/api/availability/fields/detailed");
-      let filtered = fields;
+      let fields = await Api.get("/api/availability/fields/detailed");
 
-      if (category) filtered = filtered.filter((f) => f.id_game == category);
-      if (availableOnly) filtered = filtered.filter((f) => f.estado === "available");
-
+      if (category) {
+        fields = fields.filter((f) => f.id_game == category);
+      }
+      if (availableOnly) {
+        fields = fields.filter((f) => f.estado === "available");
+      }
       if (selectedTime) {
         const timeRanges = {
           morning: { start: "06:00:00", end: "12:00:00" },
@@ -209,12 +211,12 @@ export async function renderDashboardUser(nav, main) {
           night: { start: "18:00:01", end: "23:59:59" },
         };
         const { start, end } = timeRanges[selectedTime];
-        filtered = filtered.filter(
+        fields = fields.filter(
           (f) => f.hora_inicio >= start && f.hora_final <= end
         );
       }
 
-      renderFields(filtered);
+      await renderFields(fields);
       filterPanel.classList.add("hidden");
     } catch (err) {
       console.error(err);
@@ -234,16 +236,11 @@ export async function renderDashboardUser(nav, main) {
     loadAvailableFields();
   });
 
-  // Logout
+
   document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
-    window.location.href = "/skybolt/login";
-  });
+  e.preventDefault();
+  locaL.delete("active_user");
+  window.location.href = "/skybolt/login";
+});
+
 }
-
-
-
-
-
-
