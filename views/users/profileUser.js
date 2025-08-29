@@ -1,12 +1,4 @@
 
-
-
-
-
-
-
-
-
 import { locaL } from "../../src/scripts/LocalStorage";
 //import { renderDashboardUser } from "./dashboardUser"; // función que renderiza el dashboard principal
 import { Api } from "../../src/scripts/methodsApi";
@@ -19,53 +11,46 @@ export let renderDashboardUserProfile = (ul, main) => {
   }
   // Render del menú y saludo
   ul.innerHTML = `
-<a href="/skybolt/dashboarduser" data-link id="back-dashboard">Fields</a>
-<a href="/skybolt/dashboarduser/profile/request" data-link>Be owner</a>
-<a data-link><button>Payments</button></a>
-<a data-link><button>Contacts</button></a>
-<a href="/skybolt/login" data-link id="log-out-user">Log out</a>
-`;
+   <section class="p-6 max-w-md mx-auto">
+        <h1 class="text-2xl font-semibold mb-6">Profile</h1>
+        <div class="flex flex-col items-center text-center">
+            <img src="avatar-default.png" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md" />
+            <h2 class="text-lg font-bold">${activeUser.full_name}</h2>
+            <p class="text-gray-600 text-sm">${activeUser.email || "No email"}</p>
+            <p class="text-gray-600 text-sm">CR: ${activeUser.id_user}</p>
+            <p class="text-gray-500 text-sm">User: ${activeUser.roles[0].name_role}</p>
+        </div>
+        <div class="flex justify-around mt-6">
 
-  main.innerHTML = `
-<section class="p-6 max-w-md mx-auto">
-<h1 class="text-2xl font-semibold mb-6">Profile</h1>
-<div class="flex flex-col items-center text-center">
-<img src="avatar-default.png" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md"/>
-<h2 class="text-lg font-bold">${activeUser.full_name}</h2>
-<p class="text-gray-600 text-sm">${activeUser.email || "No email"}</p>
-<p class="text-gray-600 text-sm">CR: ${activeUser.id_user}</p>
-<p class="text-gray-500 text-sm">User: ${activeUser.roles[0].name_role}</p>
-</div>
-<div class="flex justify-around mt-6">
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
+                <span id="countReservas" class="font-semibold">00</span>
+                <span class="text-gray-500 text-xs">reservations</span>
+            </div>
 
-<div class="flex flex-col items-center">
-<div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
-<span id="countReservas" class="font-semibold">00</span>
-<span class="text-gray-500 text-xs">reservations</span>
-</div>
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
+                <span id="countReviews" class="font-semibold">00</span>
+                <span class="text-gray-500 text-xs">reviews</span>
+            </div>
+        </div>
 
-<div class="flex flex-col items-center">
-<div class="w-12 h-12 flex items-center justify-center border rounded-full mb-1"></div>
-<span id="countReviews" class="font-semibold">00</span>
-<span class="text-gray-500 text-xs">reviews</span>
-</div>
-</div>
-
-<div class="w-full bg-green-400 rounded-2xl shadow-md mt-6 divide-y divide-green-300">
-<button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
-Send Notifications <span>›</span>
-</button>
-<button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
-Payments <span>›</span>
-</button>
-<button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
-Contact us <span>›</span>
-</button>
-<button id="delete-account" class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600">
-Delete Account <span>›</span>
-</button>
-</div>
-</section>
+        <div class="w-full bg-green-400 rounded-2xl shadow-md mt-6 divide-y divide-green-300">
+            <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+                Send Notifications <span>›</span>
+            </button>
+            <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+                Payments <span>›</span>
+            </button>
+            <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+                Contact us <span>›</span>
+            </button>
+            <button id="delete-account"
+                class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600">
+                Delete Account <span>›</span>
+            </button>
+        </div>
+    </section>
 `;
 
   // Contador de reservas

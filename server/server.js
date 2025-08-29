@@ -18,6 +18,7 @@ import ownerRequestsRouter from './endpoints/ownerRequests.js';
 import reviewsRouter from './endpoints/reviews.js';
 import queriesRouter from './endpoints/queries.js';
 import municipalitiesRouter from './endpoints/municipalities.js';
+import departamentsRouter from './endpoints/departaments.js';
 
 const app = express();
 app.use(cors());
@@ -41,6 +42,7 @@ app.use('/api', ownerRequestsRouter);
 app.use('/api', reviewsRouter);
 app.use('/api', queriesRouter);
 app.use('/api', municipalitiesRouter);
+app.use('/api', departamentsRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
