@@ -41,6 +41,34 @@ router.get("/users", async (req, res) => {
   }
 });
 
+//Adding endpoint " reviews counter for user profile"
+router.get('/users/:id_user/reviews', async (req, res) => {
+  try {
+    const { id_user } = req.params;
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) AS total_reviews FROM reviews WHERE id_user = ?',
+      [id_user]
+    );
+    res.json(rows);
+  } catch (err) {
+    sendError(res, 500, 'Error al obtener reviews del usuario', err.message);
+  }
+});
+
+//Adding endpoint " reservations counter for user profile"
+router.get('/users/:id_user/reservations', async (req, res) => {
+  try {
+    const { id_user } = req.params;
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) AS total_reservations FROM reservations WHERE id_user = ?',
+      [id_user]
+    );
+    res.json(rows);
+  } catch (err) {
+    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+  }
+});
+
 /* ==========================
    📌 Crear usuario (rol "user" por defecto)
    ========================== */
