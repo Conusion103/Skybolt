@@ -44,7 +44,6 @@ router.get('/reservations/full/:id_reserve', async (req, res) => {
   }
 });
 
-
 // ✅ CRUD básico (lo que ya tienes)
 router.get('/reservations', async (_req, res) => {
   try {
@@ -74,6 +73,15 @@ router.post('/reservations', async (req, res) => {
     return sendError(res, 400, 'reserve_schedule, id_user e id_field son requeridos');
   }
   try {
+    // Validar si ya existe reserva en ese horario y cancha
+    const [conflict] = await pool.query(
+      'SELECT * FROM reservations WHERE id_field = ? AND reserve_schedule = ?',
+      [id_field, reserve_schedule]
+    );
+    if (conflict.length) {
+      return sendError(res, 409, 'El horario ya está reservado para esta cancha');
+    }
+
     const [result] = await pool.query(
       'INSERT INTO reservations (reserve_schedule, id_user, id_field) VALUES (?, ?, ?)',
       [reserve_schedule, id_user, id_field]
@@ -93,7 +101,21 @@ router.put('/reservations/:id_reserve', async (req, res) => {
     );
     if (!currRows.length) return sendError(res, 404, 'Reservation no encontrada');
 
+    // Validar conflicto solo si cambió horario o cancha
     const curr = currRows[0];
+    if (
+      (reserve_schedule && reserve_schedule !== curr.reserve_schedule) ||
+      (id_field && id_field !== curr.id_field)
+    ) {
+      const [conflict] = await pool.query(
+        'SELECT * FROM reservations WHERE id_field = ? AND reserve_schedule = ? AND id_reserve != ?',
+        [id_field ?? curr.id_field, reserve_schedule ?? curr.reserve_schedule, req.params.id_reserve]
+      );
+      if (conflict.length) {
+        return sendError(res, 409, 'El horario ya está reservado para esta cancha');
+      }
+    }
+
     const [result] = await pool.query(
       'UPDATE reservations SET reserve_schedule = ?, id_user = ?, id_field = ? WHERE id_reserve = ?',
       [
@@ -124,5 +146,4 @@ router.delete('/reservations/:id_reserve', async (req, res) => {
 });
 
 export default router;
-
 
