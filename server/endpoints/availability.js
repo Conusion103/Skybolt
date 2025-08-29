@@ -86,14 +86,13 @@ router.delete('/availability/:id_availability', async (req, res) => {
 });
 
 // 📌 Obtener disponibilidad con detalles de cancha, horario y ubicación
-router.get('/availability/fields-detailed', async (_req, res) => {
+router.get('/availability/fields/detailed', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT 
         f.id_field,
         f.name_field,
         f.image_path,
-        a.id_availability,
         a.day_of_week,
         a.estado,
         t.hora_inicio,
