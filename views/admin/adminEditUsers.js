@@ -57,7 +57,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   main.innerHTML = `
     <section class="p-6 sm:p-6">
        <h2 class="text-lg sm:text-2xl font-bold text-green-600 mb-4 text-center sm:text-left">
-        Hello Admin, you are editing users: ${locaL.get("active_user").full_name}
+        Hello ${locaL.get("active_user").full_name}, you are editing users
       </h2>
 
        <input type="text" id="user-search" placeholder="Search by email..."
@@ -145,7 +145,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
         </div>
       </div>
       <!-- MODAL VER MÁS -->
-
+      
       <div id="modal-user" class="fixed inset-0  bg-opacity-50 hidden flex items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
         <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
           <h3 class="text-xl font-bold text-green-600 mb-4">User Details</h3>
@@ -237,9 +237,9 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
       <td class="px-4 py-2">${user.email}</td>
       <td class="px-4 py-2">${user.phone}</td>
       <td class="px-4 py-2 text-center">
-        <button class="btn-view bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition" data-id="${user.id_user}">See more</button>
-        <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">Edit</button>
-        <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" data-id="${user.id_user}">Delete</button>
+        <button class="btn-view bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition" data-id="${user.id_user}">🔍</button>
+        <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">✏️</button>
+        <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" data-id="${user.id_user}">🗑️</button>
       </td>
     `;
     tbody.appendChild(row);
