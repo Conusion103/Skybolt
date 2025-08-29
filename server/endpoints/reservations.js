@@ -5,42 +5,45 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// ✅ Obtener todas las reservas con JOIN (usuario y cancha)
+// Obtener todas las reservas con JOIN (usuario y cancha)
 router.get('/reservations/full', async (_req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT r.id_reserve, r.reserve_schedule, 
               u.id_user, u.full_name AS user_name, 
-              f.id_field, f.field_name
+              f.id_field, f.name_field
        FROM reservations r
        JOIN users u ON r.id_user = u.id_user
-       JOIN fields f ON r.id_field = f.id_field`
+       JOIN fields_ f ON r.id_field = f.id_field`
     );
     res.json(rows);
   } catch (err) {
+    console.error('Error en /reservations/full:', err);
     sendError(res, 500, 'Error al obtener reservas con detalles', err.message);
   }
 });
 
-// ✅ Obtener reserva específica con JOIN
+// Obtener reserva específica con JOIN
 router.get('/reservations/full/:id_reserve', async (req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT r.id_reserve, r.reserve_schedule, 
               u.id_user, u.full_name AS user_name, 
-              f.id_field, f.field_name
+              f.id_field, f.name_field
        FROM reservations r
        JOIN users u ON r.id_user = u.id_user
-       JOIN fields f ON r.id_field = f.id_field
+       JOIN fields_ f ON r.id_field = f.id_field
        WHERE r.id_reserve = ?`,
       [req.params.id_reserve]
     );
     if (!rows.length) return sendError(res, 404, 'Reserva no encontrada');
     res.json(rows[0]);
   } catch (err) {
+    console.error('Error en /reservations/full/:id_reserve:', err);
     sendError(res, 500, 'Error al obtener reserva con detalles', err.message);
   }
 });
+
 
 // ✅ CRUD básico (lo que ya tienes)
 router.get('/reservations', async (_req, res) => {
@@ -121,4 +124,5 @@ router.delete('/reservations/:id_reserve', async (req, res) => {
 });
 
 export default router;
+
 
