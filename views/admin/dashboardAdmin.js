@@ -268,25 +268,29 @@ export let renderDashboardAdminFields = (ul, main) => {
                 })
                 .catch(() => alert("Error loading field for editing"));
             };
-        });
+        });        
 
-        // Eventos eliminar
-        tbody.querySelectorAll(".btn-delete").forEach(btn => {
-            btn.onclick = e => {
-                const id = +e.target.closest("tr").dataset.id;
-                if (!confirm("Delete this field?")) return;
-                Api.delete(`/api/fields_/${id}`)
-                    .then(res => {
-                        if (res.success) {
-                            alert("Field eliminated");
-                            loadFields();
-                            editFormContainer.innerHTML = "";
-                        }
-                    })
-                .catch(() => alert("Error deleting field"));
-            };
-        });
     }
+
+    // Delegación de eventos para eliminar canchas
+tbody.onclick = function(e) {
+    if (e.target.classList.contains("btn-delete")) {
+        const id = +e.target.closest("tr").dataset.id;
+        if (!confirm("Delete this field?")) return;
+        Api.delete(`/api/fields_/${id}`)
+            .then(() => {
+                alert("Field eliminated");
+                loadFields();
+                // Si tienes un modal de edición abierto, ciérralo:
+                const modal = document.getElementById("edit-field-form-container");
+                if (modal) {
+                    modal.classList.add("hidden");
+                    modal.classList.remove("flex");
+                }
+            })
+            .catch(() => alert("Error deleting field"));
+    }
+};
 
     function showEditForm(field) {
         // Llena los selects con las opciones actuales
