@@ -29,10 +29,9 @@ export let renderDashboardOwner = (ul, main) => {
     main.innerHTML = `<p>Por favor inicia sesión.</p>`;
     return;
   }
-
   document.body.style.background = "white";
 
-  // Navbar 
+  // Navbar
   ul.innerHTML = `
      <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,7 +199,6 @@ export let renderDashboardOwner = (ul, main) => {
     </footer>
   `;
 
-
   // Referencias DOM
   const fieldForm = main.querySelector("#field-form");
   const fieldIdInput = main.querySelector("#field-id");
@@ -211,23 +209,28 @@ export let renderDashboardOwner = (ul, main) => {
   const cancelEditBtn = main.querySelector("#cancel-edit");
   const tbody = main.querySelector("#fields-tbody");
 
+  // Variables para guardar datos traídos del backend
   let games = [];
   let municipalities = [];
   let availabilityStates = [];
 
-  const formatTime = time => time?.slice(0, 5); // HH:MM
+  // Formato de hora legible
+  const formatTime = time => time?.slice(0, 5);
 
+  // Estados legibles
   const availabilityLabels = {
     available: "Disponible",
     not_available: "No disponible"
   };
 
+  // Función para llenar selects
   function loadSelectOptions(select, items, valueKey, textKey) {
     select.innerHTML = items
       .map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`)
       .join("");
   }
 
+  // Cargar datos de juegos, municipios y disponibilidad desde API
   async function loadSelectData() {
     try {
       games = await Api.get("/api/games");
@@ -248,6 +251,7 @@ export let renderDashboardOwner = (ul, main) => {
     }
   }
 
+  // Cargar canchas del propietario
   function loadFields() {
     Api.get("/api/fields_")
       .then(fields => {
@@ -271,6 +275,7 @@ export let renderDashboardOwner = (ul, main) => {
         const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
         const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
 
+        // Mostrar múltiples disponibilidades, si existen
         let availabilityInfo = "N/A";
         if (Array.isArray(field.availability) && field.availability.length) {
           availabilityInfo = field.availability
@@ -293,6 +298,7 @@ export let renderDashboardOwner = (ul, main) => {
       })
       .join("");
 
+    // Eventos editar
     tbody.querySelectorAll(".edit-btn").forEach(btn => {
       btn.onclick = e => {
         const id = +e.target.closest("tr").dataset.id;
@@ -303,10 +309,16 @@ export let renderDashboardOwner = (ul, main) => {
             fieldGameSelect.value = field.id_game;
             fieldMunicipalitySelect.value = field.id_municipality;
 
-            const ids = field.availability.map(a => a.id_availability.toString());
-            Array.from(fieldAvailabilitySelect.options).forEach(opt => {
-              opt.selected = ids.includes(opt.value);
-            });
+            // Seleccionar múltiples disponibilidades
+            if (Array.isArray(field.availability)) {
+              const ids = field.availability.map(a => a.id_availability.toString());
+              Array.from(fieldAvailabilitySelect.options).forEach(opt => {
+                opt.selected = ids.includes(opt.value);
+              });
+            } else {
+              // Si no hay disponibilidad, deseleccionar todo
+              Array.from(fieldAvailabilitySelect.options).forEach(opt => (opt.selected = false));
+            }
 
             cancelEditBtn.classList.remove("hidden");
           })
@@ -314,6 +326,7 @@ export let renderDashboardOwner = (ul, main) => {
       };
     });
 
+    // Eventos eliminar
     tbody.querySelectorAll(".delete-btn").forEach(btn => {
       btn.onclick = e => {
         const id = +e.target.closest("tr").dataset.id;
@@ -331,12 +344,14 @@ export let renderDashboardOwner = (ul, main) => {
     });
   }
 
+  // Submit form (crear o actualizar)
   fieldForm.onsubmit = e => {
     e.preventDefault();
 
     const id = fieldIdInput.value.trim();
 
     const availability_ids = Array.from(fieldAvailabilitySelect.selectedOptions).map(opt => +opt.value);
+
     if (!availability_ids.length) {
       showError("Debes seleccionar al menos una disponibilidad");
       return;
@@ -356,6 +371,7 @@ export let renderDashboardOwner = (ul, main) => {
     }
 
     if (id) {
+      // Actualizar cancha
       Api.put(`/api/fields_/${id}`, payload)
         .then(res => {
           if (res.success) {
@@ -368,9 +384,10 @@ export let renderDashboardOwner = (ul, main) => {
         })
         .catch(() => showError("Error actualizando cancha"));
     } else {
+      // Crear cancha
       Api.post("/api/fields_", payload)
         .then(res => {
-          if (res.id_field) {
+          if (res.success) {
             showSuccess("Cancha creada");
             loadFields();
             fieldForm.reset();
@@ -384,12 +401,16 @@ export let renderDashboardOwner = (ul, main) => {
     fieldForm.reset();
     fieldIdInput.value = "";
     cancelEditBtn.classList.add("hidden");
+    // Deseleccionar todo en disponibilidad
     Array.from(fieldAvailabilitySelect.options).forEach(opt => (opt.selected = false));
   };
 
+  // Inicializar selects y cargar canchas
   loadSelectData().then(loadFields);
 
+  // Logout
   document.getElementById("log-out-user").onclick = () => {
     locaL.remove("active_user");
   };
 };
+

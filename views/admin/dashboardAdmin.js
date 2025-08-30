@@ -96,7 +96,7 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
                         <select id="edit-field-municipality"
                             class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" required>
                         </select>
-                        <!-- select multiple para disponibilidades -->
+                        <!-- Aquí el cambio: select multiple para disponibilidades -->
                         <select id="edit-field-availability" multiple size="5"
                             class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" required>
                         </select>
@@ -157,7 +157,7 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
     let municipalities = [];
     let availabilityStates = [];
 
-    // Carga y renderizado
+    // Lógica para carga y renderizado
     const loadFields = () => {
         Promise.all([
             Api.get("/api/fields_"),
@@ -169,12 +169,13 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
                 showError("Error loading data.");
                 return;
             }
-
             fields = fieldsRes.data.map(field => {
-                // Mapear disponibilidades a array para editar correctamente
+                // Asumimos que la API trae availability_ids como array, o que hay relación para traer disponibilidades por cancha
+                // Para demo, mapeamos las disponibilidades como un array
+                // Si la API trae solo un id_availability, puedes adaptarlo aquí para convertirlo en array [id]
                 return {
                     ...field,
-                    availabilities: field.availability_ids || []  // Ajusta según tu API real
+                    availabilities: field.availability_ids || []  // aquí la clave que use tu API para disponibilidades múltiples
                 }
             });
             games = gamesRes.data;
@@ -185,11 +186,11 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
         });
     };
 
-    // Renderiza la tabla con la lista de campos
+    // Función para filtrar y renderizar la tabla de canchas
     const renderFieldsTable = (fieldsArray) => {
         const tbody = document.getElementById("fields-tbody");
         tbody.innerHTML = fieldsArray.map(field => {
-            // Obtener nombres de disponibilidades separadas por salto de línea
+            // Obtener los nombres de las disponibilidades para mostrar
             const availabilityList = availabilityStates
                 .filter(a => field.availabilities.includes(a.id_availability))
                 .map(a => a.estado)
@@ -222,7 +223,7 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
         });
     };
 
-    // Mostrar formulario de edición
+    // Función para mostrar el formulario de edición con datos
     function showEditForm(field) {
         const gameOptions = games.map(g => `<option value="${g.id_game}" ${g.id_game === field.id_game ? "selected" : ""}>${g.name_game}</option>`).join("");
         const municipalityOptions = municipalities.map(m => `<option value="${m.id_municipality}" ${m.id_municipality === field.id_municipality ? "selected" : ""}>${m.name_municipality}</option>`).join("");
@@ -279,7 +280,7 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
         };
     }
 
-    // Buscador y filtro por estado
+    // Buscador y filtro de estado
     const searchInput = document.getElementById("field-search");
     const statusFilter = document.getElementById("field-status-filter");
 
@@ -293,11 +294,12 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
 
         const status = statusFilter.value;
         if(status) {
-            // Filtrar por disponibilidad "available" o "not_available"
-            // Asumimos que availabilityStates con "available" en estado son las disponibles
-            const availableStatesIds = availabilityStates.filter(a => a.estado.toLowerCase().includes("available")).map(a => a.id_availability);
-
+            // Filtrar por disponibilidad, ej. "available" o "not_available"
             filtered = filtered.filter(field => {
+                // Asumiendo que availabilityStates tienen alguna forma de identificar disponible o no
+                // Aquí debes adaptar según tu estructura real
+                const availableStatesIds = availabilityStates.filter(a => a.estado.toLowerCase().includes("available")).map(a => a.id_availability);
+
                 const hasAvailable = field.availabilities.some(id => availableStatesIds.includes(id));
                 return status === "available" ? hasAvailable : !hasAvailable;
             });
@@ -309,17 +311,11 @@ export let renderDashboardAdminFields = (ul, main, footer) => {
     searchInput.addEventListener("input", applyFilters);
     statusFilter.addEventListener("change", applyFilters);
 
-    // Logout
-    document.getElementById("log-out-user").addEventListener("click", e => {
-        e.preventDefault();
-        showConfirm("Are you sure you want to logout?")
-            .then(res => {
-                if (res.isConfirmed) {
-                    locaL.remove("active_user");
-                    window.location.href = "/skybolt/login";
-                }
-            });
-    });
-
+    // Carga inicial
     loadFields();
+
+    // Logout
+    document.getElementById("log-out-user").addEventListener("click", () => {
+        locaL.remove("active_user");
+    });
 };
