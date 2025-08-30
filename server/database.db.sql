@@ -1,12 +1,15 @@
--- CREATE DATABASE skybolt;
+-- USE skybolt;
+-- CREATE DATABASE skybolt; -- si es necesario
 USE skybolt;
 
 -- Desactivar claves foráneas temporalmente
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- Eliminar tablas si existen
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS owner_requests;
 DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS field_availability;
 DROP TABLE IF EXISTS fields_;
 DROP TABLE IF EXISTS availability;
 DROP TABLE IF EXISTS time_;
@@ -16,6 +19,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS municipalities;
 DROP TABLE IF EXISTS departments;
 DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS owner_status;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -97,21 +101,28 @@ CREATE TABLE availability (
     FOREIGN KEY (id_tiempo) REFERENCES time_(id_tiempo)
 );
 
--- Tabla de canchas
+-- Tabla de canchas (sin id_availability directo)
 CREATE TABLE fields_ (
     id_field INT AUTO_INCREMENT PRIMARY KEY,
     name_field VARCHAR(255) NOT NULL,
     id_municipality INT NOT NULL,
     id_game INT NOT NULL,
-    id_availability INT NOT NULL,
     id_owner INT DEFAULT NULL,
     image_path VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id_municipality) REFERENCES municipalities(id_municipality),
     FOREIGN KEY (id_game) REFERENCES games(id_game),
-    FOREIGN KEY (id_availability) REFERENCES availability(id_availability),
     FOREIGN KEY (id_owner) REFERENCES users(id_user)
+);
+
+-- Tabla de relación muchos a muchos entre canchas y disponibilidades
+CREATE TABLE field_availability (
+    id_field_availability INT AUTO_INCREMENT PRIMARY KEY,
+    id_field INT NOT NULL,
+    id_availability INT NOT NULL,
+    FOREIGN KEY (id_field) REFERENCES fields_(id_field) ON DELETE CASCADE,
+    FOREIGN KEY (id_availability) REFERENCES availability(id_availability) ON DELETE CASCADE
 );
 
 -- Tabla de reservas
@@ -152,6 +163,7 @@ CREATE TABLE reviews (
     FOREIGN KEY (id_field) REFERENCES fields_(id_field)
 );
 
+-- Tabla de estado de propietario
 CREATE TABLE owner_status (
     id_user INT PRIMARY KEY,
     status ENUM('active', 'suspended') DEFAULT 'active',
@@ -182,18 +194,14 @@ INSERT INTO roles (name_role) VALUES
 ('owner'),
 ('user');
 
+-- Insertar usuario admin
 INSERT INTO users (full_name, email, phone, birthdate, document_type, id_document, id_municipality, password_)
 VALUES 
 ('Super Admin', 'admin@exmaple.com', '123456789', '1990-01-01', 'CC', '123456789', 1 ,'$2a$12$104EkARrpraFPPH2SIC9hurCLmgVyEfLYaJBtDvBn86CfXvM8jNJe');
 
+-- Asignar rol admin
 INSERT INTO user_roles (id_user, id_role)
 VALUES (
   LAST_INSERT_ID(),
   (SELECT id_role FROM roles WHERE name_role = 'admin' LIMIT 1)
 );
-
-select * from users;
-
-select * from roles;
-
-DELETE FROM users WHERE email = 'isaistudio1.1@hotmail.com'

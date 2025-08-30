@@ -11,7 +11,7 @@ export async function renderDashboardUser(nav, main) {
 
   // Contenido principal
   main.innerHTML = `
-    <h2 class="text-xl font-bold mb-4">Hola ${locaL.get("active_user").full_name}</h2>
+    <h2 class="text-xl font-bold mb-4">Hola ${locaL.get("active_user")?.full_name || "Usuario"}</h2>
 
     <button id="openFilterBtn" class="mb-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Filtrar</button>
 
@@ -50,7 +50,7 @@ export async function renderDashboardUser(nav, main) {
 
   let selectedTime = "";
 
-  // Botones de hora seleccionable
+  // Manejo selección de botón de hora
   document.querySelectorAll(".time-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".time-btn").forEach((b) =>
@@ -78,9 +78,10 @@ export async function renderDashboardUser(nav, main) {
     console.error("Error cargando categorías:", err);
   }
 
-  // Función para cargar reservas activas del usuario
+  // Cargar reservas activas del usuario
   async function loadUserReservations() {
     const user = locaL.get("active_user");
+    if (!user) return [];
     try {
       const reservations = await Api.get("/api/reservations/full");
       return reservations.filter(r => r.id_user === user.id_user);
@@ -90,54 +91,57 @@ export async function renderDashboardUser(nav, main) {
     }
   }
 
-  // Renderizar canchas con lógica para reservar/cancelar
+  // Renderizar canchas disponibles y reservas
   async function renderFields(fields) {
     const userReservations = await loadUserReservations();
-
     const container = document.getElementById("fieldsContainer");
-    container.innerHTML = fields.length
-      ? fields
-          .map((f) => {
-            // Buscar si usuario tiene reserva en esta cancha
-            const reservation = userReservations.find(r => r.id_field === f.id_field);
-            if (reservation) {
-              return `
-                <article class="bg-white shadow rounded-lg p-4">
-                  <h3 class="font-bold text-green-600">${f.name_field}</h3>
-                  <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
-                  <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
-                  <p class="text-sm">Estado: ${f.estado}</p>
-                  <button data-id-reserve="${reservation.id_reserve}" class="cancel-btn mt-2 w-full bg-red-500 text-white py-1 rounded-lg hover:bg-red-600 transition">Cancelar Reserva</button>
-                </article>
-              `;
-            } else {
-              return `
-                <article class="bg-white shadow rounded-lg p-4">
-                  <h3 class="font-bold text-green-600">${f.name_field}</h3>
-                  <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
-                  <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
-                  <p class="text-sm">Estado: ${f.estado}</p>
-                  <button data-id-field="${f.id_field}" data-hour-start="${f.hora_inicio}" class="reserve-btn mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
-                </article>
-              `;
-            }
-          })
-          .join("")
-      : "<p>No se encontraron resultados</p>";
 
-    // Eventos reservar
+    if (!fields.length) {
+      container.innerHTML = "<p>No se encontraron resultados</p>";
+      return;
+    }
+
+    container.innerHTML = fields.map((f) => {
+      const reservation = userReservations.find(r => r.id_field === f.id_field);
+      if (reservation) {
+        return `
+          <article class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-bold text-green-600">${f.name_field}</h3>
+            <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
+            <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
+            <p class="text-sm">Estado: ${f.estado}</p>
+            <button data-id-reserve="${reservation.id_reserve}" class="cancel-btn mt-2 w-full bg-red-500 text-white py-1 rounded-lg hover:bg-red-600 transition">Cancelar Reserva</button>
+          </article>
+        `;
+      } else {
+        return `
+          <article class="bg-white shadow rounded-lg p-4">
+            <h3 class="font-bold text-green-600">${f.name_field}</h3>
+            <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
+            <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
+            <p class="text-sm">Estado: ${f.estado}</p>
+            <button data-id-field="${f.id_field}" data-hour-start="${f.hora_inicio}" class="reserve-btn mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
+          </article>
+        `;
+      }
+    }).join("");
+
+    // Botones reservar
     document.querySelectorAll(".reserve-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const idField = e.target.dataset.idField;
         const horaInicio = e.target.dataset.hourStart;
         const user = locaL.get("active_user");
+        if (!user) {
+          showError("Debe iniciar sesión para reservar");
+          return;
+        }
 
-        // Construir fecha actual + hora inicio para reserve_schedule
+        // Crear fecha con hora inicio
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, "0");
         const dd = String(now.getDate()).padStart(2, "0");
-
         // Formato 'YYYY-MM-DD HH:mm:ss'
         const reserve_schedule = `${yyyy}-${mm}-${dd} ${horaInicio}`;
 
@@ -148,16 +152,17 @@ export async function renderDashboardUser(nav, main) {
         };
 
         try {
-          await Api.post("/reservations", payload);
+          await Api.post("/api/reservations", payload);
           showSuccess("Reserva creada con éxito ✅");
+          await loadAvailableFields();
         } catch (err) {
-          console.error("Error al reservar:", err.message);
+          console.error("Error al reservar:", err.message || err);
           showError("Error al reservar ❌");
         }
       });
     });
 
-    // Eventos cancelar reserva
+    // Botones cancelar reserva
     document.querySelectorAll(".cancel-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const idReserve = e.target.dataset.idReserve;
@@ -166,7 +171,7 @@ export async function renderDashboardUser(nav, main) {
         try {
           await Api.delete(`/api/reservations/${idReserve}`);
           alert("Reserva cancelada ✅");
-          await loadAvailableFields(); // recargar canchas para actualizar botones
+          await loadAvailableFields();
         } catch (err) {
           console.error("Error al cancelar reserva:", err.message || err);
           alert("Error al cancelar reserva ❌");
@@ -175,7 +180,7 @@ export async function renderDashboardUser(nav, main) {
     });
   }
 
-  // Función para cargar canchas disponibles al inicio y luego según filtro
+  // Cargar canchas disponibles
   async function loadAvailableFields() {
     try {
       const fields = await Api.get("/api/availability/fields/detailed");
@@ -187,7 +192,7 @@ export async function renderDashboardUser(nav, main) {
     }
   }
 
-  // Al iniciar la vista cargamos las canchas disponibles
+  // Inicializar con canchas disponibles
   await loadAvailableFields();
 
   // Aplicar filtros
@@ -199,7 +204,7 @@ export async function renderDashboardUser(nav, main) {
       let fields = await Api.get("/api/availability/fields/detailed");
 
       if (category) {
-        fields = fields.filter((f) => f.id_game == category);
+        fields = fields.filter((f) => String(f.id_game) === String(category));
       }
       if (availableOnly) {
         fields = fields.filter((f) => f.estado === "available");
@@ -236,11 +241,11 @@ export async function renderDashboardUser(nav, main) {
     loadAvailableFields();
   });
 
-
+  // Logout
   document.getElementById("log-out-user").addEventListener("click", (e) => {
-  e.preventDefault();
-  locaL.delete("active_user");
-  window.location.href = "/skybolt/login";
-});
-
+    e.preventDefault();
+    locaL.delete("active_user");
+    window.location.href = "/skybolt/login";
+  });
 }
+
