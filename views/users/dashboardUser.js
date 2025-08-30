@@ -9,7 +9,7 @@ export async function renderDashboardUser(nav, main) {
   `;
 
   // Contenido principal
-  main.innerHTML = `
+    main.innerHTML = `
     <h2 class="text-xl font-bold mb-4">Hola ${locaL.get("active_user").full_name}</h2>
 
     <button id="openFilterBtn" class="mb-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Filtrar</button>
@@ -44,7 +44,7 @@ export async function renderDashboardUser(nav, main) {
     </div>
 
     <h3 class="text-lg font-semibold mb-2">Canchas disponibles</h3>
-    <div id="fieldsContainer" class="grid gap-4"></div>
+    <div id="fieldsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   `;
 
   let selectedTime = "";
