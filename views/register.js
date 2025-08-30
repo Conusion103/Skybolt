@@ -1,5 +1,6 @@
 import { generalFormat } from "../src/scripts/validationMethods";
 import { Api } from "../src/scripts/methodsApi";
+import { showError, showSuccess } from "../src/scripts/alerts";
 
 // Datos de departamentos con sus municipios y IDs
 export const departamentos = [
@@ -343,14 +344,14 @@ export let renderRegister = (ul, main) => {
         })
         .then((res) => {
           // En tu método Api.request ya devuelves json, no res.ok
-          alert("Usuario registrado correctamente");
+          showSuccess("Usuario registrado correctamente");
         })
         .catch((error) => {
-          alert(error.message);
+          showError(error.message);
         });
     } catch (error) {
       console.error(error.message);
-      alert(error.message);
+      showError(error.message);
     }
   });
 };

@@ -1,3 +1,4 @@
+import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts.js";
 import { Api } from "../../src/scripts/methodsApi.js";
 
 export let renderDashboardAdminRequest = (ul, main) => {
@@ -68,26 +69,29 @@ export let renderDashboardAdminRequest = (ul, main) => {
       }
       container.innerHTML = requests.map(renderRequestCard).join("");
 
-      // Event Listeners - solo en solicitudes pendientes
+      // ✅ Event Listeners usando showConfirm con .then()
       document.querySelectorAll(".approve-request").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
 
-          if (!confirm("✅ Are you sure you want to approve this request?")) return;
+          showConfirm("✅ Are you sure you want to approve this request?")
+            .then((confirmed) => {
+              if (!confirmed) return;
 
-          Api.put(`/api/owner_requests/${id}`, { status: "approved" })
-            .then(() => {
-              const card = btn.closest("div.bg-white");
-              const span = card.querySelector("span");
-              span.textContent = "approved";
-              span.className = "font-medium text-green-600";
+              Api.put(`/api/owner_requests/${id}`, { status: "approved" })
+                .then(() => {
+                  const card = btn.closest("div.bg-white");
+                  const span = card.querySelector("span");
+                  span.textContent = "approved";
+                  span.className = "font-medium text-green-600";
 
-              // Quitar botones
-              card.querySelectorAll("button").forEach((b) => b.remove());
+                  // Quitar botones
+                  card.querySelectorAll("button").forEach((b) => b.remove());
 
-              alert("✅ Request approved!");
-            })
-            .catch((err) => console.error("Error approving request:", err));
+                  showSuccess("✅ Request approved!");
+                })
+                .catch((err) => console.error("Error approving request:", err));
+            });
         });
       });
 
@@ -95,24 +99,28 @@ export let renderDashboardAdminRequest = (ul, main) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
 
-          if (!confirm("❌ Are you sure you want to reject this request?")) return;
+          showConfirm("❌ Are you sure you want to reject this request?")
+            .then((confirmed) => {
+              if (!confirmed) return;
 
-          Api.put(`/api/owner_requests/${id}`, { status: "rejected" })
-            .then(() => {
-              const card = btn.closest("div.bg-white");
-              const span = card.querySelector("span");
-              span.textContent = "rejected";
-              span.className = "font-medium text-red-600";
+              Api.put(`/api/owner_requests/${id}`, { status: "rejected" })
+                .then(() => {
+                  const card = btn.closest("div.bg-white");
+                  const span = card.querySelector("span");
+                  span.textContent = "rejected";
+                  span.className = "font-medium text-red-600";
 
-              // Quitar botones
-              card.querySelectorAll("button").forEach((b) => b.remove());
+                  // Quitar botones
+                  card.querySelectorAll("button").forEach((b) => b.remove());
 
-              alert("❌ Request rejected!");
-            })
-            .catch((err) => console.error("Error rejecting request:", err));
+                  showError("❌ Request rejected!");
+                })
+                .catch((err) => console.error("Error rejecting request:", err));
+            });
         });
       });
     })
     .catch((err) => console.error("Error loading requests:", err));
 };
+
 

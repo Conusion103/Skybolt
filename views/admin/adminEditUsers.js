@@ -2,6 +2,7 @@ import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 import { departamentos } from "../register";
 import { generalFormat } from "../../src/scripts/validationMethods";
+import { showConfirm, showSuccess } from "../../src/scripts/alerts";
 
 export let renderDashboardAdminEditUsers = (ul, main) => {
 
@@ -265,16 +266,22 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
     if (!userID) return;
 
     // Eliminar usuario
-    if (e.target.classList.contains("btn-delete")) {
-      if (!confirm("Delete this user?")) return;
-      Api.delete(`/api/users/${userID}`)
-        .then(() => {
-          usersList = usersList.filter((u) => u.id_user !== userID);
-          renderUsers(usersList);
-          alert("User successfully deleted");
-        })
-        .catch((err) => alert(err.message));
-    }
+if (e.target.classList.contains("btn-delete")) {
+  showConfirm("Delete this user?").then((confirmed) => {
+    if (!confirmed) return;
+
+    Api.delete(`/api/users/${userID}`)
+      .then(() => {
+        usersList = usersList.filter((u) => u.id_user !== userID);
+        renderUsers(usersList);
+        showSuccess("User successfully deleted");
+      })
+      .catch((err) => {
+        showError(err.message);
+      });
+  });
+}
+
     // Editar usuario
     if (e.target.classList.contains("btn-edit")) {
       const userData = usersList.find((u) => u.id_user === userID);
@@ -364,7 +371,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
        // Llamada a la API para actualizar usuario
       Api.put(`/api/users/${userID}`, updatedUser)
         .then(() => {
-          alert("Usuario actualizado correctamente");
+          showSucces("Usuario actualizado correctamente");
           document.getElementById("edit-user-form-container").style.display = "none";
           return Api.get("/api/users");
         })

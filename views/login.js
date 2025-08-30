@@ -1,6 +1,7 @@
 import { Api } from "../src/scripts/methodsApi";
 import bcrypt from "bcryptjs";
 import { locaL } from "../src/scripts/LocalStorage";
+import { showError } from "../src/scripts/alerts";
 export let renderLogin = (ul, main) => {
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
@@ -208,14 +209,14 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 
                         window.dispatchEvent(new PopStateEvent('popstate'));
                     } else {
-                        alert("Contraseña incorrecta");
+                        showError("Contraseña incorrecta");
                     }
                 } else {
-                    alert("Usuario no encontrado");
+                    showError("Usuario no encontrado");
                 }
             })
             .catch(error => {
-                alert("Error al iniciar sesión: " + error.message);
+                showError("Error al iniciar sesión: " + error.message);
             });
 
 

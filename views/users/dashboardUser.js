@@ -1,3 +1,4 @@
+import { showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
@@ -118,10 +119,10 @@ export function renderDashboardUser(nav, main) {
 
         try {
           await Api.post("/reservations", payload);
-          alert("Reserva creada con éxito ✅");
+          showSuccess("Reserva creada con éxito ✅");
         } catch (err) {
           console.error("Error al reservar:", err.message);
-          alert("Error al reservar ❌");
+          showError("Error al reservar ❌");
         }
       });
     });
