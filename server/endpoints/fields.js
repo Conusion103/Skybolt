@@ -50,15 +50,11 @@ router.get('/fields_/:id_field', async (req, res) => {
   const { id_field } = req.params;
 
   try {
-    const [fieldRows] = await pool.query(`
-      SELECT * FROM fields_ WHERE id_field = ?
-    `, [id_field]);
-
+    const [fieldRows] = await pool.query(`SELECT * FROM fields_ WHERE id_field = ?`, [id_field]);
     if (!fieldRows.length) return sendError(res, 404, 'Field no encontrada');
 
     const [availabilities] = await pool.query(`
-      SELECT 
-        a.id_availability, a.estado, a.day_of_week, t.hora_inicio, t.hora_final
+      SELECT a.id_availability, a.estado, a.day_of_week, t.hora_inicio, t.hora_final
       FROM field_availability fa
       JOIN availability a ON fa.id_availability = a.id_availability
       JOIN time_ t ON a.id_tiempo = t.id_tiempo
@@ -74,7 +70,7 @@ router.get('/fields_/:id_field', async (req, res) => {
   }
 });
 
-// ✅ Crear nueva cancha
+// ✅ Crear nueva cancha con disponibilidad por día y hora
 router.post('/fields_', async (req, res) => {
   const {
     name_field,
@@ -82,10 +78,10 @@ router.post('/fields_', async (req, res) => {
     id_game,
     id_owner,
     image_path,
-    availability_ids
+    availability_selection // { Monday: ['09:00:00', ...], ... }
   } = req.body;
 
-  if (!name_field || !id_municipality || !id_game || !Array.isArray(availability_ids)) {
+  if (!name_field || !id_municipality || !id_game || typeof availability_selection !== 'object') {
     return sendError(res, 400, 'Datos incompletos o disponibilidad no válida');
   }
 
@@ -100,22 +96,35 @@ router.post('/fields_', async (req, res) => {
 
     const id_field = result.insertId;
 
-    if (availability_ids.length) {
-      const values = availability_ids.map(id => [id_field, id]);
-      await conn.query(`INSERT INTO field_availability (id_field, id_availability) VALUES ?`, [values]);
+    for (const [day, hours] of Object.entries(availability_selection)) {
+      for (const hour of hours) {
+        const [timeRows] = await conn.query('SELECT id_tiempo FROM time_ WHERE hora_inicio = ?', [hour]);
+        if (!timeRows.length) continue;
+        const id_tiempo = timeRows[0].id_tiempo;
+
+        const [availRows] = await conn.query(`
+          SELECT id_availability FROM availability
+          WHERE day_of_week = ? AND id_tiempo = ? AND estado = 'available'
+        `, [day, id_tiempo]);
+        if (!availRows.length) continue;
+
+        const id_availability = availRows[0].id_availability;
+
+        await conn.query('INSERT INTO field_availability (id_field, id_availability) VALUES (?, ?)', [id_field, id_availability]);
+      }
     }
 
     await conn.commit();
     res.status(201).json({ id_field });
   } catch (err) {
     await conn.rollback();
-    sendError(res, 500, 'Error al crear field', err.message);
+    sendError(res, 500, 'Error al crear cancha', err.message);
   } finally {
     conn.release();
   }
 });
 
-// ✅ Actualizar cancha
+// ✅ Actualizar cancha con disponibilidad por día y hora
 router.put('/fields_/:id_field', async (req, res) => {
   const {
     name_field,
@@ -123,9 +132,13 @@ router.put('/fields_/:id_field', async (req, res) => {
     id_game,
     id_owner,
     image_path,
-    availability_ids
+    availability_selection
   } = req.body;
   const { id_field } = req.params;
+
+  if (!name_field || !id_municipality || !id_game || typeof availability_selection !== 'object') {
+    return sendError(res, 400, 'Datos incompletos o disponibilidad no válida');
+  }
 
   const conn = await pool.getConnection();
   try {
@@ -143,10 +156,24 @@ router.put('/fields_/:id_field', async (req, res) => {
       WHERE id_field = ?
     `, [name_field, id_municipality, id_game, id_owner || null, image_path || null, id_field]);
 
-    if (Array.isArray(availability_ids)) {
-      await conn.query('DELETE FROM field_availability WHERE id_field = ?', [id_field]);
-      const values = availability_ids.map(id => [id_field, id]);
-      await conn.query('INSERT INTO field_availability (id_field, id_availability) VALUES ?', [values]);
+    await conn.query('DELETE FROM field_availability WHERE id_field = ?', [id_field]);
+
+    for (const [day, hours] of Object.entries(availability_selection)) {
+      for (const hour of hours) {
+        const [timeRows] = await conn.query('SELECT id_tiempo FROM time_ WHERE hora_inicio = ?', [hour]);
+        if (!timeRows.length) continue;
+        const id_tiempo = timeRows[0].id_tiempo;
+
+        const [availRows] = await conn.query(`
+          SELECT id_availability FROM availability
+          WHERE day_of_week = ? AND id_tiempo = ? AND estado = 'available'
+        `, [day, id_tiempo]);
+        if (!availRows.length) continue;
+
+        const id_availability = availRows[0].id_availability;
+
+        await conn.query('INSERT INTO field_availability (id_field, id_availability) VALUES (?, ?)', [id_field, id_availability]);
+      }
     }
 
     await conn.commit();
@@ -221,5 +248,6 @@ router.get('/fields_/available', async (req, res) => {
 });
 
 export default router;
+
 
 
