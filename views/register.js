@@ -344,6 +344,7 @@ export let renderRegister = (ul, main) => {
         })
         .then((res) => {
           // En tu método Api.request ya devuelves json, no res.ok
+          window.location.href = "/skybolt/login";
           showSuccess("Usuario registrado correctamente");
         })
         .catch((error) => {
