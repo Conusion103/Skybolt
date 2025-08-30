@@ -2,7 +2,7 @@ import { showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
-export function renderDashboardUser(nav, main) {
+export async function renderDashboardUser(nav, main) {
   // Navegación
   nav.innerHTML = `
     <a href="/skybolt/dashboarduser/profile" data-link class="text-green-600 font-semibold">Profile</a>
@@ -68,48 +68,78 @@ export function renderDashboardUser(nav, main) {
   });
 
   // Cargar categorías dinámicas
-  Api.get("/api/games")
-    .then((games) => {
-      const select = document.getElementById("categorySelect");
-      select.innerHTML += games
-        .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
-        .join("");
-    })
-    .catch(console.error);
+  try {
+    const games = await Api.get("/api/games");
+    const select = document.getElementById("categorySelect");
+    select.innerHTML += games
+      .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
+      .join("");
+  } catch (err) {
+    console.error("Error cargando categorías:", err);
+  }
 
-  // Renderizar canchas
-  function renderFields(fields) {
+  // Función para cargar reservas activas del usuario
+  async function loadUserReservations() {
+    const user = locaL.get("active_user");
+    try {
+      const reservations = await Api.get("/api/reservations/full");
+      return reservations.filter(r => r.id_user === user.id_user);
+    } catch (err) {
+      console.error("Error cargando reservas del usuario:", err);
+      return [];
+    }
+  }
+
+  // Renderizar canchas con lógica para reservar/cancelar
+  async function renderFields(fields) {
+    const userReservations = await loadUserReservations();
+
     const container = document.getElementById("fieldsContainer");
     container.innerHTML = fields.length
       ? fields
-          .map(
-            (f) => `
-          <article class="bg-white shadow rounded-lg p-4">
-            <h3 class="font-bold text-green-600">${f.field_name}</h3>
-            <p class="text-sm text-gray-600">${f.municipality_name}, ${f.department_name}</p>
-            <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
-            <p class="text-sm">Estado: ${f.estado}</p>
-            <p class="text-sm">Reservas: ${f.num_reservations}</p>
-            <button data-id="${f.id_field || ""}"
-              class="reserve-btn mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
-          </article>
-        `
-          )
+          .map((f) => {
+            // Buscar si usuario tiene reserva en esta cancha
+            const reservation = userReservations.find(r => r.id_field === f.id_field);
+            if (reservation) {
+              return `
+                <article class="bg-white shadow rounded-lg p-4">
+                  <h3 class="font-bold text-green-600">${f.name_field}</h3>
+                  <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
+                  <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
+                  <p class="text-sm">Estado: ${f.estado}</p>
+                  <button data-id-reserve="${reservation.id_reserve}" class="cancel-btn mt-2 w-full bg-red-500 text-white py-1 rounded-lg hover:bg-red-600 transition">Cancelar Reserva</button>
+                </article>
+              `;
+            } else {
+              return `
+                <article class="bg-white shadow rounded-lg p-4">
+                  <h3 class="font-bold text-green-600">${f.name_field}</h3>
+                  <p class="text-sm text-gray-600">${f.name_municipality}, ${f.name_department}</p>
+                  <p class="text-sm">Día: ${f.day_of_week} - ${f.hora_inicio} a ${f.hora_final}</p>
+                  <p class="text-sm">Estado: ${f.estado}</p>
+                  <button data-id-field="${f.id_field}" data-hour-start="${f.hora_inicio}" class="reserve-btn mt-2 w-full bg-green-500 text-white py-1 rounded-lg hover:bg-green-600 transition">Reservar</button>
+                </article>
+              `;
+            }
+          })
           .join("")
       : "<p>No se encontraron resultados</p>";
 
-    // Añadir eventos a los botones de reserva
+    // Eventos reservar
     document.querySelectorAll(".reserve-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
-        const idField = e.target.dataset.id;
+        const idField = e.target.dataset.idField;
+        const horaInicio = e.target.dataset.hourStart;
         const user = locaL.get("active_user");
 
-        // Aquí pedimos el horario (ejemplo simple con prompt, se puede mejorar con un input datetime-local en modal)
-        const reserve_schedule = prompt(
-          "Ingrese fecha y hora de la reserva (YYYY-MM-DD HH:MM:SS):"
-        );
+        // Construir fecha actual + hora inicio para reserve_schedule
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
 
-        if (!reserve_schedule) return alert("Debes ingresar una fecha y hora");
+        // Formato 'YYYY-MM-DD HH:mm:ss'
+        const reserve_schedule = `${yyyy}-${mm}-${dd} ${horaInicio}`;
 
         const payload = {
           reserve_schedule,
@@ -126,39 +156,72 @@ export function renderDashboardUser(nav, main) {
         }
       });
     });
+
+    // Eventos cancelar reserva
+    document.querySelectorAll(".cancel-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const idReserve = e.target.dataset.idReserve;
+        if (!confirm("¿Seguro que quieres cancelar la reserva?")) return;
+
+        try {
+          await Api.delete(`/api/reservations/${idReserve}`);
+          alert("Reserva cancelada ✅");
+          await loadAvailableFields(); // recargar canchas para actualizar botones
+        } catch (err) {
+          console.error("Error al cancelar reserva:", err.message || err);
+          alert("Error al cancelar reserva ❌");
+        }
+      });
+    });
   }
 
+  // Función para cargar canchas disponibles al inicio y luego según filtro
+  async function loadAvailableFields() {
+    try {
+      const fields = await Api.get("/api/availability/fields/detailed");
+      const availableFields = fields.filter((f) => f.estado === "available");
+      await renderFields(availableFields);
+    } catch (err) {
+      console.error("Error al cargar canchas disponibles:", err);
+      document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
+    }
+  }
+
+  // Al iniciar la vista cargamos las canchas disponibles
+  await loadAvailableFields();
+
   // Aplicar filtros
-  document.getElementById("applyFilterBtn").addEventListener("click", () => {
+  document.getElementById("applyFilterBtn").addEventListener("click", async () => {
     const category = document.getElementById("categorySelect").value;
     const availableOnly = document.getElementById("availabilityToggle").checked;
 
-    Api.get("/api/fields/disponibilidad")
-      .then((fields) => {
-        let filtered = fields;
+    try {
+      let fields = await Api.get("/api/availability/fields/detailed");
 
-        if (category) filtered = filtered.filter((f) => f.id_game == category);
-        if (availableOnly) filtered = filtered.filter((f) => f.estado === "available");
+      if (category) {
+        fields = fields.filter((f) => f.id_game == category);
+      }
+      if (availableOnly) {
+        fields = fields.filter((f) => f.estado === "available");
+      }
+      if (selectedTime) {
+        const timeRanges = {
+          morning: { start: "06:00:00", end: "12:00:00" },
+          afternoon: { start: "12:00:01", end: "18:00:00" },
+          night: { start: "18:00:01", end: "23:59:59" },
+        };
+        const { start, end } = timeRanges[selectedTime];
+        fields = fields.filter(
+          (f) => f.hora_inicio >= start && f.hora_final <= end
+        );
+      }
 
-        if (selectedTime) {
-          const timeRanges = {
-            morning: { start: "06:00:00", end: "12:00:00" },
-            afternoon: { start: "12:00:01", end: "18:00:00" },
-            night: { start: "18:00:01", end: "23:59:59" },
-          };
-          const { start, end } = timeRanges[selectedTime];
-          filtered = filtered.filter(
-            (f) => f.hora_inicio >= start && f.hora_final <= end
-          );
-        }
-
-        renderFields(filtered);
-        filterPanel.classList.add("hidden");
-      })
-      .catch((err) => {
-        console.error(err);
-        document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
-      });
+      await renderFields(fields);
+      filterPanel.classList.add("hidden");
+    } catch (err) {
+      console.error(err);
+      document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
+    }
   });
 
   // Limpiar filtros
@@ -170,12 +233,14 @@ export function renderDashboardUser(nav, main) {
     document.querySelectorAll(".time-btn").forEach((b) =>
       b.classList.remove("bg-green-400", "text-white")
     );
+    loadAvailableFields();
   });
 
-  // Logout
+
   document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
-    history.pushState(null, null, "/skybolt/login");
-  });
+  e.preventDefault();
+  locaL.delete("active_user");
+  window.location.href = "/skybolt/login";
+});
+
 }
