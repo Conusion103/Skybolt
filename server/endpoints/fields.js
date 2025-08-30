@@ -1,42 +1,10 @@
-// endpoints/fields.js
 import express from 'express';
 import { pool } from '../conexion_db.js';
 import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// router.get('/fields_', async (_req, res) => {
-//   try {
-//     const [rows] = await pool.query('SELECT * FROM fields_');
-//     res.json(rows);
-//   } catch (err) {
-//     sendError(res, 500, 'Error al obtener fields_', err.message);
-//   }
-// });
-// router.get('/fields_', async (_req, res) => {
-//   try {
-//     const [rows] = await pool.query(`
-//       SELECT
-//         f.id_field,
-//         f.name_field,
-//         g.name_game,
-//         m.name_municipality,
-//         a.estado AS availability,
-//         f.id_owner,
-//         f.image_path,
-//         f.created_at,
-//         f.updated_at
-//       FROM fields_ f
-//       LEFT JOIN games g ON f.id_game = g.id_game
-//       LEFT JOIN municipalities m ON f.id_municipality = m.id_municipality
-//       LEFT JOIN availability a ON f.id_availability = a.id_availability
-//     `);
-//     res.json(rows);
-//   } catch (err) {
-//     sendError(res, 500, 'Error al obtener fields_', err.message);
-//   }
-// });
-
+// Obtener todas las canchas con información básica y joins
 router.get('/fields_', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -64,32 +32,7 @@ router.get('/fields_', async (_req, res) => {
   }
 });
 
-
-// router.get('/fields/availability', async (_req, res) => {
-//   try {
-//     const [rows] = await pool.query(`
-//       SELECT 
-//         f.id_field,
-//         f.name_field,
-//         g.name_game,
-//         m.name_municipality,
-//         a.day_of_week,
-//         t.hora_inicio,
-//         t.hora_final,
-//         a.estado
-//       FROM fields_ f
-//       JOIN municipalities m ON f.id_municipality = m.id_municipality
-//       JOIN games g ON f.id_game = g.id_game
-//       JOIN availability a ON f.id_availability = a.id_availability
-//       JOIN time_ t ON a.id_tiempo = t.id_tiempo
-//       WHERE a.estado = 'available';
-//     `);
-//     res.json(rows);
-//   } catch (err) {
-//     sendError(res, 500, 'Error al obtener canchas disponibles', err.message);
-//   }
-// });
-
+// Obtener canchas detalladas con joins adicionales
 router.get('/fields/detailed', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -119,8 +62,7 @@ router.get('/fields/detailed', async (_req, res) => {
   }
 });
 
-
-
+// Obtener cancha específica por ID
 router.get('/fields_/:id_field', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM fields_ WHERE id_field = ?', [req.params.id_field]);
@@ -131,6 +73,7 @@ router.get('/fields_/:id_field', async (req, res) => {
   }
 });
 
+// Crear cancha nueva
 router.post('/fields_', async (req, res) => {
   const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
   if (!name_field || !id_municipality || !id_game || !id_availability) {
@@ -148,6 +91,7 @@ router.post('/fields_', async (req, res) => {
   }
 });
 
+// Actualizar cancha existente
 router.put('/fields_/:id_field', async (req, res) => {
   const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
   try {
@@ -174,6 +118,7 @@ router.put('/fields_/:id_field', async (req, res) => {
   }
 });
 
+// Eliminar cancha
 router.delete('/fields_/:id_field', async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM fields_ WHERE id_field = ?', [req.params.id_field]);
@@ -185,5 +130,48 @@ router.delete('/fields_/:id_field', async (req, res) => {
 });
 
 
+// NUEVO ENDPOINT: Obtener canchas disponibles en un datetime específico
+// GET /fields_/available?datetime=2025-08-30T15:00:00
+router.get('/fields_/available', async (req, res) => {
+  const { datetime } = req.query;
+  if (!datetime) return sendError(res, 400, 'datetime es requerido en formato ISO');
+
+  try {
+    const requestedDate = new Date(datetime);
+    if (isNaN(requestedDate)) return sendError(res, 400, 'datetime inválido');
+
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayOfWeek = daysOfWeek[requestedDate.getUTCDay()];
+
+    const timeString = requestedDate.toISOString().substr(11, 8);
+
+    const query = `
+      SELECT f.id_field, f.name_field, g.name_game, m.name_municipality,
+             a.day_of_week, t.hora_inicio, t.hora_final, a.estado,
+             f.id_owner, f.image_path
+      FROM fields_ f
+      JOIN availability a ON f.id_availability = a.id_availability
+      JOIN time_ t ON a.id_tiempo = t.id_tiempo
+      JOIN games g ON f.id_game = g.id_game
+      JOIN municipalities m ON f.id_municipality = m.id_municipality
+      WHERE a.estado = 'available'
+        AND a.day_of_week = ?
+        AND t.hora_inicio <= ?
+        AND t.hora_final > ?
+        AND f.id_field NOT IN (
+          SELECT r.id_field
+          FROM reservations r
+          WHERE r.reserve_schedule = ?
+        )
+    `;
+
+    const [rows] = await pool.query(query, [dayOfWeek, timeString, timeString, datetime]);
+    res.json(rows);
+  } catch (err) {
+    console.error('Error en /fields_/available:', err);
+    sendError(res, 500, 'Error al obtener canchas disponibles', err.message);
+  }
+});
 
 export default router;
+

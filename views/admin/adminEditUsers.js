@@ -2,6 +2,7 @@ import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 import { departamentos } from "../register";
 import { generalFormat } from "../../src/scripts/validationMethods";
+import { showConfirm, showSuccess } from "../../src/scripts/alerts";
 
 export let renderDashboardAdminEditUsers = (ul, main) => {
 
@@ -57,7 +58,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   main.innerHTML = `
     <section class="p-6 sm:p-6">
        <h2 class="text-lg sm:text-2xl font-bold text-green-600 mb-4 text-center sm:text-left">
-        Hello Admin, you are editing users: ${locaL.get("active_user").full_name}
+        Hello ${locaL.get("active_user").full_name}, you are editing users
       </h2>
 
        <input type="text" id="user-search" placeholder="Search by email..."
@@ -145,7 +146,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
         </div>
       </div>
       <!-- MODAL VER MÁS -->
-
+      
       <div id="modal-user" class="fixed inset-0  bg-opacity-50 hidden flex items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
         <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
           <h3 class="text-xl font-bold text-green-600 mb-4">User Details</h3>
@@ -216,38 +217,35 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
 
   // ---------- RENDER USERS ----------
   const renderUsers = (data) => {
-    const tbody = document.getElementById("user-table-body");
-    tbody.innerHTML = "";
-    // Filtra solo los usuarios con rol 'user'
-    const onlyUsers = data.filter((u) =>
-      u.roles.some((r) => r.name_role === "user")
-    );
+  const tbody = document.getElementById("user-table-body");
+  tbody.innerHTML = "";
+  // Solo usuarios donde primer rol es 'user'
+  const onlyUsers = data.filter((u) =>
+    u.roles.length > 0 && u.roles[0].name_role === "user"
+  );
 
-    if (onlyUsers.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">There are no users with role <strong>user</strong>.</td></tr>`;
-      return;
-    }
-    // Crea las filas de la tabla
-    onlyUsers.forEach((user) => {
-      const row = document.createElement("tr");
-      row.classList.add("border-b", "hover:bg-gray-50");
+  if (onlyUsers.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">There are no users with role <strong>user</strong>.</td></tr>`;
+    return;
+  }
+  onlyUsers.forEach((user) => {
+    const row = document.createElement("tr");
+    row.classList.add("border-b", "hover:bg-gray-50");
 
-      row.innerHTML = `
-        <td class="px-4 py-2">${user.id_user}</td>
-        <td class="px-4 py-2">${user.full_name}</td>
-        <td class="px-4 py-2">${user.email}</td>
-        <td class="px-4 py-2">${user.phone}</td>
-        <!--- <td class="px-4 py-2">${user.roles.map(r => r.name_role).join(", ")}</td>--->
-
-        <td class="px-4 py-2 text-center">
-          <button class="btn-view bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition" data-id="${user.id_user}">See more</button>
-          <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">Edit</button>
-          <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" data-id="${user.id_user}">Delete</button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
-  };
+    row.innerHTML = `
+      <td class="px-4 py-2">${user.id_user}</td>
+      <td class="px-4 py-2">${user.full_name}</td>
+      <td class="px-4 py-2">${user.email}</td>
+      <td class="px-4 py-2">${user.phone}</td>
+      <td class="px-4 py-2 text-center">
+        <button class="btn-view bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition" data-id="${user.id_user}">🔍</button>
+        <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition" data-id="${user.id_user}">✏️</button>
+        <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition" data-id="${user.id_user}">🗑️</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+};
 
   // ---------- SEARCH ----------
   document.getElementById("user-search").addEventListener("input", (e) => {
@@ -265,59 +263,88 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
     if (!userID) return;
 
     // Eliminar usuario
-    if (e.target.classList.contains("btn-delete")) {
-      if (!confirm("Delete this user?")) return;
-      Api.delete(`/api/users/${userID}`)
-        .then(() => {
-          usersList = usersList.filter((u) => u.id_user !== userID);
-          renderUsers(usersList);
-          alert("User successfully deleted");
-        })
-        .catch((err) => alert(err.message));
-    }
+if (e.target.classList.contains("btn-delete")) {
+  showConfirm("Delete this user?").then((confirmed) => {
+    if (!confirmed) return;
+
+    Api.delete(`/api/users/${userID}`)
+      .then(() => {
+        usersList = usersList.filter((u) => u.id_user !== userID);
+        renderUsers(usersList);
+        showSuccess("User successfully deleted");
+      })
+      .catch((err) => {
+        showError(err.message);
+      });
+  });
+}
+
     // Editar usuario
     if (e.target.classList.contains("btn-edit")) {
-      const userData = usersList.find((u) => u.id_user === userID);
-      if (!userData) return;
+  const userData = usersList.find((u) => u.id_user === userID);
+  if (!userData) return;
 
-      // Llenar formulario de edición
-      document.getElementById("edit-user-id").value = userData.id_user;
-      document.getElementById("edit-full_name").value = userData.full_name;
-      document.getElementById("edit-email").value = userData.email;
-      document.getElementById("edit-phone").value = userData.phone || "";
-      document.getElementById("edit-birthdate").value = userData.birthdate?.split("T")[0] || "";
-      document.getElementById("edit-document_type").value = userData.document_type;
-      document.getElementById("edit-id_document").value = userData.id_document;
-      document.getElementById("edit-id_department").value = userData.id_department;
-      loadMunicipalities(userData.id_department);
-      document.getElementById("edit-id_municipality").value = userData.id_municipality;
-      document.getElementById("edit-rol").value = userData.roles[0]?.name_role || "";
-      document.getElementById("edit-password_").value = "";
+  document.getElementById("edit-user-id").value = userData.id_user;
+  document.getElementById("edit-full_name").value = userData.full_name;
+  document.getElementById("edit-email").value = userData.email;
+  document.getElementById("edit-phone").value = userData.phone || "";
+  document.getElementById("edit-birthdate").value = userData.birthdate?.split("T")[0] || "";
+  document.getElementById("edit-document_type").value = userData.document_type;
+  document.getElementById("edit-id_document").value = userData.id_document;
+  document.getElementById("edit-id_department").value = userData.id_department;
 
-      document.getElementById("edit-user-form-container").classList.remove("hidden");
-    }
+  // Carga municipios y selecciona el correcto
+  loadMunicipalities(userData.id_department, userData.id_municipality);
+
+  document.getElementById("edit-rol").value = userData.roles[0]?.name_role || "";
+  document.getElementById("edit-password_").value = "";
+
+  document.getElementById("edit-user-form-container").classList.remove("hidden");
+}
     // Ver detalles del usuario
     if (e.target.classList.contains("btn-view")) {
-      const userData = usersList.find((u) => u.id_user === userID);
-      if (!userData) return;
+  const userData = usersList.find((u) => u.id_user === userID);
+  if (!userData) return;
 
-      const depName = getDepartmentName(userData.id_department);
-      const munName = getMunicipalityName(userData.id_department, userData.id_municipality);
+  let depName = "Unknown";
+  let munName = "Unknown";
 
-      // Rellenar modal con información
-      document.getElementById("modal-user-content").innerHTML = `
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" ><strong>ID:</strong> ${userData.id_user}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Name:</strong> ${userData.full_name}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Email:</strong> ${userData.email}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Phone:</strong> ${userData.phone || "N/A"}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Birthday:</strong> ${userData.birthdate?.split("T")[0] || "N/A"}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>${userData.document_type}:</strong> ${userData.id_document}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Location:</strong> ${depName} - ${munName}</p>
-        <p class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"><strong>Roles:</strong> ${userData.roles.map(r => r.name_role).join(", ")}</p>
-      `;
-      document.getElementById("modal-user").classList.remove("hidden");
-      document.getElementById("modal-user").classList.add("flex");
-    }
+  if (userData.id_municipality) {
+    Api.get(`/api/municipalities/${userData.id_municipality}`)
+      .then((muni) => {
+        munName = muni?.name_municipality || "Unknown";
+        if (muni?.id_department) {
+          Api.get(`/api/departments/${muni.id_department}`)
+            .then(dep => {
+              depName = dep?.name_department || "Unknown";
+              mostrarModalUser(userData, depName, munName);
+            })
+            .catch(() => mostrarModalUser(userData, depName, munName));
+        } else {
+          mostrarModalUser(userData, depName, munName);
+        }
+      })
+      .catch(() => mostrarModalUser(userData, depName, munName));
+  } else {
+    mostrarModalUser(userData, depName, munName);
+  }
+}
+
+// Helper para mostrar el modal
+function mostrarModalUser(userData, depName, munName) {
+  document.getElementById("modal-user-content").innerHTML = `
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>ID:</strong> ${userData.id_user}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Name:</strong> ${userData.full_name}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Email:</strong> ${userData.email}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Phone:</strong> ${userData.phone || "N/A"}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Birthday:</strong> ${userData.birthdate?.split("T")[0] || "N/A"}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>${userData.document_type}:</strong> ${userData.id_document}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Location:</strong> ${depName} - ${munName}</p>
+    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Roles:</strong> ${userData.roles[0]?.name_role || ""}</p>
+  `;
+  document.getElementById("modal-user").classList.remove("hidden");
+  document.getElementById("modal-user").classList.add("flex");
+}
   });
 
   // ---------- CANCEL EDIT ----------
@@ -364,7 +391,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
        // Llamada a la API para actualizar usuario
       Api.put(`/api/users/${userID}`, updatedUser)
         .then(() => {
-          alert("Usuario actualizado correctamente");
+          showSucces("Usuario actualizado correctamente");
           document.getElementById("edit-user-form-container").style.display = "none";
           return Api.get("/api/users");
         })
@@ -386,18 +413,6 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   });
 
   // ---------- HELPERS ----------
-    // Obtiene el nombre del departamento
-  const getDepartmentName = (id) => {
-    const dep = departamentos.find((d) => d.id === Number(id));
-    return dep ? dep.name : "Unknown";
-  };
-   // Obtiene el nombre del municipio
-  const getMunicipalityName = (depId, muniId) => {
-    const dep = departamentos.find((d) => d.id === Number(depId));
-    if (!dep) return "Unknown";
-    const muni = dep.municipios.find((m) => m.id === Number(muniId));
-    return muni ? muni.name : "Unknown";
-  };
   // Carga los municipios en el select según departamento seleccionado
   const loadMunicipalities = (depId) => {
     const select = document.getElementById("edit-id_municipality");
