@@ -4,134 +4,181 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// Obtener todas las canchas con información básica y joins
+// ✅ Obtener todas las canchas con JOIN y disponibilidades
 router.get('/fields_', async (_req, res) => {
   try {
-    const [rows] = await pool.query(`
-      SELECT
-        f.id_field,
-        f.name_field,
-        f.id_game,
-        g.name_game,
-        f.id_municipality,
-        m.name_municipality,
-        f.id_availability,
-        a.estado AS availability,
-        f.id_owner,
-        f.image_path,
-        f.created_at,
-        f.updated_at
+    const [fields] = await pool.query(`
+      SELECT 
+        f.id_field, f.name_field, f.id_game, g.name_game,
+        f.id_municipality, m.name_municipality,
+        f.id_owner, f.image_path,
+        f.created_at, f.updated_at
       FROM fields_ f
-      LEFT JOIN games g ON f.id_game = g.id_game
-      LEFT JOIN municipalities m ON f.id_municipality = m.id_municipality
-      LEFT JOIN availability a ON f.id_availability = a.id_availability
+      JOIN games g ON f.id_game = g.id_game
+      JOIN municipalities m ON f.id_municipality = m.id_municipality
     `);
-    res.json(rows);
+
+    const [availabilities] = await pool.query(`
+      SELECT 
+        fa.id_field, a.id_availability, a.estado, a.day_of_week, t.hora_inicio, t.hora_final
+      FROM field_availability fa
+      JOIN availability a ON fa.id_availability = a.id_availability
+      JOIN time_ t ON a.id_tiempo = t.id_tiempo
+    `);
+
+    const merged = fields.map(f => ({
+      ...f,
+      availability: availabilities
+        .filter(a => a.id_field === f.id_field)
+        .map(a => ({
+          id_availability: a.id_availability,
+          estado: a.estado,
+          day_of_week: a.day_of_week,
+          hora_inicio: a.hora_inicio,
+          hora_final: a.hora_final
+        }))
+    }));
+
+    res.json(merged);
   } catch (err) {
     sendError(res, 500, 'Error al obtener fields_', err.message);
   }
 });
 
-// Obtener canchas detalladas con joins adicionales
-router.get('/fields/detailed', async (_req, res) => {
-  try {
-    const [rows] = await pool.query(`
-      SELECT 
-        f.id_field,
-        f.name_field,
-        f.id_game,
-        g.name_game,
-        f.id_municipality,
-        m.name_municipality,
-        f.id_availability,
-        a.day_of_week,
-        t.hora_inicio,
-        t.hora_final,
-        a.estado,
-        f.id_owner,
-        f.image_path
-      FROM fields_ f
-      JOIN games g ON f.id_game = g.id_game
-      JOIN municipalities m ON f.id_municipality = m.id_municipality
-      JOIN availability a ON f.id_availability = a.id_availability
-      JOIN time_ t ON a.id_tiempo = t.id_tiempo
-    `);
-    res.json(rows);
-  } catch (err) {
-    sendError(res, 500, 'Error al obtener canchas detalladas', err.message);
-  }
-});
-
-// Obtener cancha específica por ID
+// ✅ Obtener cancha por ID
 router.get('/fields_/:id_field', async (req, res) => {
+  const { id_field } = req.params;
+
   try {
-    const [rows] = await pool.query('SELECT * FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!rows.length) return sendError(res, 404, 'Field no encontrada');
-    res.json(rows[0]);
+    const [fieldRows] = await pool.query(`
+      SELECT * FROM fields_ WHERE id_field = ?
+    `, [id_field]);
+
+    if (!fieldRows.length) return sendError(res, 404, 'Field no encontrada');
+
+    const [availabilities] = await pool.query(`
+      SELECT 
+        a.id_availability, a.estado, a.day_of_week, t.hora_inicio, t.hora_final
+      FROM field_availability fa
+      JOIN availability a ON fa.id_availability = a.id_availability
+      JOIN time_ t ON a.id_tiempo = t.id_tiempo
+      WHERE fa.id_field = ?
+    `, [id_field]);
+
+    res.json({
+      ...fieldRows[0],
+      availability: availabilities
+    });
   } catch (err) {
     sendError(res, 500, 'Error al obtener field', err.message);
   }
 });
 
-// Crear cancha nueva
+// ✅ Crear nueva cancha
 router.post('/fields_', async (req, res) => {
-  const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
-  if (!name_field || !id_municipality || !id_game || !id_availability) {
-    return sendError(res, 400, 'name_field, id_municipality, id_game e id_availability son requeridos');
+  const {
+    name_field,
+    id_municipality,
+    id_game,
+    id_owner,
+    image_path,
+    availability_ids
+  } = req.body;
+
+  if (!name_field || !id_municipality || !id_game || !Array.isArray(availability_ids)) {
+    return sendError(res, 400, 'Datos incompletos o disponibilidad no válida');
   }
+
+  const conn = await pool.getConnection();
   try {
-    const [result] = await pool.query(
-      `INSERT INTO fields_ (name_field, id_municipality, id_game, id_availability, id_owner, image_path)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name_field, id_municipality, id_game, id_availability, id_owner || null, image_path || null]
-    );
-    res.status(201).json({ id_field: result.insertId });
+    await conn.beginTransaction();
+
+    const [result] = await conn.query(`
+      INSERT INTO fields_ (name_field, id_municipality, id_game, id_owner, image_path)
+      VALUES (?, ?, ?, ?, ?)
+    `, [name_field, id_municipality, id_game, id_owner || null, image_path || null]);
+
+    const id_field = result.insertId;
+
+    if (availability_ids.length) {
+      const values = availability_ids.map(id => [id_field, id]);
+      await conn.query(`INSERT INTO field_availability (id_field, id_availability) VALUES ?`, [values]);
+    }
+
+    await conn.commit();
+    res.status(201).json({ id_field });
   } catch (err) {
+    await conn.rollback();
     sendError(res, 500, 'Error al crear field', err.message);
+  } finally {
+    conn.release();
   }
 });
 
-// Actualizar cancha existente
+// ✅ Actualizar cancha
 router.put('/fields_/:id_field', async (req, res) => {
-  const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
+  const {
+    name_field,
+    id_municipality,
+    id_game,
+    id_owner,
+    image_path,
+    availability_ids
+  } = req.body;
+  const { id_field } = req.params;
+
+  const conn = await pool.getConnection();
   try {
-    const [currRows] = await pool.query('SELECT * FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!currRows.length) return sendError(res, 404, 'Field no encontrada');
-    const curr = currRows[0];
-    const [result] = await pool.query(
-      `UPDATE fields_ SET name_field = ?, id_municipality = ?, id_game = ?, id_availability = ?, id_owner = ?, image_path = ?
-       WHERE id_field = ?`,
-      [
-        name_field ?? curr.name_field,
-        id_municipality ?? curr.id_municipality,
-        id_game ?? curr.id_game,
-        id_availability ?? curr.id_availability,
-        (id_owner === undefined ? curr.id_owner : id_owner),
-        image_path ?? curr.image_path,
-        req.params.id_field
-      ]
-    );
-    if (!result.affectedRows) return sendError(res, 404, 'Field no encontrada');
+    await conn.beginTransaction();
+
+    const [exists] = await conn.query('SELECT * FROM fields_ WHERE id_field = ?', [id_field]);
+    if (!exists.length) {
+      await conn.rollback();
+      return sendError(res, 404, 'Cancha no encontrada');
+    }
+
+    await conn.query(`
+      UPDATE fields_
+      SET name_field = ?, id_municipality = ?, id_game = ?, id_owner = ?, image_path = ?
+      WHERE id_field = ?
+    `, [name_field, id_municipality, id_game, id_owner || null, image_path || null, id_field]);
+
+    if (Array.isArray(availability_ids)) {
+      await conn.query('DELETE FROM field_availability WHERE id_field = ?', [id_field]);
+      const values = availability_ids.map(id => [id_field, id]);
+      await conn.query('INSERT INTO field_availability (id_field, id_availability) VALUES ?', [values]);
+    }
+
+    await conn.commit();
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al actualizar field', err.message);
+    await conn.rollback();
+    sendError(res, 500, 'Error al actualizar cancha', err.message);
+  } finally {
+    conn.release();
   }
 });
 
-// Eliminar cancha
+// ✅ Eliminar cancha
 router.delete('/fields_/:id_field', async (req, res) => {
+  const { id_field } = req.params;
+  const conn = await pool.getConnection();
   try {
-    const [result] = await pool.query('DELETE FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!result.affectedRows) return sendError(res, 404, 'Field no encontrada');
+    await conn.beginTransaction();
+    await conn.query('DELETE FROM field_availability WHERE id_field = ?', [id_field]);
+    const [result] = await conn.query('DELETE FROM fields_ WHERE id_field = ?', [id_field]);
+    await conn.commit();
+    if (!result.affectedRows) return sendError(res, 404, 'Cancha no encontrada');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al eliminar field', err.message);
+    await conn.rollback();
+    sendError(res, 500, 'Error al eliminar cancha', err.message);
+  } finally {
+    conn.release();
   }
 });
 
-
-// NUEVO ENDPOINT: Obtener canchas disponibles en un datetime específico
-// GET /fields_/available?datetime=2025-08-30T15:00:00
+// ✅ Obtener canchas disponibles en un datetime
 router.get('/fields_/available', async (req, res) => {
   const { datetime } = req.query;
   if (!datetime) return sendError(res, 400, 'datetime es requerido en formato ISO');
@@ -142,7 +189,6 @@ router.get('/fields_/available', async (req, res) => {
 
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayOfWeek = daysOfWeek[requestedDate.getUTCDay()];
-
     const timeString = requestedDate.toISOString().substr(11, 8);
 
     const query = `
@@ -150,7 +196,8 @@ router.get('/fields_/available', async (req, res) => {
              a.day_of_week, t.hora_inicio, t.hora_final, a.estado,
              f.id_owner, f.image_path
       FROM fields_ f
-      JOIN availability a ON f.id_availability = a.id_availability
+      JOIN field_availability fa ON f.id_field = fa.id_field
+      JOIN availability a ON fa.id_availability = a.id_availability
       JOIN time_ t ON a.id_tiempo = t.id_tiempo
       JOIN games g ON f.id_game = g.id_game
       JOIN municipalities m ON f.id_municipality = m.id_municipality
@@ -174,4 +221,5 @@ router.get('/fields_/available', async (req, res) => {
 });
 
 export default router;
+
 
