@@ -59,50 +59,49 @@ export let renderDashboardUserProfile = (ul, main) => {
   });
 
   main.innerHTML = `
-    <section class="p-6 max-w-md mx-auto">
-      <h1 class="text-2xl font-semibold mb-6">Profile</h1>
+    <section class="p-4 sm:p-6 max-w-full sm:max-w-md mx-auto">
+      <h1 class="text-2xl font-semibold mb-6 text-center sm:text-left">Profile</h1>
+
       <div class="flex flex-col items-center text-center">
         <img src="${image}" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md" />
-        <h2 class="text-lg font-bold">${activeUser.full_name}</h2>
-        <p class="text-gray-600 text-sm">${activeUser.email || "No email"}</p>
+        <h2 class="text-lg font-bold break-words">${activeUser.full_name}</h2>
+        <p class="text-gray-600 text-sm break-words">${activeUser.email}</p>
         <p class="text-gray-600 text-sm">CR: ${activeUser.id_user}</p>
-        <p class="text-gray-500 text-sm">User: ${activeUser.roles?.[0]?.name_role || "N/A"}</p>
+        <p class="text-gray-500 text-sm">User: ${activeUser.roles?.[0]?.name_role}</p>
       </div>
 
+      <div class="flex flex-row justify-around items-center gap-6 mt-6">
+        <!-- Reservas -->
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
+            <img src="../../img/bookings.png" alt="Reservations Icon" class="w-8 h-8" />
+          </div>
+          <span id="countReservas" class="font-semibold text-lg">00</span>
+          <span class="text-gray-500 text-xs">reservations</span>
+        </div>
 
-        <div class="flex justify-around mt-6">
-  <!-- Reservas -->
-  <div class="flex flex-col items-center">
-    <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
-      <img src="../../img/bookings.png" alt="Reservations Icon" class="w-8 h-8" />
-    </div>
-    <span id="countReservas" class="font-semibold text-lg">00</span>
-    <span class="text-gray-500 text-xs">reservations</span>
-  </div>
-
-  <!-- Reseñas -->
-  <div class="flex flex-col items-center">
-    <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
-      <img src="../../img/reviews.png" alt="Reviews Icon" class="w-8 h-8" />
-    </div>
-    <span id="countReviews" class="font-semibold text-lg">00</span>
-    <span class="text-gray-500 text-xs">reviews</span>
-  </div>
-</div>
-
+        <!-- Reseñas -->
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 flex items-center justify-center rounded-full border-2 border-green-400 bg-green-50 shadow-inner mb-2">
+            <img src="../../img/reviews.png" alt="Reviews Icon" class="w-8 h-8" />
+          </div>
+          <span id="countReviews" class="font-semibold text-lg">00</span>
+          <span class="text-gray-500 text-xs">reviews</span>
+        </div>
       </div>
-      <div class="w-full bg-green-400 rounded-2xl shadow-md mt-6 divide-y divide-green-300">
-        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+
+      <div class="w-full bg-green-400 rounded-2xl shadow-md mt-6 divide-y divide-green-300 overflow-hidden">
+        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium hover:bg-green-300 transition-colors">
           Send Notifications <span>›</span>
         </button>
-        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium hover:bg-green-300 transition-colors">
           Payments <span>›</span>
         </button>
-        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium">
+        <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium hover:bg-green-300 transition-colors">
           Contact us <span>›</span>
         </button>
         <button id="delete-account"
-          class="delete-account w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600 hover:text-red-700 font-semibold px-2">
+          class="delete-account w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
           Delete Account <span>›</span>
         </button>
       </div>
