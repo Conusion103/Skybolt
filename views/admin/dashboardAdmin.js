@@ -1,3 +1,4 @@
+import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage"
 import { Api } from "../../src/scripts/methodsApi"
 
@@ -273,24 +274,35 @@ export let renderDashboardAdminFields = (ul, main) => {
     }
 
     //eliminar canchas
-    tbody.onclick = function(e) {
-        if (e.target.classList.contains("btn-delete")) {
-            const id = +e.target.closest("tr").dataset.id;
-            if (!confirm("Delete this field?")) return;
-            Api.delete(`/api/fields_/${id}`)
-                .then(() => {
-                    alert("Field eliminated");
-                    loadFields();
-                   
-                    const modal = document.getElementById("edit-field-form-container");
-                    if (modal) {
-                        modal.classList.add("hidden");
-                        modal.classList.remove("flex");
-                    }
-                })
-                .catch(() => alert("Error deleting field"));
+tbody.onclick = async function (e) {
+  if (e.target.classList.contains("btn-delete")) {
+    const id = +e.target.closest("tr").dataset.id;
+
+    const confirmed = await showConfirm(
+      "¿Quieres eliminar este campo?",
+      "Eliminar campo",
+      "Sí, borrar",
+      "Cancelar"
+    );
+
+    if (!confirmed) return;
+
+    Api.delete(`/api/fields_/${id}`)
+      .then(() => {
+        showSuccess("Campo eliminado correctamente ✅");
+        loadFields();
+
+        const modal = document.getElementById("edit-field-form-container");
+        if (modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
         }
-    };
+      })
+      .catch(() => {
+        showError("Error eliminando el campo ❌");
+      });
+  }
+};
 
     function showEditForm(field) {
         // Llenamos los selects con las opciones actuales

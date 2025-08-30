@@ -1,3 +1,4 @@
+import { showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
@@ -147,12 +148,11 @@ export async function renderDashboardUser(nav, main) {
         };
 
         try {
-          await Api.post("/api/reservations", payload);
-          alert("Reserva creada con éxito ✅");
-          await loadAvailableFields(); // recargar canchas para actualizar botones
+          await Api.post("/reservations", payload);
+          showSuccess("Reserva creada con éxito ✅");
         } catch (err) {
-          console.error("Error al reservar:", err.message || err);
-          alert("Error al reservar ❌");
+          console.error("Error al reservar:", err.message);
+          showError("Error al reservar ❌");
         }
       });
     });
