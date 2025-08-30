@@ -21,6 +21,7 @@
 
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
+import { showSuccess } from "../../src/scripts/alerts.js";
 
 export let renderDashboardOwner = (ul, main) => {
   const activeUser = locaL.get("active_user");
@@ -245,7 +246,7 @@ export let renderDashboardOwner = (ul, main) => {
       loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
       loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
     } catch (error) {
-      alert("Error cargando datos para los selects");
+      showError("Error cargando datos para los selects");
       console.error("Error al cargar selects:", error);
     }
   }
@@ -301,7 +302,7 @@ export let renderDashboardOwner = (ul, main) => {
             fieldAvailabilitySelect.value = field.id_availability;
             cancelEditBtn.classList.remove("hidden");
           })
-          .catch(() => alert("Error al cargar cancha para editar"));
+          .catch(() => showError("Error al cargar cancha para editar"));
       };
     });
 
@@ -313,12 +314,12 @@ export let renderDashboardOwner = (ul, main) => {
         Api.delete(`/api/fields_/${id}`)
           .then(res => {
             if (res.success) {
-              alert("Cancha eliminada");
+              showError("Cancha eliminada");
               loadFields();
               if (fieldIdInput.value == id) cancelEditBtn.click();
             }
           })
-          .catch(() => alert("Error al eliminar cancha"));
+          .catch(() => showError("Error al eliminar cancha"));
       };
     });
   }
@@ -337,7 +338,7 @@ export let renderDashboardOwner = (ul, main) => {
     };
 
     if (!payload.name_field) {
-      alert("El nombre de la cancha es obligatorio");
+      showError("El nombre de la cancha es obligatorio");
       return;
     }
 
@@ -345,24 +346,24 @@ export let renderDashboardOwner = (ul, main) => {
       Api.put(`/api/fields_/${id}`, payload)
         .then(res => {
           if (res.success) {
-            alert("Cancha actualizada");
+            showSuccess("Cancha actualizada");
             fieldForm.reset();
             fieldIdInput.value = "";
             cancelEditBtn.classList.add("hidden");
             loadFields();
           }
         })
-        .catch(() => alert("Error al actualizar cancha"));
+        .catch(() => showError("Error al actualizar cancha"));
     } else {
       Api.post("/api/fields_", payload)
         .then(res => {
           if (res.id_field) {
-            alert("Cancha creada");
+            showSuccess("Cancha creada");
             fieldForm.reset();
             loadFields();
           }
         })
-        .catch(() => alert("Error al crear cancha"));
+        .catch(() => showError("Error al crear cancha"));
     }
   };
 
