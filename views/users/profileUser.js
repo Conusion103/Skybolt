@@ -14,7 +14,7 @@ export let renderDashboardUserProfile = (ul, main) => {
   // Render menu and welcome
   document.body.style.background = "white";
 
-    ul.innerHTML = `
+  ul.innerHTML = `
 
     <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,7 +102,7 @@ export let renderDashboardUserProfile = (ul, main) => {
           Contact us <span>›</span>
         </button>
         <button id="delete-account"
-          class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600">
+          class="delete-account w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600 hover:text-red-700 font-semibold px-2">
           Delete Account <span>›</span>
         </button>
       </div>
@@ -110,73 +110,66 @@ export let renderDashboardUserProfile = (ul, main) => {
   `;
 
 
-Api.get(`/api/users/${activeUser.id_user}/reservations`)
-  .then((reservations) => {
-    console.log("Respuesta reservas:", reservations);
-    
-    let count = 0;
-    if (Array.isArray(reservations) && reservations.length > 0) {
-      // Si devuelve un arreglo de objetos con reservas
-      count = reservations[0].total_reservations || 0;
-    } else if (Array.isArray(reservations?.data)) {
-      count = reservations.data.length;
-    } else if (reservations?.total !== undefined) {
-      // Si devuelve un objeto con propiedad total
-      count = reservations.total;
-    }
-    
-    document.getElementById("countReservas").textContent = count.toString().padStart(2, "0");
-  })
-  .catch((err) => {
-    console.error("Error cargando reservas:", err);
-    document.getElementById("countReservas").textContent = "00";
-  });
+  Api.get(`/api/users/${activeUser.id_user}/reservations`)
+    .then((reservations) => {
+      console.log("Respuesta reservas:", reservations);
+
+      let count = 0;
+      if (Array.isArray(reservations) && reservations.length > 0) {
+        // Si devuelve un arreglo de objetos con reservas
+        count = reservations[0].total_reservations || 0;
+      } else if (Array.isArray(reservations?.data)) {
+        count = reservations.data.length;
+      } else if (reservations?.total !== undefined) {
+        // Si devuelve un objeto con propiedad total
+        count = reservations.total;
+      }
+
+      document.getElementById("countReservas").textContent = count.toString().padStart(2, "0");
+    })
+    .catch((err) => {
+      console.error("Error cargando reservas:", err);
+      document.getElementById("countReservas").textContent = "00";
+    });
 
 
   // Contador de reseñas
-Api.get(`/api/users/${activeUser.id_user}/reviews`)
-  .then((reviews) => {
-    console.log("Respuesta del endpoint:", reviews);
+  Api.get(`/api/users/${activeUser.id_user}/reviews`)
+    .then((reviews) => {
+      console.log("Respuesta del endpoint:", reviews);
 
-    // Si la respuesta es un arreglo con objetos que tienen total
-    let count = reviews[0].total_reviews;
-    if (Array.isArray(reviews) && reviews.length > 0) {
-      // asumimos que el primer elemento tiene el total real
-      count = reviews[0].total || 0;
-    } else if (reviews?.data && Array.isArray(reviews.data)) {
-      count = reviews.data.length;
-    }
+      // Si la respuesta es un arreglo con objetos que tienen total
+      let count = reviews[0].total_reviews;
+      if (Array.isArray(reviews) && reviews.length > 0) {
+        // asumimos que el primer elemento tiene el total real
+        count = reviews[0].total || 0;
+      } else if (reviews?.data && Array.isArray(reviews.data)) {
+        count = reviews.data.length;
+      }
 
-    document.getElementById("countReviews").textContent = count.toString().padStart(2, "0");
-    console.log("Cantidad de reseñas:", count);
-  })
-  .catch((err) => {
-    console.error("Error cargando reseñas:", err);
-    document.getElementById("countReviews").textContent = "00";
-  });
+      document.getElementById("countReviews").textContent = count.toString().padStart(2, "0");
+      console.log("Cantidad de reseñas:", count);
+    })
+    .catch((err) => {
+      console.error("Error cargando reseñas:", err);
+      document.getElementById("countReviews").textContent = "00";
+    });
 
 
 
   // Delete account
   const deleteAccountBtn = document.getElementById("delete-account");
-  if (deleteAccountBtn) {
-    deleteAccountBtn.addEventListener("click", async () => {
-      const confirmDelete = confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      );
-      if (!confirmDelete) return;
-
-      try {
-        await Api.delete(`/api/users/${activeUser.id_user}`);
-        alert("Your account has been deleted successfully.");
-        locaL.remove("active_user");
-        window.location.href = "/skybolt/login";
-      } catch (err) {
-        console.error(err);
-        alert("Error deleting account, please try again.");
-      }
+    deleteAccountBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!confirm("Delete this user?")) return;
+      Api.delete(`/api/users/${activeUser.id_user}`)
+        .then(() => {
+          locaL.delete("active_user");
+          window.location.href = "/skybolt/login";
+          alert("User successfully deleted");
+        })
+        .catch((err) => alert(err.message));
     });
-  }
 
   // Logout dinámico
   const logoutBtn = document.getElementById('log-out-user');
@@ -187,11 +180,11 @@ Api.get(`/api/users/${activeUser.id_user}/reviews`)
     });
   }
 
-    document.getElementById("log-out-user").addEventListener("click", (e) => {
-  e.preventDefault();
-  locaL.delete("active_user");
-
-});
+  document.getElementById("log-out-user").addEventListener("click", (e) => {
+    e.preventDefault();
+    locaL.delete("active_user");
+    window.location.href = "/skybolt/login";
+  });
 
   // Back dinámico
   const backBtn = main.querySelector('#back-dashboard');
