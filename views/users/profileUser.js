@@ -1,5 +1,7 @@
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
+import { showError, showSuccess } from "../../src/scripts/alerts";
+
 
 export let renderDashboardUserProfile = (ul, main) => {
   const activeUser = locaL.get('active_user');
@@ -165,9 +167,9 @@ export let renderDashboardUserProfile = (ul, main) => {
         .then(() => {
           locaL.delete("active_user");
           window.location.href = "/skybolt/login";
-          alert("User successfully deleted");
+          showSuccess("User successfully deleted");
         })
-        .catch((err) => alert(err.message));
+        .catch((err) => showError(err.message));
     });
 
   // Logout dinámico
@@ -191,7 +193,6 @@ export let renderDashboardUserProfile = (ul, main) => {
     backBtn.addEventListener('click', (e) => {
       e.preventDefault();
       history.pushState(null, null, "/skybolt/dashboarduser");
-      // Aquí podrías llamar a función para renderizar dashboard si estás usando SPA
     });
   }
 };
