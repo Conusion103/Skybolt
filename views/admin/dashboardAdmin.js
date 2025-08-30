@@ -2,8 +2,8 @@ import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage"
 import { Api } from "../../src/scripts/methodsApi"
 
-export let renderDashboardAdminFields = (ul, main) => {
-     document.body.style.background = "white";
+export let renderDashboardAdminFields = (ul, main, footer) => {
+    document.body.style.background = "white";
 
     ul.innerHTML = `
         <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
@@ -19,7 +19,6 @@ export let renderDashboardAdminFields = (ul, main) => {
                         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
                         <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
                         <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
-                
                     </nav>
 
                     <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -42,8 +41,8 @@ export let renderDashboardAdminFields = (ul, main) => {
 
         <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
         <div id="top" class="h-16"></div>
-
     `;
+
     document.getElementById("menu-btn").addEventListener("click", () => {
         const menu = document.getElementById("mobile-menu");
         menu.classList.toggle("hidden");
@@ -62,6 +61,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                 <option value="available">Available</option>
                 <option value="not_available">Not available</option>
             </select>
+
             <!-- Tabla -->
             <div id="fields-list-section" class="overflow-x-auto">
                 <h3 class="text-xl font-semibold mb-4">Courts of all owners</h3>
@@ -79,9 +79,6 @@ export let renderDashboardAdminFields = (ul, main) => {
                     <tbody id="fields-tbody"></tbody>
                 </table>
             </div>
-        
-
-
 
             <div id="edit-field-form-container"
                 class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
@@ -99,7 +96,8 @@ export let renderDashboardAdminFields = (ul, main) => {
                         <select id="edit-field-municipality"
                             class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" required>
                         </select>
-                        <select id="edit-field-availability"
+                        <!-- Aquí el cambio: select multiple para disponibilidades -->
+                        <select id="edit-field-availability" multiple size="5"
                             class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" required>
                         </select>
                         <div class="flex flex-col sm:flex-row justify-end gap-3 mt-4 col-span-1 sm:col-span-2">
@@ -116,8 +114,8 @@ export let renderDashboardAdminFields = (ul, main) => {
                 </div>
             </div>
         </section>
-      
     `;
+
     footer.innerHTML = `
         <!-- FOOTER COMPLETO -->
         <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
@@ -149,214 +147,175 @@ export let renderDashboardAdminFields = (ul, main) => {
                     <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
                     <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
                 </div>
-                </div>
-            </div>
-            <!-- COPYRIGHT -->
-            <div class="text-center text-sm mt-10 text-green-300">
-                © 2025 SKYBOLT. All rights reserved
             </div>
         </footer>
     `;
 
-    const tbody = main.querySelector("#fields-tbody");
-    const editFormContainer = main.querySelector("#edit-form-container");
-
+    // Data global para este módulo
+    let fields = [];
     let games = [];
     let municipalities = [];
     let availabilityStates = [];
-    let owners = [];
-    let allFields = [];
-    let allReservations = [];
-    let filterFieldName = "";
-    let filterStatus = "";
 
-    const formatTime = time => time?.slice(0, 5);
-
-    const availabilityLabels = {
-        available: "Available",
-        not_available: "Not available"
-    };
-
-    function loadSelectData() {
-        return Promise.all([
-            Api.get("/api/games"),
-            Api.get("/api/municipalities"),
-            Api.get("/api/availability"),
-            Api.get("/api/users?role=owner") 
-        ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
-            games = gamesData;
-            municipalities = municipalitiesData;
-            availabilityStates = availabilityData.map(a => ({
-                id_availability: a.id_availability,
-                estado: `${availabilityLabels[a.estado] || a.estado} - ${a.day_of_week} ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`
-            }));
-            owners = ownersData;
-        });
-    }
-
-    function loadFields() {
+    // Lógica para carga y renderizado
+    const loadFields = () => {
         Promise.all([
             Api.get("/api/fields_"),
-            Api.get("/api/reservations")
-        ])
-        .then(([fields, reservations]) => {
-            allFields = fields;
-            allReservations = reservations;
-            renderFields(fields, reservations);
-        })
-        .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
+            Api.get("/api/games"),
+            Api.get("/api/municipalities"),
+            Api.get("/api/availability")
+        ]).then(([fieldsRes, gamesRes, muniRes, availRes]) => {
+            if (!fieldsRes.success || !gamesRes.success || !muniRes.success || !availRes.success) {
+                showError("Error loading data.");
+                return;
+            }
+            fields = fieldsRes.data.map(field => {
+                // Asumimos que la API trae availability_ids como array, o que hay relación para traer disponibilidades por cancha
+                // Para demo, mapeamos las disponibilidades como un array
+                // Si la API trae solo un id_availability, puedes adaptarlo aquí para convertirlo en array [id]
+                return {
+                    ...field,
+                    availabilities: field.availability_ids || []  // aquí la clave que use tu API para disponibilidades múltiples
+                }
+            });
+            games = gamesRes.data;
+            municipalities = muniRes.data;
+            availabilityStates = availRes.data;
+
+            renderFieldsTable(fields);
         });
-    }
+    };
 
-    function renderFields(fields, reservations) {
-        // Filtrado por nombre y estado
-        let filteredFields = fields.filter(field => {
-            // Filtro por nombre
-            const matchesName = filterFieldName === "" || field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
-            // Filtro por estado
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
-            let status = hasActiveReservation ? "not_available" : "available";
-            const matchesStatus = filterStatus === "" || filterStatus === status;
-            return matchesName && matchesStatus;
-        });
+    // Función para filtrar y renderizar la tabla de canchas
+    const renderFieldsTable = (fieldsArray) => {
+        const tbody = document.getElementById("fields-tbody");
+        tbody.innerHTML = fieldsArray.map(field => {
+            // Obtener los nombres de las disponibilidades para mostrar
+            const availabilityList = availabilityStates
+                .filter(a => field.availabilities.includes(a.id_availability))
+                .map(a => a.estado)
+                .join("<br>");
 
-        if (!filteredFields.length) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No fields found.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = filteredFields.map(field => {
-            const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
-            const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-            const ownerName = owners.find(o => o.id_user === field.id_owner)?.full_name || "N/A";
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
-            const availabilityName = hasActiveReservation
-                ? `<span class="text-red-600 font-bold">Not available</span>`
-                : `<span class="text-green-600 font-bold">Available</span>`;
+            const game = games.find(g => g.id_game === field.id_game);
+            const municipality = municipalities.find(m => m.id_municipality === field.id_municipality);
 
             return `
-                <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
+                <tr data-id="${field.id_field}" class="cursor-pointer hover:bg-gray-100" >
                     <td class="p-2 border">${field.name_field}</td>
-                    <td class="p-2 border">${gameName}</td>
-                    <td class="p-2 border">${municipalityName}</td>
-                    <td class="p-2 border">${availabilityName}</td>
-                    <td class="p-2 border">${ownerName}</td>
-                    <td class="p-2 border text-center">
-                        <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">✏️</button>
-                        <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️</button>
+                    <td class="p-2 border">${game ? game.name_game : "N/A"}</td>
+                    <td class="p-2 border">${municipality ? municipality.name_municipality : "N/A"}</td>
+                    <td class="p-2 border">${availabilityList || "None"}</td>
+                    <td class="p-2 border text-center">${field.id_owner}</td>
+                    <td class="p-2 border">
+                        <button data-id="${field.id_field}" class="edit-field-btn bg-green-600 px-4 py-1 rounded text-white hover:bg-green-700">Edit</button>
                     </td>
                 </tr>
-        `;
+            `;
         }).join("");
 
-        main.querySelector("#field-search").addEventListener("input", (e) => {
-            filterFieldName = e.target.value.trim();
-            renderFields(allFields, allReservations);
+        // Agregar eventos a botones editar
+        document.querySelectorAll(".edit-field-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = +btn.dataset.id;
+                const field = fields.find(f => f.id_field === id);
+                if (field) showEditForm(field);
+            });
         });
-        main.querySelector("#field-status-filter").addEventListener("change", (e) => {
-            filterStatus = e.target.value;
-            renderFields(allFields, allReservations);
-        });
+    };
 
-        // Eventos editar
-        tbody.querySelectorAll(".btn-edit").forEach(btn => {
-            btn.onclick = e => {
-                const id = +e.target.closest("tr").dataset.id;
-                Api.get(`/api/fields_/${id}`)
-                .then(field => {
-                    showEditForm(field);
-                })
-                .catch(() => alert("Error loading field for editing"));
-            };
-        });        
-
-    }
-
-    //eliminar canchas
-tbody.onclick = async function (e) {
-  if (e.target.classList.contains("btn-delete")) {
-    const id = +e.target.closest("tr").dataset.id;
-
-    const confirmed = await showConfirm(
-      "¿Quieres eliminar este campo?",
-      "Eliminar campo",
-      "Sí, borrar",
-      "Cancelar"
-    );
-
-    if (!confirmed) return;
-
-    Api.delete(`/api/fields_/${id}`)
-      .then(() => {
-        showSuccess("Campo eliminado correctamente ✅");
-        loadFields();
-
-        const modal = document.getElementById("edit-field-form-container");
-        if (modal) {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        }
-      })
-      .catch(() => {
-        showError("Error eliminando el campo ❌");
-      });
-  }
-};
-
+    // Función para mostrar el formulario de edición con datos
     function showEditForm(field) {
-        // Llenamos los selects con las opciones actuales
         const gameOptions = games.map(g => `<option value="${g.id_game}" ${g.id_game === field.id_game ? "selected" : ""}>${g.name_game}</option>`).join("");
         const municipalityOptions = municipalities.map(m => `<option value="${m.id_municipality}" ${m.id_municipality === field.id_municipality ? "selected" : ""}>${m.name_municipality}</option>`).join("");
-        const availabilityOptions = availabilityStates.map(a => `<option value="${a.id_availability}" ${a.id_availability === field.id_availability ? "selected" : ""}>${a.estado}</option>`).join("");
+        const availabilityOptions = availabilityStates.map(a => `
+            <option value="${a.id_availability}" ${field.availabilities.includes(a.id_availability) ? "selected" : ""}>${a.estado}</option>
+        `).join("");
 
-        // Muestra el modal
         const modal = document.getElementById("edit-field-form-container");
         modal.classList.remove("hidden");
         modal.classList.add("flex");
 
-        // Llena los campos
         document.getElementById("edit-field-id").value = field.id_field;
         document.getElementById("edit-field-name").value = field.name_field;
         document.getElementById("edit-field-game").innerHTML = gameOptions;
         document.getElementById("edit-field-municipality").innerHTML = municipalityOptions;
         document.getElementById("edit-field-availability").innerHTML = availabilityOptions;
 
-        // Evento submit para editar
         const editForm = document.getElementById("admin-edit-field-form");
         editForm.onsubmit = e => {
             e.preventDefault();
+            const selectAvailability = document.getElementById("edit-field-availability");
+            const selectedAvailabilities = Array.from(selectAvailability.selectedOptions).map(opt => +opt.value);
+
+            if(selectedAvailabilities.length === 0){
+                showError("Please select at least one availability.");
+                return;
+            }
+
             const payload = {
                 name_field: document.getElementById("edit-field-name").value.trim(),
                 id_game: +document.getElementById("edit-field-game").value,
                 id_municipality: +document.getElementById("edit-field-municipality").value,
-                id_availability: +document.getElementById("edit-field-availability").value,
+                availability_ids: selectedAvailabilities,
                 id_owner: field.id_owner
             };
+
             Api.put(`/api/fields_/${field.id_field}`, payload)
                 .then(res => {
                     if (res.success) {
-                        alert("Updated field");
+                        showSuccess("Field updated successfully");
                         modal.classList.add("hidden");
                         modal.classList.remove("flex");
                         loadFields();
+                    } else {
+                        showError("Failed to update field");
                     }
                 })
-            .catch(() => alert("Error updating field"));
+                .catch(() => showError("Error updating field"));
         };
 
-        // Evento cancelar edición
         document.getElementById("cancel-edit-admin").onclick = () => {
             modal.classList.add("hidden");
             modal.classList.remove("flex");
         };
     }
 
-    document.getElementById('log-out-user').addEventListener('click', (e) => {
-        e.preventDefault();
-        locaL.delete('active_user');
-        window.location.href = "/skybolt/login";
-    });
+    // Buscador y filtro de estado
+    const searchInput = document.getElementById("field-search");
+    const statusFilter = document.getElementById("field-status-filter");
 
-    loadSelectData().then(loadFields);
-}
+    function applyFilters() {
+        let filtered = [...fields];
+
+        const query = searchInput.value.toLowerCase().trim();
+        if (query) {
+            filtered = filtered.filter(f => f.name_field.toLowerCase().includes(query));
+        }
+
+        const status = statusFilter.value;
+        if(status) {
+            // Filtrar por disponibilidad, ej. "available" o "not_available"
+            filtered = filtered.filter(field => {
+                // Asumiendo que availabilityStates tienen alguna forma de identificar disponible o no
+                // Aquí debes adaptar según tu estructura real
+                const availableStatesIds = availabilityStates.filter(a => a.estado.toLowerCase().includes("available")).map(a => a.id_availability);
+
+                const hasAvailable = field.availabilities.some(id => availableStatesIds.includes(id));
+                return status === "available" ? hasAvailable : !hasAvailable;
+            });
+        }
+
+        renderFieldsTable(filtered);
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+
+    // Carga inicial
+    loadFields();
+
+    // Logout
+    document.getElementById("log-out-user").addEventListener("click", () => {
+        locaL.remove("active_user");
+    });
+};

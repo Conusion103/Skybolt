@@ -21,7 +21,7 @@
 
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
-import { showSuccess } from "../../src/scripts/alerts.js";
+import { showSuccess, showError } from "../../src/scripts/alerts.js";
 
 export let renderDashboardOwner = (ul, main) => {
   const activeUser = locaL.get("active_user");
@@ -29,7 +29,7 @@ export let renderDashboardOwner = (ul, main) => {
     main.innerHTML = `<p>Por favor inicia sesión.</p>`;
     return;
   }
-   document.body.style.background = "white";
+  document.body.style.background = "white";
 
   // Navbar
   ul.innerHTML = `
@@ -44,7 +44,6 @@ export let renderDashboardOwner = (ul, main) => {
             <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Mis canchas</a>
             <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Perfil</a>
             <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
-    
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -65,8 +64,8 @@ export let renderDashboardOwner = (ul, main) => {
 
     <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
     <div id="top" class="h-16"></div>
-
   `;
+
   document.getElementById("menu-btn").addEventListener("click", () => {
     const menu = document.getElementById("mobile-menu");
     menu.classList.toggle("hidden");
@@ -113,11 +112,12 @@ export let renderDashboardOwner = (ul, main) => {
           </label>
 
           <label class="flex flex-col col-span-2">
-            Disponibilidad:
+            Disponibilidad (selecciona una o más):
             <select
               id="field-availability"
               required
-              class="border rounded px-4 py-3 text-lg w-full"
+              multiple
+              class="border rounded px-4 py-3 text-lg w-full h-40"
             ></select>
           </label>
 
@@ -137,7 +137,6 @@ export let renderDashboardOwner = (ul, main) => {
             </button>
           </div>
         </form>
-
       </section>
 
       <!-- Tabla responsive -->
@@ -159,13 +158,12 @@ export let renderDashboardOwner = (ul, main) => {
         </div>
       </section>
     </section>
-
   `;
+
   footer.innerHTML = `
     <!-- FOOTER COMPLETO -->
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            
         <!-- DESCRIPCIÓN -->
         <div>
           <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
@@ -227,7 +225,9 @@ export let renderDashboardOwner = (ul, main) => {
 
   // Función para llenar selects
   function loadSelectOptions(select, items, valueKey, textKey) {
-    select.innerHTML = items.map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`).join("");
+    select.innerHTML = items
+      .map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`)
+      .join("");
   }
 
   // Cargar datos de juegos, municipios y disponibilidad desde API
@@ -270,24 +270,33 @@ export let renderDashboardOwner = (ul, main) => {
       return;
     }
 
-    tbody.innerHTML = fields.map(field => {
-      const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
-      const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-      const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
+    tbody.innerHTML = fields
+      .map(field => {
+        const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
+        const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
 
-      return `
-        <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
-          <td class="p-2 border">${field.name_field}</td>
-          <td class="p-2 border">${gameName}</td>
-          <td class="p-2 border">${municipalityName}</td>
-          <td class="p-2 border">${availabilityName}</td>
-          <td class="p-2 border text-center">
-            <button class="edit-btn text-blue-600 hover:underline mr-2">Editar</button>
-            <button class="delete-btn text-red-600 hover:underline">Eliminar</button>
-          </td>
-        </tr>
-      `;
-    }).join("");
+        // Mostrar múltiples disponibilidades, si existen
+        let availabilityInfo = "N/A";
+        if (Array.isArray(field.availability) && field.availability.length) {
+          availabilityInfo = field.availability
+            .map(a => `${availabilityLabels[a.estado] || a.estado} - ${a.day_of_week} ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`)
+            .join("<br>");
+        }
+
+        return `
+          <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
+            <td class="p-2 border">${field.name_field}</td>
+            <td class="p-2 border">${gameName}</td>
+            <td class="p-2 border">${municipalityName}</td>
+            <td class="p-2 border text-sm">${availabilityInfo}</td>
+            <td class="p-2 border text-center">
+              <button class="edit-btn text-blue-600 hover:underline mr-2">Editar</button>
+              <button class="delete-btn text-red-600 hover:underline">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      })
+      .join("");
 
     // Eventos editar
     tbody.querySelectorAll(".edit-btn").forEach(btn => {
@@ -299,7 +308,18 @@ export let renderDashboardOwner = (ul, main) => {
             fieldNameInput.value = field.name_field;
             fieldGameSelect.value = field.id_game;
             fieldMunicipalitySelect.value = field.id_municipality;
-            fieldAvailabilitySelect.value = field.id_availability;
+
+            // Seleccionar múltiples disponibilidades
+            if (Array.isArray(field.availability)) {
+              const ids = field.availability.map(a => a.id_availability.toString());
+              Array.from(fieldAvailabilitySelect.options).forEach(opt => {
+                opt.selected = ids.includes(opt.value);
+              });
+            } else {
+              // Si no hay disponibilidad, deseleccionar todo
+              Array.from(fieldAvailabilitySelect.options).forEach(opt => (opt.selected = false));
+            }
+
             cancelEditBtn.classList.remove("hidden");
           })
           .catch(() => showError("Error al cargar cancha para editar"));
@@ -314,7 +334,7 @@ export let renderDashboardOwner = (ul, main) => {
         Api.delete(`/api/fields_/${id}`)
           .then(res => {
             if (res.success) {
-              showError("Cancha eliminada");
+              showSuccess("Cancha eliminada");
               loadFields();
               if (fieldIdInput.value == id) cancelEditBtn.click();
             }
@@ -329,11 +349,19 @@ export let renderDashboardOwner = (ul, main) => {
     e.preventDefault();
 
     const id = fieldIdInput.value.trim();
+
+    const availability_ids = Array.from(fieldAvailabilitySelect.selectedOptions).map(opt => +opt.value);
+
+    if (!availability_ids.length) {
+      showError("Debes seleccionar al menos una disponibilidad");
+      return;
+    }
+
     const payload = {
       name_field: fieldNameInput.value.trim(),
       id_game: +fieldGameSelect.value,
       id_municipality: +fieldMunicipalitySelect.value,
-      id_availability: +fieldAvailabilitySelect.value,
+      availability_ids,
       id_owner: activeUser.id_user
     };
 
@@ -343,44 +371,46 @@ export let renderDashboardOwner = (ul, main) => {
     }
 
     if (id) {
+      // Actualizar cancha
       Api.put(`/api/fields_/${id}`, payload)
         .then(res => {
           if (res.success) {
             showSuccess("Cancha actualizada");
+            loadFields();
             fieldForm.reset();
             fieldIdInput.value = "";
             cancelEditBtn.classList.add("hidden");
-            loadFields();
           }
         })
-        .catch(() => showError("Error al actualizar cancha"));
+        .catch(() => showError("Error actualizando cancha"));
     } else {
+      // Crear cancha
       Api.post("/api/fields_", payload)
         .then(res => {
-          if (res.id_field) {
+          if (res.success) {
             showSuccess("Cancha creada");
-            fieldForm.reset();
             loadFields();
+            fieldForm.reset();
           }
         })
-        .catch(() => showError("Error al crear cancha"));
+        .catch(() => showError("Error creando cancha"));
     }
   };
 
-  // Cancelar edición
   cancelEditBtn.onclick = () => {
     fieldForm.reset();
     fieldIdInput.value = "";
     cancelEditBtn.classList.add("hidden");
+    // Deseleccionar todo en disponibilidad
+    Array.from(fieldAvailabilitySelect.options).forEach(opt => (opt.selected = false));
   };
 
-  // Logout
-  document.getElementById("log-out-user").addEventListener("click", e => {
-    e.preventDefault();
-    locaL.delete("active_user");
-    window.location.href = "/skybolt/login";
-  });
-
-  // Cargar datos iniciales
+  // Inicializar selects y cargar canchas
   loadSelectData().then(loadFields);
+
+  // Logout
+  document.getElementById("log-out-user").onclick = () => {
+    locaL.remove("active_user");
+  };
 };
+
