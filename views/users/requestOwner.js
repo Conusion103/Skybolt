@@ -1,6 +1,7 @@
 import { ownerRequestValidators } from "../../src/scripts/ownerRequestValidation.js";
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
+import { showError, showSuccess } from "../../src/scripts/alerts.js";
 
 export let renderResgiterRequestOwner = (ul, main) => {
   ul.innerHTML = `
@@ -75,13 +76,13 @@ export let renderResgiterRequestOwner = (ul, main) => {
     //  Enviar usando Api.post con then/catch
     Api.post("/api/owner_requests", formData)
       .then((response) => {
-        alert(" Request sent successfully!");
+        showSuccess(" Request sent successfully!");
         console.log("Response:", response);
         form.reset();
       })
       .catch((err) => {
         console.error("Error sending request:", err.message);
-        alert(" Could not send the request.");
+        showError(" Could not send the request.");
       });
   });
 };
