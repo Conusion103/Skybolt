@@ -23,6 +23,5 @@
     "mysql2": "^3.14.3",
     "sweetalert2": "^11.22.5",
     "tailwindcss": "^4.1.12"
-
   }
 }
