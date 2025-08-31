@@ -148,7 +148,8 @@ export async function renderDashboardUser(nav, main) {
         };
 
         try {
-          await Api.post("/reservations", payload);
+          await Api.post("/api/reservations", payload);
+          renderDashboardUser(nav, main)
           showSuccess("Reserva creada con éxito ✅");
         } catch (err) {
           console.error("Error al reservar:", err.message);

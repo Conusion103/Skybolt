@@ -8,7 +8,7 @@ export const departamentos = [
     id: 1,
     name: "Antioquia",
     municipios: [
-      { id: 1, name: "Medellín" },
+      { id: 19, name: "Medellín" },
       { id: 2, name: "Envigado" },
       { id: 3, name: "Bello" },
       { id: 4, name: "Itagüí" },
@@ -44,7 +44,7 @@ export const departamentos = [
     id: 4,
     name: "Atlántico",
     municipios: [
-      { id: 19, name: "Barranquilla" },
+      { id: 1, name: "Barranquilla" },
       { id: 20, name: "Soledad" },
       { id: 21, name: "Malambo" },
       { id: 22, name: "Sabanalarga" },

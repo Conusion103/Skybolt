@@ -1,4 +1,4 @@
--- CREATE DATABASE skybolt;
+CREATE DATABASE skybolt;
 USE skybolt;
 
 -- Desactivar claves foráneas temporalmente
@@ -108,10 +108,10 @@ CREATE TABLE fields_ (
     image_path VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_municipality) REFERENCES municipalities(id_municipality),
-    FOREIGN KEY (id_game) REFERENCES games(id_game),
-    FOREIGN KEY (id_availability) REFERENCES availability(id_availability),
-    FOREIGN KEY (id_owner) REFERENCES users(id_user)
+    FOREIGN KEY (id_municipality) REFERENCES municipalities(id_municipality) ON DELETE CASCADE,
+    FOREIGN KEY (id_game) REFERENCES games(id_game) ON DELETE CASCADE,
+    FOREIGN KEY (id_availability) REFERENCES availability(id_availability) ON DELETE CASCADE,
+    FOREIGN KEY (id_owner) REFERENCES users(id_user) ON DELETE CASCADE
 );
 
 -- Tabla de reservas
@@ -123,7 +123,7 @@ CREATE TABLE reservations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_field) REFERENCES fields_(id_field)
+    FOREIGN KEY (id_field) REFERENCES fields_(id_field) ON DELETE CASCADE
 );
 
 -- Tabla de solicitudes de ser propietario
@@ -149,32 +149,22 @@ CREATE TABLE reviews (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE,
-    FOREIGN KEY (id_field) REFERENCES fields_(id_field)
+    FOREIGN KEY (id_field) REFERENCES fields_(id_field) ON DELETE CASCADE
 );
 
-CREATE TABLE owner_status (
-    id_user INT PRIMARY KEY,
-    status ENUM('active', 'suspended') DEFAULT 'active',
-    FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
-);
+-- CREATE TABLE owner_status (
+--     id_user INT PRIMARY KEY,
+--     status ENUM('active', 'suspended') DEFAULT 'active',
+--     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
+-- );
 
--- Insertar departamentos
+-- Insertar departamento Atlántico
 INSERT INTO departments (name_department) VALUES
-('Antioquia'),         
-('Cundinamarca'),      
-('Valle del Cauca'),   
-('Atlántico'),         
-('Bolívar'),           
-('Magdalena');
+('Atlántico');
 
--- Insertar municipios
+-- Insertar municipio Barranquilla
 INSERT INTO municipalities (id_department, name_municipality) VALUES
-(1, 'Medellín'), (1, 'Envigado'), (1, 'Bello'), (1, 'Itagüí'), (1, 'Rionegro'),
-(2, 'Bogotá'), (2, 'Soacha'), (2, 'Chía'), (2, 'Zipaquirá'), (2, 'Girardot'),
-(3, 'Cali'), (3, 'Palmira'), (3, 'Yumbo'), (3, 'Buenaventura'), (3, 'Tuluá'),
-(4, 'Barranquilla'), (4, 'Soledad'), (4, 'Malambo'), (4, 'Puerto Colombia'), (4, 'Sabanalarga'),
-(5, 'Cartagena'), (5, 'Magangué'), (5, 'Turbaco'), (5, 'El Carmen de Bolívar'), (5, 'Arjona'),
-(6, 'Santa Marta'), (6, 'Ciénaga'), (6, 'Fundación'), (6, 'El Banco'), (6, 'Plato');
+(1, 'Barranquilla');
 
 -- Insertar roles
 INSERT INTO roles (name_role) VALUES
@@ -182,18 +172,41 @@ INSERT INTO roles (name_role) VALUES
 ('owner'),
 ('user');
 
-INSERT INTO users (full_name, email, phone, birthdate, document_type, id_document, id_municipality, password_)
-VALUES 
-('Super Admin', 'admin@exmaple.com', '123456789', '1990-01-01', 'CC', '123456789', 1 ,'$2a$12$104EkARrpraFPPH2SIC9hurCLmgVyEfLYaJBtDvBn86CfXvM8jNJe');
-
-INSERT INTO user_roles (id_user, id_role)
-VALUES (
-  LAST_INSERT_ID(),
-  (SELECT id_role FROM roles WHERE name_role = 'admin' LIMIT 1)
+-- Insertar Super Admin
+INSERT INTO users (
+    full_name,
+    email,
+    phone,
+    birthdate,
+    document_type,
+    id_document,
+    id_municipality,
+    password_
+) VALUES (
+    'Super Admin',
+    'admin@example.com',
+    '3001234567',
+    '1990-01-01',
+    'CC',
+    '1000000001',
+    1,
+    '$2a$12$7tcjcHBSNcVHOUqIcs6W1.lVZTHjMBfBbDJrRRJPmOCV60DQnvD7a'
 );
 
+-- Asignar rol admin al Super Admin
+INSERT INTO user_roles (id_user, id_role)
+VALUES (
+    1,
+    (SELECT id_role FROM roles WHERE name_role = 'admin' LIMIT 1)
+);
+
+INSERT INTO games (name_game)
+VALUES ('Fútbol 5');
+
+INSERT INTO time_ (hora_inicio, hora_final)
+VALUES ('08:00:00', '10:00:00');
+
+INSERT INTO availability (day_of_week, id_tiempo, estado)
+VALUES ('Monday', 1, 'available');
+
 select * from users;
-
-select * from roles;
-
-DELETE FROM users WHERE email = 'isaistudio1.1@hotmail.com'
