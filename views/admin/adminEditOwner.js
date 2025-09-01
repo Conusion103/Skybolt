@@ -1,9 +1,16 @@
+import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 import { generalFormat } from "../../src/scripts/validationMethods";
 
 
 export let renderDashboardAdminEditOwners = (ul, main) => {
+    const activeUser = locaL.get("active_user");
+  if (!activeUser) {
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    return;
+  }
+  
   document.body.style.background = "white";
   // ---------- NAV ----------
   ul.innerHTML = `
@@ -57,7 +64,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         Hello ${locaL.get("active_user").full_name}, you are editing owners
       </h2>
 
-      <input type="text" id="user-search" placeholder="Search by email..."
+      <input type="text" id="owner-search" placeholder="Search by email..."
         class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"/>
 
       <!-- Tabla -->
@@ -67,8 +74,8 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
             <tr>
               <th class="px-4 py-2 text-left">ID</th>
               <th class="px-4 py-2 text-left">Name</th>
-              <th class="px-4 py-2 text-left">Phone</th>
               <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Phone</th>
               <th class="px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
@@ -78,33 +85,45 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
           
       <!-- FORM EDITAR -->
       <div id="edit-owner-form-container"
-        class="fixed inset-0 bg-opacity-50 hidden flex items-center justify-center z-50 bg-white/50 backdrop-blur-md p-4 rounded-lg">
-        <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto transform">
-          <h3 class="text-base font-bold text-green-600 mb-3 text-[40px] text-center">Editar Owner</h3>
-          <form id="edit-owner-form" class="space-y-3 text-sm">
-
+        class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-md p-4">
+        <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto transform 
+                    max-h-[100vh] overflow-y-auto">
+          
+          <h3 class="text-2xl font-bold text-green-600 mb-4 text-center">Editar Owner</h3>
+          
+          <form id="edit-owner-form" class="space-y-2 text-sm">
             <input type="hidden" id="edit-owner-id" />
-            <input type="text" id="edit-full_name" placeholder="Full Name" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
-            <input type="email" id="edit-email" placeholder="Email" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
-            <input type="text" id="edit-phone" placeholder="Phone" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
-            <input type="date" id="edit-birthdate" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
-            <input type="text" id="edit-document_type" placeholder="Document Type" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
-            <input type="text" id="edit-id_document" placeholder="ID Document"class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+            <input type="text" id="edit-full_name" placeholder="Full Name"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
+            <input type="email" id="edit-email" placeholder="Email"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
+            <input type="text" id="edit-phone" placeholder="Phone"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+            <input type="date" id="edit-birthdate"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
+            <input type="text" id="edit-document_type" placeholder="Document Type"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
+            <input type="text" id="edit-id_document" placeholder="ID Document"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
 
             <!-- Departamento -->
-            <select id="edit-id_department" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+            <select id="edit-id_department"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
               <option value="">--Select a department--</option>
             </select>
 
             <!-- Municipio -->
-            <select id="edit-id_municipality" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+            <select id="edit-id_municipality"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
               <option value="">Select a municipality</option>
             </select>
 
-            <input type="text" id="edit-rol" placeholder="Role" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
-            <input type="password" id="edit-password_" placeholder="New Password (optional)" class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
+            <input type="text" id="edit-rol" placeholder="Role"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
+            <input type="password" id="edit-password_" placeholder="New Password (optional)"
+              class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300" />
 
-            <div class="flex justify-end gap-4 mt-4 ">
+            <div class="flex justify-end gap-4 mt-4">
               <button type="submit"
                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
                 Guardar
@@ -117,6 +136,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
           </form>
         </div>
       </div>
+
 
 
       <!-- MODAL VER MÁS -->
@@ -183,7 +203,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
   let departmentsList = [];
   let municipalitiesList = [];
 
-    // ---------- CARGAR DEPARTAMENTOS ----------
+  // ---------- CARGAR DEPARTAMENTOS ----------
   function loadDepartments(callback) {
     const depSelect = document.getElementById("edit-id_department");
     depSelect.innerHTML = `<option value="">--Select a department--</option>`;
@@ -275,14 +295,14 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     if (!ownerID) return;
 
     if (e.target.classList.contains("btn-delete")) {
-      if (!confirm("¿Eliminar este owner?")) return;
+      if (!showConfirm("¿Eliminar este owner?")) return;
       Api.delete(`/api/users/${ownerID}`)
         .then(() => {
           ownersList = ownersList.filter((u) => u.id_user !== ownerID);
           renderOwners(ownersList);
-          alert("Owner eliminado correctamente");
+          showSuccess("Owner eliminado correctamente");
         })
-        .catch((err) => alert(err.message));
+        .catch((err) => showError(err.message));
     }
 
     if (e.target.classList.contains("btn-edit")) {
@@ -305,31 +325,31 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     }
 
 
-if (e.target.classList.contains("btn-view")) {
-  const ownerData = ownersList.find((u) => u.id_user === ownerID);
-  if (!ownerData) return;
+    if (e.target.classList.contains("btn-view")) {
+      const ownerData = ownersList.find((u) => u.id_user === ownerID);
+      if (!ownerData) return;
 
-  if (ownerData.id_municipality) {
-  Api.get(`/api/municipalities/${ownerData.id_municipality}`)
-    .then((muni) => {
-      let muniName = muni?.name_municipality || "Desconocido";
-      let depName = "Desconocido";
-      if (muni?.id_department) {
-        Api.get(`/api/departments/${muni.id_department}`)
-          .then(dep => {
-            depName = dep?.name_department || "Desconocido";
-            mostrarModalOwner(ownerData, depName, muniName);
+      if (ownerData.id_municipality) {
+        Api.get(`/api/municipalities/${ownerData.id_municipality}`)
+          .then((muni) => {
+            let muniName = muni?.name_municipality || "Desconocido";
+            let depName = "Desconocido";
+            if (muni?.id_department) {
+              Api.get(`/api/departments/${muni.id_department}`)
+                .then(dep => {
+                  depName = dep?.name_department || "Desconocido";
+                  mostrarModalOwner(ownerData, depName, muniName);
+                })
+                .catch(() => mostrarModalOwner(ownerData, depName, muniName));
+            } else {
+              mostrarModalOwner(ownerData, depName, muniName);
+            }
           })
           .catch(() => mostrarModalOwner(ownerData, depName, muniName));
       } else {
         mostrarModalOwner(ownerData, depName, muniName);
       }
-    })
-    .catch(() => mostrarModalOwner(ownerData, "Desconocido", "Desconocido"));
-} else {
-  mostrarModalOwner(ownerData, "Desconocido", "Desconocido");
-}
-}
+    }
   });
 
   function mostrarModalOwner(ownerData, depName, muniName) {
@@ -387,7 +407,7 @@ if (e.target.classList.contains("btn-view")) {
 
       Api.put(`/api/users/${ownerID}`, updatedOwner)
         .then(() => {
-          alert("Owner actualizado correctamente");
+          showSuccess("Owner actualizado correctamente");
           document.getElementById("edit-owner-form-container").style.display = "none";
           return Api.get("/api/users");
         })
@@ -395,9 +415,9 @@ if (e.target.classList.contains("btn-view")) {
           ownersList = data;
           renderOwners(ownersList);
         })
-        .catch((err) => alert(err.message));
+        .catch((err) => showError(err.message));
     } catch (error) {
-      alert(error.message);
+      showError(error.message);
     }
   });
 

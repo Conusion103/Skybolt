@@ -1,4 +1,4 @@
-CREATE DATABASE skybolt;
+--CREATE DATABASE skybolt;
 USE skybolt;
 
 -- Desactivar claves foráneas temporalmente

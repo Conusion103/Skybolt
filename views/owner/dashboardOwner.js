@@ -21,19 +21,19 @@
 
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
-import { showSuccess } from "../../src/scripts/alerts.js";
+import { showSuccess, showError, showConfirm } from "../../src/scripts/alerts.js";
 
 export let renderDashboardOwner = (ul, main) => {
   const activeUser = locaL.get("active_user");
   if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p>`;
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
     return;
   }
    document.body.style.background = "white";
 
   // Navbar
   ul.innerHTML = `
-     <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+    <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <h1 class="text-3xl font-bold text-gray-800">
@@ -41,10 +41,9 @@ export let renderDashboardOwner = (ul, main) => {
           </h1>
 
           <nav class="hidden md:flex space-x-6">
-            <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Mis canchas</a>
-            <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Perfil</a>
+            <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
+            <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
             <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
-    
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -57,15 +56,14 @@ export let renderDashboardOwner = (ul, main) => {
 
       <!-- MENÚ MÓVIL -->
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-        <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Mis canchas</a>
-        <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Perfil</a>
+        <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
+        <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
         <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
     <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
     <div id="top" class="h-16"></div>
-
   `;
   document.getElementById("menu-btn").addEventListener("click", () => {
     const menu = document.getElementById("mobile-menu");
@@ -142,7 +140,7 @@ export let renderDashboardOwner = (ul, main) => {
 
       <!-- Tabla responsive -->
       <section id="fields-list-section">
-        <h3 class="text-xl font-semibold mb-4">Mis Canchas Registradas</h3>
+        <h3 class="text-xl font-semibold mb-4">Dashboard Registradas</h3>
         <div class="overflow-x-auto">
           <table class="w-full border-collapse min-w-[600px]">
             <thead>
@@ -310,11 +308,11 @@ export let renderDashboardOwner = (ul, main) => {
     tbody.querySelectorAll(".delete-btn").forEach(btn => {
       btn.onclick = e => {
         const id = +e.target.closest("tr").dataset.id;
-        if (!confirm("¿Eliminar esta cancha?")) return;
+        if (!showConfirm("¿Eliminar esta cancha?")) return;
         Api.delete(`/api/fields_/${id}`)
           .then(res => {
             if (res.success) {
-              showError("Cancha eliminada");
+              showSuccess("Cancha eliminada");
               loadFields();
               if (fieldIdInput.value == id) cancelEditBtn.click();
             }

@@ -3,8 +3,12 @@ import { locaL } from "../../src/scripts/LocalStorage"
 import { Api } from "../../src/scripts/methodsApi"
 
 export let renderDashboardAdminFields = (ul, main) => {
-     document.body.style.background = "white";
-
+    const activeUser = locaL.get("active_user");
+    if (!activeUser) {
+        main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+        return;
+    }
+   document.body.style.background = "white";
     ul.innerHTML = `
         <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -267,7 +271,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                 .then(field => {
                     showEditForm(field);
                 })
-                .catch(() => alert("Error loading field for editing"));
+                .catch(() => showError("Error loading field for editing"));
             };
         });        
 
@@ -299,7 +303,7 @@ tbody.onclick = async function (e) {
         }
       })
       .catch(() => {
-        showError("Error eliminando el campo ❌");
+        showError("Error al eliminar el campo ❌");
       });
   }
 };
@@ -336,13 +340,13 @@ tbody.onclick = async function (e) {
             Api.put(`/api/fields_/${field.id_field}`, payload)
                 .then(res => {
                     if (res.success) {
-                        alert("Updated field");
+                        showSuccess("Updated field");
                         modal.classList.add("hidden");
                         modal.classList.remove("flex");
                         loadFields();
                     }
                 })
-            .catch(() => alert("Error updating field"));
+            .catch(() => showError("Error updating field"));
         };
 
         // Evento cancelar edición

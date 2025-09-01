@@ -69,6 +69,34 @@ router.get('/users/:id_user/reservations', async (req, res) => {
   }
 });
 
+router.get('/users/:id_user/reviewsowners', async (req, res) => {
+  try {
+    const { id_user } = req.params;
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) AS total_reviews FROM reviews r INNER JOIN fields_ f ON r.id_field = f.id_field WHERE f.id_owner = ?;',
+      [id_user]
+    );
+    res.json(rows);
+  } catch (err) {
+    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+  }
+});
+
+router.get('/users/:id_user/reservationsowners', async (req, res) => {
+  try {
+    const { id_user } = req.params;
+    const [rows] = await pool.query(
+      'SELECT COUNT(*) AS total_reservations FROM reservations r INNER JOIN fields_ f ON r.id_field = f.id_field WHERE f.id_owner = ?;',
+      [id_user]
+    );
+    res.json(rows);
+  } catch (err) {
+    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+  }
+});
+
+
+
 /* ==========================
    📌 Crear usuario (rol "user" por defecto)
    ========================== */

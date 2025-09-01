@@ -2,11 +2,15 @@ import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 import { departamentos } from "../register";
 import { generalFormat } from "../../src/scripts/validationMethods";
-import { showConfirm, showSuccess } from "../../src/scripts/alerts";
+import { showConfirm, showSuccess, showError } from "../../src/scripts/alerts";
 
 export let renderDashboardAdminEditUsers = (ul, main) => {
-
-  document.body.style.background = "white";
+  const activeUser = locaL.get("active_user");
+  if (!activeUser) {
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    return;
+  }
+   document.body.style.background = "white";
 
   // ---------- NAV ----------
   ul.innerHTML = `
@@ -71,8 +75,8 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
             <tr>
               <th class="px-4 py-2 text-left">ID</th>
               <th class="px-4 py-2 text-left">Name</th>
-              <th class="px-4 py-2 text-left">Phone</th>
               <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Phone</th>
               <th class="px-4 py-2 text-center">Actions</th>
             </tr>
           </thead>
@@ -391,7 +395,7 @@ function mostrarModalUser(userData, depName, munName) {
        // Llamada a la API para actualizar usuario
       Api.put(`/api/users/${userID}`, updatedUser)
         .then(() => {
-          showSucces("Usuario actualizado correctamente");
+          showSuccess("Usuario actualizado correctamente");
           document.getElementById("edit-user-form-container").style.display = "none";
           return Api.get("/api/users");
         })

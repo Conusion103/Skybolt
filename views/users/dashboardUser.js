@@ -1,8 +1,14 @@
-import { showError, showSuccess } from "../../src/scripts/alerts";
+import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
 export async function renderDashboardUser(nav, main) {
+  const activeUser = locaL.get("active_user");
+  if (!activeUser) {
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    return;
+  }
+   document.body.style.background = "white";
   // Navegación
   nav.innerHTML = `
     <a href="/skybolt/dashboarduser/profile" data-link class="text-green-600 font-semibold">Profile</a>
@@ -10,7 +16,7 @@ export async function renderDashboardUser(nav, main) {
   `;
 
   // Contenido principal
-  main.innerHTML = `
+    main.innerHTML = `
     <h2 class="text-xl font-bold mb-4">Hola ${locaL.get("active_user").full_name}</h2>
 
     <button id="openFilterBtn" class="mb-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Filtrar</button>
@@ -45,7 +51,7 @@ export async function renderDashboardUser(nav, main) {
     </div>
 
     <h3 class="text-lg font-semibold mb-2">Canchas disponibles</h3>
-    <div id="fieldsContainer" class="grid gap-4"></div>
+    <div id="fieldsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   `;
 
   let selectedTime = "";
@@ -149,7 +155,6 @@ export async function renderDashboardUser(nav, main) {
 
         try {
           await Api.post("/api/reservations", payload);
-          renderDashboardUser(nav, main)
           showSuccess("Reserva creada con éxito ✅");
         } catch (err) {
           console.error("Error al reservar:", err.message);
@@ -162,7 +167,7 @@ export async function renderDashboardUser(nav, main) {
     document.querySelectorAll(".cancel-btn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const idReserve = e.target.dataset.idReserve;
-        if (!confirm("¿Seguro que quieres cancelar la reserva?")) return;
+        if (!showConfirm("¿Seguro que quieres cancelar la reserva?")) return;
 
         try {
           await Api.delete(`/api/reservations/${idReserve}`);
@@ -241,7 +246,7 @@ export async function renderDashboardUser(nav, main) {
   document.getElementById("log-out-user").addEventListener("click", (e) => {
   e.preventDefault();
   locaL.delete("active_user");
-  window.location.href = "/skybolt/login";
+
 });
 
 }

@@ -8,6 +8,7 @@ import { renderDashboardAdminEditUsers } from "../views/admin/adminEditUsers";
 import { renderDashboardUserProfile } from "../views/users/profileUser";
 import { renderDashboardAdminEditOwners } from "../views/admin/adminEditOwner";
 import { renderResgiterRequestOwner } from "../views/users/requestOwner";
+import { renderDashboardOwnerProfile } from "../views/owner/profileOwner";
 import { renderDashboardAdminRequest } from "../views/admin/requestOwner";
 import { renderDashboardOwner } from "../views/owner/dashboardOwner";
 import { locaL } from "../src/scripts/LocalStorage";
@@ -26,6 +27,7 @@ let routes = {
     '/skybolt/dashboarduser/profile': () => renderDashboardUserProfile($nav, $main), 
     '/skybolt/dashboarduser/profile/request': () => renderResgiterRequestOwner($nav, $main),
     '/skybolt/dashboardowner': () => renderDashboardOwner($nav, $main), // Ruta para el Dashboard del propietario
+    '/skybolt/dashboardowner/profile': () => renderDashboardOwnerProfile($nav, $main),
     '/skybolt/dashboardowner/edit': () => renderDashboardOwnerEdit($nav, $main),
     '/skybolt/dashboardadmin/fields': () => renderDashboardAdminFields($nav, $main),
     '/skybolt/dashboardadmin/users': () => renderDashboardAdminEditUsers($nav, $main),
@@ -54,7 +56,7 @@ export let renderRoute = () => {
         
             case 'owner':
                 path = window.location.pathname;
-                if (!['/skybolt/dashboardowner', '/skybolt/dashboardowner/edit'].includes(path)) {
+                if (!['/skybolt/dashboardowner', '/skybolt/dashboardowner/edit', '/skybolt/dashboardowner/profile'].includes(path)) {
                     history.pushState(null, null, '/skybolt/dashboardowner');
                 } else {
                     history.pushState(null, null, path);

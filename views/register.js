@@ -6,71 +6,71 @@ import { showError, showSuccess } from "../src/scripts/alerts";
 export const departamentos = [
   {
     id: 1,
-    name: "Antioquia",
-    municipios: [
-      { id: 19, name: "Medellín" },
-      { id: 2, name: "Envigado" },
-      { id: 3, name: "Bello" },
-      { id: 4, name: "Itagüí" },
-      { id: 5, name: "Rionegro" },
-      { id: 6, name: "Apartadó" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Cundinamarca",
-    municipios: [
-      { id: 7, name: "Bogotá" },
-      { id: 8, name: "Soacha" },
-      { id: 9, name: "Chía" },
-      { id: 10, name: "Zipaquirá" },
-      { id: 11, name: "Girardot" },
-      { id: 12, name: "Fusagasugá" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Valle del Cauca",
-    municipios: [
-      { id: 13, name: "Cali" },
-      { id: 14, name: "Palmira" },
-      { id: 15, name: "Buenaventura" },
-      { id: 16, name: "Tuluá" },
-      { id: 17, name: "Cartago" },
-      { id: 18, name: "Yumbo" },
-    ],
-  },
-  {
-    id: 4,
-    name: "Atlántico",
+    name: "Atlantico",
     municipios: [
       { id: 1, name: "Barranquilla" },
-      { id: 20, name: "Soledad" },
-      { id: 21, name: "Malambo" },
-      { id: 22, name: "Sabanalarga" },
-      { id: 23, name: "Puerto Colombia" },
-    ],
-  },
-  {
-    id: 5,
-    name: "Santander",
-    municipios: [
-      { id: 24, name: "Bucaramanga" },
-      { id: 25, name: "Floridablanca" },
-      { id: 26, name: "Girón" },
-      { id: 27, name: "Piedecuesta" },
-      { id: 28, name: "Barrancabermeja" },
-    ],
-  },
-  {
-    id: 6,
-    name: "Bolívar",
-    municipios: [
-      { id: 29, name: "Cartagena" },
-      { id: 30, name: "Magangué" },
-      { id: 31, name: "Turbaco" },
-      { id: 32, name: "Arjona" },
-      { id: 33, name: "El Carmen de Bolívar" },
+  //     { id: 2, name: "Envigado" },
+  //     { id: 3, name: "Bello" },
+  //     { id: 4, name: "Itagüí" },
+  //     { id: 5, name: "Rionegro" },
+  //     { id: 6, name: "Apartadó" },
+  //   ],
+  // },
+  // {
+  //   id: 2,
+  //   name: "Cundinamarca",
+  //   municipios: [
+  //     { id: 7, name: "Bogotá" },
+  //     { id: 8, name: "Soacha" },
+  //     { id: 9, name: "Chía" },
+  //     { id: 10, name: "Zipaquirá" },
+  //     { id: 11, name: "Girardot" },
+  //     { id: 12, name: "Fusagasugá" },
+  //   ],
+  // },
+  // {
+  //   id: 3,
+  //   name: "Valle del Cauca",
+  //   municipios: [
+  //     { id: 13, name: "Cali" },
+  //     { id: 14, name: "Palmira" },
+  //     { id: 15, name: "Buenaventura" },
+  //     { id: 16, name: "Tuluá" },
+  //     { id: 17, name: "Cartago" },
+  //     { id: 18, name: "Yumbo" },
+  //   ],
+  // },
+  // {
+  //   id: 4,
+  //   name: "Atlántico",
+  //   municipios: [
+  //     { id: 19, name: "Barranquilla" },
+  //     { id: 20, name: "Soledad" },
+  //     { id: 21, name: "Malambo" },
+  //     { id: 22, name: "Sabanalarga" },
+  //     { id: 23, name: "Puerto Colombia" },
+  //   ],
+  // },
+  // {
+  //   id: 5,
+  //   name: "Santander",
+  //   municipios: [
+  //     { id: 24, name: "Bucaramanga" },
+  //     { id: 25, name: "Floridablanca" },
+  //     { id: 26, name: "Girón" },
+  //     { id: 27, name: "Piedecuesta" },
+  //     { id: 28, name: "Barrancabermeja" },
+  //   ],
+  // },
+  // {
+  //   id: 6,
+  //   name: "Bolívar",
+  //   municipios: [
+  //     { id: 29, name: "Cartagena" },
+  //     { id: 30, name: "Magangué" },
+  //     { id: 31, name: "Turbaco" },
+  //     { id: 32, name: "Arjona" },
+  //     { id: 33, name: "El Carmen de Bolívar" },
     ],
   },
 ];
@@ -344,6 +344,7 @@ export let renderRegister = (ul, main) => {
         })
         .then((res) => {
           // En tu método Api.request ya devuelves json, no res.ok
+          window.location.href = "/skybolt/login";
           showSuccess("Usuario registrado correctamente");
         })
         .catch((error) => {

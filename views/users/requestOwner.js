@@ -4,6 +4,12 @@ import { locaL } from "../../src/scripts/LocalStorage.js";
 import { showError, showSuccess } from "../../src/scripts/alerts.js";
 
 export let renderResgiterRequestOwner = (ul, main) => {
+      const activeUser = locaL.get("active_user");
+  if (!activeUser) {
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    return;
+  }
+  document.body.style.background = "white";
   ul.innerHTML = `
     <a href="/skybolt/dashboarduser/profile" data-link>Back</a>
   `;
