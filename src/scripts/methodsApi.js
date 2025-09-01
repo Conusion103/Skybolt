@@ -1,6 +1,6 @@
 export let Api = {
-    // base: 'https://skybolt-production.up.railway.app',
-    base: 'http://localhost:3000',
+     base: 'https://skybolt-production.up.railway.app',
+    // base: 'http://localhost:3000',
 
     // Función para manejar la lógica repetida
     request: (method, param, pack = null) => {
@@ -40,3 +40,4 @@ export let Api = {
         return Api.request('DELETE', param);  // Llama a request con el método DELETE
     }
 };
+
