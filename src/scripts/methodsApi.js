@@ -1,5 +1,5 @@
 export let Api = {
-     base: 'https://skybolt-production.up.railway.app',
+    base: 'https://skybolt-production.up.railway.app',
     // base: 'http://localhost:3000',
 
     // Función para manejar la lógica repetida
