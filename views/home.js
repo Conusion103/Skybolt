@@ -210,9 +210,14 @@ export let renderHome = (ul, main) => {
         <section class="py-16 bg-white px-6 sm:px-10 text-center" id="map">
             <h2 class="text-3xl font-extrabold text-green-900 mb-6">Find Us</h2>
             <p class="text-gray-700 mb-6">All our courts are located in accessible and safe areas.</p>
-            <iframe class="w-full h-64 md:h-96 rounded-xl shadow hover:shadow-2xl transition duration-300 border-2 border-green-400"
-                src="https://www.google.com/maps/embed?...">
+            <iframe 
+                class="w-full h-64 md:h-96 rounded-xl shadow hover:shadow-2xl transition duration-300 border-2 border-green-400"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.8427377414187!2d-74.80698112501097!3d11.004107889157373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8ef42d47d7ecf2c5%3A0x35a47b36e4e80275!2sBarranquilla%2C%20Atl%C3%A1ntico!5e0!3m2!1ses!2sco!4v1693399982000!5m2!1ses!2sco" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
             </iframe>
+
         </section>
     </div>`;
 };
