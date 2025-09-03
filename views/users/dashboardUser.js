@@ -207,7 +207,7 @@ export async function renderDashboardUser(nav, main) {
   }
     // GAME NAME MAPPING DEPENDS ON ITS IMAGE
     const gameImages = {
-    Soccer: "../img/fields/soccer.jpg",
+    "Fútbol 5": "../img/fields/soccer.jpg",
     Basketball: "../img/fields/basket.jpeg",
     Voleibol: "../img/fields/volley.jpg",
   };
