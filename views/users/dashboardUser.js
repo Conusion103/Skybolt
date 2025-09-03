@@ -9,7 +9,7 @@ export async function renderDashboardUser(nav, main) {
     return;
   }
    document.body.style.background = "white";
-  // Navegación
+ // Navigation
   nav.innerHTML = `
     <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,7 +178,7 @@ export async function renderDashboardUser(nav, main) {
       .map((g) => `<option value="${g.id_game}">${g.name_game}</option>`)
       .join("");
   } catch (err) {
-    console.error("Error cargando categorías:", err);
+    console.error("Error loading categories:", err);
   }
 
   // FUNCTION TO LOAD ACTIVE USER RESERVATIONS
@@ -189,7 +189,7 @@ export async function renderDashboardUser(nav, main) {
        // FILTER RESERVATIONS BELONGING TO ACTIVE USER
       return reservations.filter(r => r.id_user === user.id_user);
     } catch (err) {
-      console.error("Error cargando reservas del usuario:", err);
+      console.error("Error loading user reservations:", err);
       return [];
     }
   }
@@ -198,6 +198,13 @@ export async function renderDashboardUser(nav, main) {
   async function renderFields(fields) {
     const userReservations = await loadUserReservations();
 
+    // Obtener todas las reservas (de todos los usuarios, no solo el activo)
+  let allReservations = [];
+  try {
+    allReservations = await Api.get("/api/reservations/full");
+  } catch (err) {
+    console.error("Error cargando todas las reservas:", err);
+  }
     // GAME NAME MAPPING DEPENDS ON ITS IMAGE
     const gameImages = {
     Soccer: "../img/fields/soccer.jpg",
@@ -210,6 +217,9 @@ export async function renderDashboardUser(nav, main) {
       ? fields
           .map((f) => {
             const imageUrl = gameImages[f.name_game] || "../img/fields/default.jpg";
+
+            // Check if this court already has a reservation
+            const existingReservation = allReservations.find(r => r.id_field === f.id_field);
             // CHECK IF USER HAS A RESERVATION ON THIS FIELD
             const reservation = userReservations.find(r => r.id_field === f.id_field);
             if (reservation) {
@@ -228,6 +238,22 @@ export async function renderDashboardUser(nav, main) {
                 </article>
 
               `;
+            } else if (existingReservation) {
+            // If reserved by another user button grey and disabled
+            return `
+              <article class="bg-white shadow rounded-lg p-4">
+                <img src="${imageUrl}" alt="${f.name_game}" class="w-full h-40 object-cover rounded-lg mb-3"/>
+                <h3 class="font-bold text-gray-500">${f.name_field}</h3>
+                <p class="text-sm text-gray-500">${f.name_game}</p>
+                <p class="text-sm text-gray-500">${f.name_municipality}, ${f.name_department}</p>
+                <p class="text-sm">Day: ${f.day_of_week} - ${f.hora_inicio} to ${f.hora_final}</p>
+                <p class="text-sm">State: Reserved</p>
+                <button disabled 
+                        class="mt-2 w-full bg-gray-400 text-white py-1 rounded-lg cursor-not-allowed">
+                  Reserved
+                </button>
+              </article>
+            `;
             } else {
               // RENDER FIELD WITH RESERVE BUTTON
               return `
@@ -366,7 +392,7 @@ export async function renderDashboardUser(nav, main) {
       filterPanel.classList.add("hidden");
     } catch (err) {
       console.error(err);
-      document.getElementById("fieldsContainer").innerHTML = `<p>Error cargando resultados</p>`;
+      document.getElementById("fieldsContainer").innerHTML = `<p>Error loading results</p>`;
     }
   });
 
