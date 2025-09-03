@@ -125,7 +125,7 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
   // Contador de reseñas
   Api.get(`/api/users/${activeUser.id_user}/reviewsowners`)
     .then((reviews) => {
-     console.log("Respuesta reservas:", res);
+     console.log("Respuesta reservas:", reviews);
 
     // Si usas Axios, la data viene en res.data
     let count = reviews[0].total_reviews || 0;
