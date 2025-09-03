@@ -161,7 +161,6 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
     logoutHeader.addEventListener("click", (e) => {
       e.preventDefault();
       locaL.delete("active_user");
-      window.location.href = "/skybolt/login";
     });
   }
 
