@@ -1,3 +1,4 @@
+// localStorage CRUD operations
 export let locaL = {
     post: (nickname,object) => {
         if(object){
