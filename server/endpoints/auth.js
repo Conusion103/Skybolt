@@ -6,6 +6,8 @@ import { sendError, getUserRoles, JWT_SECRET, bcrypt } from '../utils.js';
 
 const router = express.Router();
 
+
+// Endpoint for the login manage
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return sendError(res, 400, 'Email y password son requeridos');

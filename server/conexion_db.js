@@ -15,7 +15,7 @@ export const pool = mysql.createPool({
     queueLimit: 0
 });
 
-// función para probar la conexión
+// function to test the connection
 export async function probarConexionConLaBaseDeDatos() {
     try {
         const connection = await pool.getConnection();

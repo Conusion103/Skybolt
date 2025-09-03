@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS games;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Tabla de departamentos
+
 CREATE TABLE departments (
     id_department INT AUTO_INCREMENT PRIMARY KEY,
     name_department VARCHAR(255) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE departments (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Tabla de municipios
+
 CREATE TABLE municipalities (
     id_municipality INT AUTO_INCREMENT PRIMARY KEY,
     id_department INT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE municipalities (
     FOREIGN KEY (id_department) REFERENCES departments(id_department)
 );
 
--- Tabla de usuarios
+
 CREATE TABLE users (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
@@ -54,13 +54,13 @@ CREATE TABLE users (
     FOREIGN KEY (id_municipality) REFERENCES municipalities(id_municipality)
 );
 
--- Tabla de roles
+
 CREATE TABLE roles (
     id_role INT AUTO_INCREMENT PRIMARY KEY,
     name_role VARCHAR(50) UNIQUE NOT NULL
 );
 
--- Relación muchos a muchos entre usuarios y roles
+
 CREATE TABLE user_roles (
     id_user INT NOT NULL,
     id_role INT NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE user_roles (
     FOREIGN KEY (id_role) REFERENCES roles(id_role)
 );
 
--- Tabla de juegos
+
 CREATE TABLE games (
     id_game INT AUTO_INCREMENT PRIMARY KEY,
     name_game VARCHAR(255) NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE games (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Tabla de tiempos
+
 CREATE TABLE time_ (
     id_tiempo INT AUTO_INCREMENT PRIMARY KEY,
     hora_inicio TIME NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE time_ (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Tabla de disponibilidad
+
 CREATE TABLE availability (
     id_availability INT AUTO_INCREMENT PRIMARY KEY,
     day_of_week VARCHAR(10) NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE availability (
     FOREIGN KEY (id_tiempo) REFERENCES time_(id_tiempo)
 );
 
--- Tabla de canchas
+
 CREATE TABLE fields_ (
     id_field INT AUTO_INCREMENT PRIMARY KEY,
     name_field VARCHAR(255) NOT NULL,
@@ -114,7 +114,6 @@ CREATE TABLE fields_ (
     FOREIGN KEY (id_owner) REFERENCES users(id_user) ON DELETE CASCADE
 );
 
--- Tabla de reservas
 CREATE TABLE reservations (
     id_reserve INT AUTO_INCREMENT PRIMARY KEY,
     reserve_schedule DATETIME NOT NULL,
@@ -126,7 +125,7 @@ CREATE TABLE reservations (
     FOREIGN KEY (id_field) REFERENCES fields_(id_field) ON DELETE CASCADE
 );
 
--- Tabla de solicitudes de ser propietario
+
 CREATE TABLE owner_requests (
     id_request INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
@@ -139,7 +138,7 @@ CREATE TABLE owner_requests (
     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
 );
 
--- Tabla de reseñas
+
 CREATE TABLE reviews (
     id_review INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
@@ -158,21 +157,21 @@ CREATE TABLE reviews (
 --     FOREIGN KEY (id_user) REFERENCES users(id_user) ON DELETE CASCADE
 -- );
 
--- Insertar departamento Atlántico
+
 INSERT INTO departments (name_department) VALUES
 ('Atlántico');
 
--- Insertar municipio Barranquilla
+
 INSERT INTO municipalities (id_department, name_municipality) VALUES
 (1, 'Barranquilla');
 
--- Insertar roles
+
 INSERT INTO roles (name_role) VALUES
 ('admin'),
 ('owner'),
 ('user');
 
--- Insertar Super Admin
+
 INSERT INTO users (
     full_name,
     email,
@@ -193,7 +192,7 @@ INSERT INTO users (
     '$2a$12$7tcjcHBSNcVHOUqIcs6W1.lVZTHjMBfBbDJrRRJPmOCV60DQnvD7a'
 );
 
--- Asignar rol admin al Super Admin
+
 INSERT INTO user_roles (id_user, id_role)
 VALUES (
     1,

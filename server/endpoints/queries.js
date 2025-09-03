@@ -5,7 +5,7 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// Reservas de un usuario con detalles de cancha y ubicación
+// User reservations with court and location details
 router.get('/users/:id_user/reservations', async (req, res) => {
   const { id_user } = req.params;
   try {
@@ -26,11 +26,12 @@ router.get('/users/:id_user/reservations', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al consultar reservas del usuario', err.message);
+    sendError(res, 500, 'Error when querying user reservations', err.message);
   }
 });
 
-// Conteo de reservas por cancha
+
+// Counting reservations per court
 router.get('/fields_/:id_field/reservations/count', async (req, res) => {
   const { id_field } = req.params;
   try {
@@ -44,14 +45,14 @@ router.get('/fields_/:id_field/reservations/count', async (req, res) => {
        GROUP BY f.name_field`,
       [id_field]
     );
-    if (!rows.length) return sendError(res, 404, 'Field no encontrada');
+    if (!rows.length) return sendError(res, 404, 'Field not found');
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, 'Error al contar reservas', err.message);
+    sendError(res, 500, 'error when counting reserves', err.message);
   }
 });
 
-// Listar reservas con detalles de usuario y ubicación
+// List reservations with user and location details
 router.get('/reservations/details', async (_req, res) => {
   try {
     const [rows] = await pool.query(
@@ -71,11 +72,11 @@ router.get('/reservations/details', async (_req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener detalles de reservas', err.message);
+    sendError(res, 500, 'Error getting reservation details', err.message);
   }
 });
 
-// Canchas, disponibilidad y número de reservas
+// Courts, availability and number of reservations
 router.get('/fields_/availability', async (_req, res) => {
   try {
     const [rows] = await pool.query(
@@ -98,7 +99,7 @@ router.get('/fields_/availability', async (_req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener disponibilidad de fields_', err.message);
+    sendError(res, 500, 'Error getting availability of fields_', err.message);
   }
 });
 
