@@ -5,6 +5,7 @@ import { showError } from "../src/scripts/alerts";
 export let renderLogin = (ul, main) => {
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
+  document.body.style.background = "white";
   $body.classList.remove("bg-cover", "bg-center", "bg-no-repeat");
   $body.classList.add("bg-gray-100", "min-h-screen");
   main.classList.remove(
@@ -31,7 +32,7 @@ export let renderLogin = (ul, main) => {
           <a href="/skybolt/home#testimonials" class="nav-link" data-link>Testimonials</a>
           <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
           <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
-          <a href="#contact" class="nav-link" data-link>Contact Us</a>
+          <a href="/skybolt/home#contact" class="nav-link" data-link>Contact Us</a>
           <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
         </nav>
 
@@ -45,11 +46,11 @@ export let renderLogin = (ul, main) => {
 
     <!-- MENÚ MÓVIL -->
     <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-      <a href="#about-us" class="nav-link" data-link>About us</a>
-      <a href="#testimonials" class="nav-link" data-link>Testimonials</a>
-      <a href="#faq" class="nav-link" data-link>FAQ</a>
-      <a href="#map" class="nav-link" data-link>Find Us</a>
-      <a href="#contact" class="nav-link" data-link>Contact Us</a>
+      <a href="/skybolt/home#about-us" class="nav-link" data-link>About us</a>
+      <a href="/skybolt/home#testimonials" class="nav-link" data-link>Testimonials</a>
+      <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
+      <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
+      <a href="/skybolt/home#contact" class="nav-link" data-link>Contact Us</a>
       <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
     </div>
 
