@@ -1,22 +1,22 @@
 import { renderRoute } from "../../routers/router";
 
-// Event listener para los clics en los enlaces
+// Actions for navigation links
 window.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
         const isLink = e.target.matches('[data-link]');
         if (isLink) {
-            e.preventDefault();  // Prevenir la acción por defecto (recarga de página)
+            e.preventDefault();  // Prevent default reload behavior
             
-            const targetUrl = e.target.href; // Obtener la URL de destino
-            history.pushState(null, null, targetUrl);  // Cambiar la URL sin recargar la página
+            const targetUrl = e.target.href; // Obtain the target URL from the clicked link
+            history.pushState(null, null, targetUrl);  // Change the URL without reloading the page
 
-            renderRoute();  // Llamar a renderRoute() para actualizar el contenido según la nueva URL
+            renderRoute();  // Call renderRoute to update the view
         }
     });
 });
 
-// Event listener para cuando cambie el historial de navegación
+// Event listener for when the navigation history changes
 window.addEventListener('popstate', renderRoute);
 
-// Event listener para cuando la página se carga inicialmente
+// Event listener for when the page initially loads
 window.addEventListener('load', renderRoute);

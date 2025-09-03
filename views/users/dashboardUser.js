@@ -20,7 +20,7 @@ export async function renderDashboardUser(nav, main) {
 
             <nav class="hidden md:flex space-x-6">
               <a href="/skybolt/dashboarduser/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Profile</a>
-              <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>       
+              <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
             </nav>
 
             <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -32,9 +32,9 @@ export async function renderDashboardUser(nav, main) {
         </div>
 
         <!-- MOBILE MENU -->
-        <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+        <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6  flex-col items-center space-y-4 text-center">
           <a href="/skybolt/dashboarduser/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Profile</a>
-          <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+          <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
         </div>
       </div>
     </header>
@@ -197,8 +197,8 @@ export async function renderDashboardUser(nav, main) {
  // RENDER FIELDS WITH RESERVE/CANCEL LOGIC
   async function renderFields(fields) {
     const userReservations = await loadUserReservations();
-
-    // Obtener todas las reservas (de todos los usuarios, no solo el activo)
+    
+// get all user reservations
   let allReservations = [];
   try {
     allReservations = await Api.get("/api/reservations/full");
@@ -412,10 +412,14 @@ export async function renderDashboardUser(nav, main) {
   });
 
  // LOGOUT BUTTON EVENT
-  document.getElementById("log-out-user").addEventListener("click", (e) => {
-  e.preventDefault();
-  locaL.delete("active_user");
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
 
-});
-
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+  });
 }

@@ -23,7 +23,7 @@ export let renderDashboardOwner = (ul, main) => {
           <nav class="hidden md:flex space-x-6">
             <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
             <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -35,10 +35,10 @@ export let renderDashboardOwner = (ul, main) => {
       </div>
 
      <!-- MOBILE MENU -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
         <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
@@ -258,10 +258,10 @@ export let renderDashboardOwner = (ul, main) => {
     const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A"; // Find and get the name of the associated game
     const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A"; // search and get the name of the municipality
     const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A"; // Search and get the availability status
-    
-    // Check if the court is reserved
+
     const isReserved = reservations.some(r => r.id_field === field.id_field); 
     const estado = isReserved ? "Reserved" : "Unreserved"; // Defines the state text ("Reserved" or "Unreserved")
+
     const estadoClass = isReserved ? "text-red-600" : "text-green-600";
 
     return `
@@ -372,10 +372,17 @@ export let renderDashboardOwner = (ul, main) => {
   };
 
   // LOGOUT BUTTON HANDLER TO DELETE ACTIVE USER AND REDIRECT TO LOGIN
-  document.getElementById("log-out-user").addEventListener("click", e => {
-    e.preventDefault();
-    locaL.delete("active_user");
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
+
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
+
 
   // INITIAL LOAD OF SELECT DATA AND FIELDS
   loadSelectData().then(loadFields);

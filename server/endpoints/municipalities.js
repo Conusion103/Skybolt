@@ -5,39 +5,36 @@ import { sendError } from "../utils.js";
 
 const router = express.Router();
 
-// 📌 Obtener todos los municipios
 router.get("/municipalities", async (_req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM municipalities");
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, "Error al obtener municipios", err.message);
+    sendError(res, 500, "Error getting municipalitiess", err.message);
   }
 });
 
-// 📌 Obtener un municipio por ID
 router.get("/municipalities/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const [rows] = await pool.query("SELECT * FROM municipalities WHERE id_municipality = ?", [id]);
 
     if (rows.length === 0) {
-      return sendError(res, 404, "Municipio no encontrado");
+      return sendError(res, 404, "municipalities not found");
     }
 
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, "Error al obtener el municipio", err.message);
+    sendError(res, 500, "Error getting municipalities", err.message);
   }
 });
 
-// 📌 Crear un nuevo municipio
 router.post("/municipalities", async (req, res) => {
   try {
     const { name_municipality, id_department } = req.body;
 
     if (!name_municipality || !id_department) {
-      return sendError(res, 400, "El nombre del municipio y el ID de departamento son obligatorios");
+      return sendError(res, 400, "The municipality name and department ID are required.");
     }
 
     const [result] = await pool.query(
@@ -47,11 +44,11 @@ router.post("/municipalities", async (req, res) => {
 
     res.status(201).json({ id: result.insertId, name_municipality, id_department });
   } catch (err) {
-    sendError(res, 500, "Error al crear el municipio", err.message);
+    sendError(res, 500, "Error creating municipalities", err.message);
   }
 });
 
-// 📌 Actualizar un municipio
+
 router.put("/municipalities/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,32 +60,32 @@ router.put("/municipalities/:id", async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return sendError(res, 404, "Municipio no encontrado");
+      return sendError(res, 404, "municipalities not found");
     }
 
-    res.json({ message: "Municipio actualizado correctamente" });
+    res.json({ message: "municipalities updated correctly" });
   } catch (err) {
-    sendError(res, 500, "Error al actualizar el municipio", err.message);
+    sendError(res, 500, "Error updating municipalities", err.message);
   }
 });
 
-// 📌 Eliminar un municipio
+
 router.delete("/municipalities/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const [result] = await pool.query("DELETE FROM municipalities WHERE id_municipality = ?", [id]);
 
     if (result.affectedRows === 0) {
-      return sendError(res, 404, "Municipio no encontrado");
+      return sendError(res, 404, "municipalities not found");
     }
 
-    res.json({ message: "Municipio eliminado correctamente" });
+    res.json({ message: "municipalities removed successfully" });
   } catch (err) {
-    sendError(res, 500, "Error al eliminar el municipio", err.message);
+    sendError(res, 500, "Error deleting municipalities", err.message);
   }
 });
 
-// 📌 Consulta avanzada: municipios con su departamento
+
 router.get("/municipalities-with-departments", async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -99,7 +96,7 @@ router.get("/municipalities-with-departments", async (_req, res) => {
 
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, "Error al obtener municipios con departamentos", err.message);
+    sendError(res, 500, "Error getting municipalities with departments", err.message);
   }
 });
 

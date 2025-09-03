@@ -7,7 +7,7 @@ import { showConfirm, showSuccess, showError } from "../../src/scripts/alerts";
 export let renderDashboardAdminEditUsers = (ul, main) => {
   const activeUser = locaL.get("active_user");
   if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    main.innerHTML = `<p>Please log in.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
     return;
   }
    document.body.style.background = "white";
@@ -27,7 +27,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
             <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
             <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
             <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
     
           </nav>
 
@@ -39,17 +39,17 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
         </div>
       </div>
 
-      <!-- MENÚ MÓVIL -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+       <!-- MOBILE MENU -->
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
         <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
     <div id="top" class="h-16"></div>
 
   `;
@@ -68,7 +68,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
        <input type="text" id="user-search" placeholder="Search by email..."
         class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"/>
 
-      <!-- Tabla -->
+      <!-- Table -->
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead class="bg-green-500 text-white">
@@ -85,9 +85,9 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
       </div>
 
           
-      <!-- FORM EDITAR -->
+      <!-- FORM EDIT -->
       <div id="edit-user-form-container"
-        class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+        class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
         <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-sm sm:max-w-lg md:max-w-2xl mx-auto
                     max-h-[90vh] overflow-y-auto sm:max-h-none sm:overflow-visible">
           <h3 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4 text-center">
@@ -116,14 +116,14 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
             <input type="text" id="edit-id_document" placeholder="ID Document"
               class="w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
 
-            <!-- Departamento -->
+            <!-- Department -->
             <select id="edit-id_department"
               class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300">
               <option value="">--Select a department--</option>
               ${departamentos.map(dep => `<option value="${dep.id}">${dep.name}</option>`).join("")}
             </select>
 
-            <!-- Municipio -->
+            <!-- Municipality -->
             <select id="edit-id_municipality"
               class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300">
               <option value="">--Select a municipality--</option>
@@ -135,7 +135,7 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
             <input type="password" id="edit-password_" placeholder="New Password (optional)"
               class="col-span-1 sm:col-span-2 w-full px-4 py-3 rounded-md bg-gray-200 focus:ring-2 focus:ring-green-300" />
 
-            <!-- Botones -->
+            <!-- Buttons -->
             <div class="flex flex-col sm:flex-row justify-end gap-3 mt-4 col-span-1 sm:col-span-2">
               <button type="submit"
                 class="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
@@ -149,9 +149,9 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
           </form>
         </div>
       </div>
-      <!-- MODAL VER MÁS -->
+      <!-- MODAL SEE MORE -->
       
-      <div id="modal-user" class="fixed inset-0  bg-opacity-50 hidden flex items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
+      <div id="modal-user" class="fixed inset-0  bg-opacity-50 hidden items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
         <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
           <h3 class="text-xl font-bold text-green-600 mb-4">User Details</h3>
           <div id="modal-user-content" class="space-y-2 text-gray-700"></div>
@@ -170,32 +170,31 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             
-        <!-- DESCRIPCIÓN -->
-        <div>
-          <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
-          <p class="text-sm">
-            Your trusted platform to book sports venues in seconds. Technology that connects active communities.
-          </p>
-        </div>
+      <!-- DESCRIPTION -->
+      <div>
+        <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
+        <p class="text-sm">
+          Your trusted platform to book sports venues in seconds. Technology that connects active communities.
+        </p>
+      </div>
 
-        <!-- ENLACES -->
-        <div>
-          <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
-          <ul class="space-y-2 text-sm">
-            <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
-            <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition" data-link>FAQ</a></li>
-            <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition" data-link>Location</a></li>
-          </ul>
-        </div>
+      <!-- LINKS -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/skybolt/login" class="hover:text-yellow-300 transition" data-link>Book Now</a></li>
+          <li><a href="/skybolt/home#faq" class="hover:text-yellow-300 transition" data-link>FAQ</a></li>
+          <li><a href="/skybolt/home#map" class="hover:text-yellow-300 transition" data-link>Location</a></li>
+        </ul>
+      </div>
 
-        <!-- REDES -->
-        <div>
-          <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
-          <div class="flex gap-4">
-            <a href="#" class="hover:text-yellow-300 transition" data-link>Instagram</a>
-            <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
-            <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
-          </div>
+     <!-- NETWORKS -->
+      <div>
+        <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-yellow-300 transition" data-link>Instagram</a>
+          <a href="#" class="hover:text-yellow-300 transition" data-link>Facebook</a>
+          <a href="#" class="hover:text-yellow-300 transition" data-link>Twitter</a>
         </div>
       </div>
       <!-- COPYRIGHT -->
@@ -206,14 +205,20 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   `;
 
   // ---------- LOGOUT ----------
-  document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
+
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
 
   let usersList = [];
 
-  // ---------- CARGAR USUARIOS ----------
+  // ---------- LOAD USERS ----------
   Api.get("/api/users").then((data) => {
     usersList = data;
     renderUsers(data);
@@ -223,15 +228,17 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   const renderUsers = (data) => {
   const tbody = document.getElementById("user-table-body");
   tbody.innerHTML = "";
-  // Solo usuarios donde primer rol es 'user'
+
+  // FILTER ONLY USERS WHOSE FIRST ROLE IS 'user'
   const onlyUsers = data.filter((u) =>
     u.roles.length > 0 && u.roles[0].name_role === "user"
   );
-
+   // IF NO USERS FOUND, DISPLAY EMPTY STATE MESSAGE
   if (onlyUsers.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">There are no users with role <strong>user</strong>.</td></tr>`;
     return;
   }
+  // LOOP THROUGH USERS AND ADD THEM TO THE TABLE
   onlyUsers.forEach((user) => {
     const row = document.createElement("tr");
     row.classList.add("border-b", "hover:bg-gray-50");
@@ -254,105 +261,112 @@ export let renderDashboardAdminEditUsers = (ul, main) => {
   // ---------- SEARCH ----------
   document.getElementById("user-search").addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
+     // FILTER USERS BASED ON EMAIL
     const filtered = usersList.filter((u) =>
       u.email.toLowerCase().includes(searchTerm)
     );
     renderUsers(filtered);
   });
 
-  // ---------- EVENTOS TABLA ----------
-  // Maneja clics en botones de Ver, Editar y Eliminar
+  // ---------- TABLE EVENTS ----------
   document.getElementById("user-table-body").addEventListener("click", (e) => {
     const userID = Number(e.target.getAttribute("data-id"));
     if (!userID) return;
 
-    // Eliminar usuario
-if (e.target.classList.contains("btn-delete")) {
-  showConfirm("Delete this user?").then((confirmed) => {
-    if (!confirmed) return;
-
-    Api.delete(`/api/users/${userID}`)
-      .then(() => {
-        usersList = usersList.filter((u) => u.id_user !== userID);
-        renderUsers(usersList);
-        showSuccess("User successfully deleted");
-      })
-      .catch((err) => {
-        showError(err.message);
+      // DELETE USER BUTTON CLICK
+    if (e.target.classList.contains("btn-delete")) {
+      showConfirm("Delete this user?").then((confirmed) => {
+        if (!confirmed) return;
+        // API CALL TO DELETE USER
+        Api.delete(`/api/users/${userID}`)
+          .then(() => {
+            usersList = usersList.filter((u) => u.id_user !== userID);
+            renderUsers(usersList);
+            showSuccess("User successfully deleted");
+          })
+          .catch((err) => {
+            showError(err.message);
+          });
       });
-  });
-}
+    }
 
-    // Editar usuario
+      // EDIT USER BUTTON CLICK
     if (e.target.classList.contains("btn-edit")) {
-  const userData = usersList.find((u) => u.id_user === userID);
-  if (!userData) return;
+      const userData = usersList.find((u) => u.id_user === userID);
+      if (!userData) return;
 
-  document.getElementById("edit-user-id").value = userData.id_user;
-  document.getElementById("edit-full_name").value = userData.full_name;
-  document.getElementById("edit-email").value = userData.email;
-  document.getElementById("edit-phone").value = userData.phone || "";
-  document.getElementById("edit-birthdate").value = userData.birthdate?.split("T")[0] || "";
-  document.getElementById("edit-document_type").value = userData.document_type;
-  document.getElementById("edit-id_document").value = userData.id_document;
-  document.getElementById("edit-id_department").value = userData.id_department;
+       // FILL THE EDIT FORM WITH USER DATA
+      document.getElementById("edit-user-id").value = userData.id_user;
+      document.getElementById("edit-full_name").value = userData.full_name;
+      document.getElementById("edit-email").value = userData.email;
+      document.getElementById("edit-phone").value = userData.phone || "";
+      document.getElementById("edit-birthdate").value = userData.birthdate?.split("T")[0] || "";
+      document.getElementById("edit-document_type").value = userData.document_type;
+      document.getElementById("edit-id_document").value = userData.id_document;
+      document.getElementById("edit-id_department").value = userData.id_department;
 
-  // Carga municipios y selecciona el correcto
-  loadMunicipalities(userData.id_department, userData.id_municipality);
+      // LOAD MUNICIPALITIES AND SELECT CORRECT ONE
+      loadMunicipalities(userData.id_department, userData.id_municipality);
 
-  document.getElementById("edit-rol").value = userData.roles[0]?.name_role || "";
-  document.getElementById("edit-password_").value = "";
-
-  document.getElementById("edit-user-form-container").classList.remove("hidden");
-}
-    // Ver detalles del usuario
+      document.getElementById("edit-rol").value = userData.roles[0]?.name_role || "";
+      document.getElementById("edit-password_").value = "";
+      // SHOW THE EDIT FORM
+      document.getElementById("edit-user-form-container").classList.remove("hidden");
+    }
+     // VIEW USER DETAILS BUTTON CLICK
     if (e.target.classList.contains("btn-view")) {
-  const userData = usersList.find((u) => u.id_user === userID);
-  if (!userData) return;
+      const userData = usersList.find((u) => u.id_user === userID);
+      if (!userData) return;
 
-  let depName = "Unknown";
-  let munName = "Unknown";
+      let depName = "Unknown";
+      let munName = "Unknown";
 
-  if (userData.id_municipality) {
-    Api.get(`/api/municipalities/${userData.id_municipality}`)
-      .then((muni) => {
-        munName = muni?.name_municipality || "Unknown";
-        if (muni?.id_department) {
-          Api.get(`/api/departments/${muni.id_department}`)
-            .then(dep => {
-              depName = dep?.name_department || "Unknown";
-              mostrarModalUser(userData, depName, munName);
-            })
-            .catch(() => mostrarModalUser(userData, depName, munName));
-        } else {
-          mostrarModalUser(userData, depName, munName);
-        }
-      })
-      .catch(() => mostrarModalUser(userData, depName, munName));
-  } else {
-    mostrarModalUser(userData, depName, munName);
-  }
-}
+       // IF MUNICIPALITY EXISTS, FETCH DATA FROM API
+      if (userData.id_municipality) {
+        Api.get(`/api/municipalities/${userData.id_municipality}`)
+          .then((muni) => {
+            munName = muni?.name_municipality || "Unknown";
+            // Si el municipio tiene un departamento asociado, se consulta
+            if (muni?.id_department) {
+              Api.get(`/api/departments/${muni.id_department}`)
+                .then(dep => {
+                  depName = dep?.name_department || "Unknown";
+                  // Se muestra el modal con toda la información
 
-// Helper para mostrar el modal
-function mostrarModalUser(userData, depName, munName) {
-  document.getElementById("modal-user-content").innerHTML = `
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>ID:</strong> ${userData.id_user}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Name:</strong> ${userData.full_name}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Email:</strong> ${userData.email}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Phone:</strong> ${userData.phone || "N/A"}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Birthday:</strong> ${userData.birthdate?.split("T")[0] || "N/A"}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>${userData.document_type}:</strong> ${userData.id_document}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Location:</strong> ${depName} - ${munName}</p>
-    <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Roles:</strong> ${userData.roles[0]?.name_role || ""}</p>
-  `;
-  document.getElementById("modal-user").classList.remove("hidden");
-  document.getElementById("modal-user").classList.add("flex");
-}
+                  showModalUser(userData, depName, munName);
+                })
+                .catch(() => showModalUser(userData, depName, munName));
+            } else {
+              showModalUser(userData, depName, munName);
+            }
+          })
+          .catch(() => showModalUser(userData, depName, munName));
+      } else {
+        showModalUser(userData, depName, munName);
+      }
+    }
+
+    // ---------- SHOW MODAL WITH USER DETAILS ----------
+    function showModalUser(userData, depName, munName) {
+      document.getElementById("modal-user-content").innerHTML = `
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>ID:</strong> ${userData.id_user}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Name:</strong> ${userData.full_name}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Email:</strong> ${userData.email}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Phone:</strong> ${userData.phone || "N/A"}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Birthday:</strong> ${userData.birthdate?.split("T")[0] || "N/A"}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>${userData.document_type}:</strong> ${userData.id_document}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Location:</strong> ${depName} - ${munName}</p>
+        <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>Roles:</strong> ${userData.roles[0]?.name_role || ""}</p>
+      `;
+      // DISPLAY MODAL
+      document.getElementById("modal-user").classList.remove("hidden");
+      document.getElementById("modal-user").classList.add("flex");
+    }
   });
 
   // ---------- CANCEL EDIT ----------
   document.getElementById("cancel-edit").addEventListener("click", () => {
+    // RESET FORM AND HIDE IT
     document.getElementById("edit-user-form").reset();
     document.getElementById("edit-user-id").value = "";
     document.getElementById("edit-user-form-container").classList.add("hidden");
@@ -364,7 +378,7 @@ function mostrarModalUser(userData, depName, munName) {
     try {
       const userID = Number(document.getElementById("edit-user-id").value);
 
-      // Validaciones con generalFormat
+      // VALIDATE FORM INPUTS
       const full_name = generalFormat.nameFormat(document.getElementById("edit-full_name").value.trim());
       const email = generalFormat.hotmailFormat(document.getElementById("edit-email").value.trim());
       const phone = generalFormat.phoneNumber(document.getElementById("edit-phone").value.trim());
@@ -387,15 +401,15 @@ function mostrarModalUser(userData, depName, munName) {
         rol
       };
 
-      // Validación de password solo si se cambia
+      // CHECK IF PASSWORD WAS MODIFIED
       const newPassword = document.getElementById("edit-password_").value;
       if (newPassword) {
         updatedUser.password_ = generalFormat.passwordFormat(newPassword, newPassword);
       }
-       // Llamada a la API para actualizar usuario
+       // API CALL TO UPDATE USER
       Api.put(`/api/users/${userID}`, updatedUser)
         .then(() => {
-          showSuccess("Usuario actualizado correctamente");
+          showSuccess("User updated successfully");
           document.getElementById("edit-user-form-container").style.display = "none";
           return Api.get("/api/users");
         })
@@ -411,18 +425,20 @@ function mostrarModalUser(userData, depName, munName) {
     
 
   // ---------- MODAL CLOSE ----------
-    document.getElementById("close-modal").addEventListener("click", () => {
+  document.getElementById("close-modal").addEventListener("click", () => {
+      // HIDE MODAL
     document.getElementById("modal-user").classList.add("hidden");
     document.getElementById("modal-user").classList.remove("flex");
   });
 
   // ---------- HELPERS ----------
-  // Carga los municipios en el select según departamento seleccionado
+  // LOAD MUNICIPALITIES INTO SELECT BASED ON DEPARTMENT
   const loadMunicipalities = (depId) => {
     const select = document.getElementById("edit-id_municipality");
     select.innerHTML = '<option value="">Select a municipality</option>';
     const dep = departamentos.find((d) => d.id === Number(depId));
     if (!dep) return;
+    // APPEND MUNICIPALITIES TO SELECT DROPDOWN
     dep.municipios.forEach((m) => {
       const option = document.createElement("option");
         option.value = m.id;
@@ -430,7 +446,7 @@ function mostrarModalUser(userData, depName, munName) {
         select.appendChild(option);
     });
   };
-    // Detecta cambio de departamento y actualiza municipios
+  // UPDATE MUNICIPALITIES WHEN DEPARTMENT CHANGES
   document.getElementById("edit-id_department").addEventListener("change", (e) => {
     const depId = Number(e.target.value);
     loadMunicipalities(depId);

@@ -1,5 +1,5 @@
 
-
+// functions to validate owner request form fields
 export const ownerRequestValidators = {
   cancha_name: (value) => {
     if (!value || typeof value !== "string") {
@@ -8,7 +8,7 @@ export const ownerRequestValidators = {
     if (!/^[a-zA-Z0-9\s]{3,100}$/.test(value.trim())) {
       return "Field Name must be 3–100 characters, only letters, numbers and spaces.";
     }
-    return null; // ✅ valid
+    return null;
   },
 
   cancha_location: (value) => {
@@ -22,7 +22,7 @@ export const ownerRequestValidators = {
   },
 
   cancha_description: (value) => {
-    if (!value) return null; // optional
+    if (!value) return null;
     if (value.length > 500) {
       return "Description cannot exceed 500 characters.";
     }
@@ -30,9 +30,7 @@ export const ownerRequestValidators = {
   }
 };
 
-/**
- * Helper to validate entire form
- */
+// Function to validate the entire form
 export const validateOwnerRequestForm = (formData) => {
   let errors = {};
 

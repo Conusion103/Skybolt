@@ -1,73 +1,75 @@
+// Object to hold general validation methods
 export let generalFormat = {
     
-    // Función para validar el nombre
+    // Validation function for names
     nameFormat: (name) => {
-        // Verificar que el nombre no esté vacío
+        // Check if the name is not empty
         if (!name) throw new Error(`Error: the name can't be void`);
-        // Devolver el nombre en minúsculas
+        // Normalize the name to lowercase
         return name.toLowerCase();
     },
 
-    // Función para validar el tipo de documento
+    // Validation for document types
     documenttypeFormat: (type) => {
-        // Lista de tipos de documentos válidos
+        // List of valid document types
         const validTypes = [
-            "CC",  // Cédula de ciudadanía
-            "CE",  // Cédula de extranjería
-            "PP",  // Pasaporte
-            "PEP", // Permiso especial de permanencia
-            "NIT"  // Número de identificación tributaria
+            "CC",  // Cedula of citizen
+            "CE",  // Cedula of foreigner
+            "PP",  // Passport
+            "PEP", // Allow of permanent residence
+            "NIT"  // Number of tax identification
         ];
 
-        // Verificar si el tipo de documento es válido
+        // Check if the provided type is in the list of valid types
         if (!validTypes.includes(type)) throw new Error("You must choose a document type");
-        // Devolver el tipo de documento si es válido
+        // Return it if type docment it's valid
         return type;
     },
 
-    // Función para validar la identificación
+    // Validation if the identification is valid
     identicationFormat: (identification) => {
-        // Verificar que la identificación no esté vacía
+        // Check if the identification is not empty
         if (!identification) throw new Error(`Error: the identification can't be void`);
-        // Convertir la identificación a número entero
+        // Convert the identification to an integer
         identification = parseInt(identification);
-        // Verificar si la identificación es un número válido
+        // Check if the identification is a number
         if (isNaN(identification)) throw new Error(`Error: the identification only can be a number`);
-        // Devolver la identificación como número entero
+        // Return the identification if it's valid
         return identification;
     },
 
-    // Función para validar el formato de email (hotmail en este caso)
+    // valid email format example: hotmail.com,
     hotmailFormat: (hotmail) => {
-        // Verificar que el email no esté vacío
+        // Check if the email is not empty
         if (!hotmail) throw new Error(`Error: the email can't be empty`);
 
-        // Convertir el email a minúsculas y quitar espacios en blanco al principio y al final
+        // Convert the email to lowercase and trim whitespace from the start and end
         const email = hotmail.toLowerCase().trim();
 
-        // Expresión regular para validar el formato del email
+        // Regex of validation
         const emailRegex = /^[^\s()<>[\]{};:,"']+@[^\s()<>[\]{};:,"']+\.[^\s()<>[\]{};:,"']+$/;
 
-        // Verificar si el email cumple con el formato válido
+        // Check if the email matches the regex pattern
         if (!emailRegex.test(email)) {
             throw new Error(`Error: invalid email format. Make sure it includes a domain, e.g., 'example@hotmail.com'`);
         }
 
-        // Devolver el email si es válido
+        // Return the email if it's valid
         return email;
     },
 
-    // Función para validar las contraseñas
+    // Validation for password format
     passwordFormat: (password1, password2) => {
-        // Verificar que las contraseñas no estén vacías
+        // Check is the password is not empty
         if (!password1 || !password2) throw new Error(`Error: password can't be empty`);
-        // Verificar que las contraseñas coincidan
+
+        // Verify that the passwords match
         if (password1 !== password2) throw new Error(`Error: passwords must match`);
 
-        // Expresión regular para validar el formato de la contraseña
+        // Regex of validation
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-        // Verificar que la contraseña cumpla con los requisitos de longitud y complejidad
+        // Verify that the password meets the length and complexity requirements
         if (!regex.test(password1)) {
             throw new Error(`Password must have at least 8 characters, including:
                 - one uppercase letter
@@ -76,44 +78,52 @@ export let generalFormat = {
                 - one special character`);
         }
 
-        // Devolver la contraseña si es válida
         return password1;
     },
+
+    // Validation of deparment
     departamentFormat: (departament) => {
         if(!departament) throw new Error("Departament field can't be empty");
         return departament;
     },
+
+    // Validation of town
     townFormat: (town) => {
         if(!town) throw new Error("Town field can't be empty");
         return town;
     },
+
+    // Validation of Number phone
     phoneNumber: (phone) => {
         if(!phone) throw new Error("Phone field can't be empty");
         if(isNaN(phone)) throw new Error("Phone field must has only numbers")
         return phone
     },
+
+    // Validation of Birthdate
     birthdate: (birthdate) => {
         if (!birthdate) throw new Error("Birthdate field can't be empty");
       
-        // Intentar convertir la cadena a un objeto Date
+        // Convert String to Date
         const date = new Date(birthdate);
-        // Verificar que sea una fecha válida
+        // Check the date is valid
         if (isNaN(date.getTime())) throw new Error("Invalid date format");
       
-        // Calcular la diferencia de edad
+        // calculate the age difference
         const today = new Date();
         let age = today.getFullYear() - date.getFullYear();
         const monthDiff = today.getMonth() - date.getMonth();
         const dayDiff = today.getDate() - date.getDate();
       
-        // Ajustar edad si no ha cumplido años aún este año
+        // Adjust age if you haven't had a birthday yet this year
         if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
           age--;
         }
       
         if (age < 18) throw new Error("You must be at least 18 years old");
-      
-        return date.toISOString().split('T')[0]; // Opcional: devolver fecha en formato YYYY-MM-DD
+        
+        // Return date in format YYYY-MM-DD
+        return date.toISOString().split('T')[0]; 
       }
 
 };
