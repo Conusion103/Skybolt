@@ -17,7 +17,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
             <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
             <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
             <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
     
           </nav>
 
@@ -29,17 +29,17 @@ export let renderDashboardAdminRequest = (ul, main) => {
         </div>
       </div>
 
-      <!-- MENÚ MÓVIL -->
+      <!-- MOBILE MENU -->
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6  flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
         <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
     <div id="top" class="h-16"></div>
   `;
   document.getElementById("menu-btn").addEventListener("click", () => {
@@ -47,7 +47,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     menu.classList.toggle("hidden");
   });
 
-
+  // ---------- MAIN ----------
   main.innerHTML = `
     <section class="p-6">
       <h2 class="text-2xl font-bold text-green-600 mb-6">
@@ -57,16 +57,23 @@ export let renderDashboardAdminRequest = (ul, main) => {
       <input type="text" id="owner-search" placeholder="Search by user email..."
         class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"/>
 
-      <!-- Contenedor de solicitudes -->
+      <!-- Request container -->
       <div id="owner-requests-container" class="space-y-4"></div>
     </section>
   `;
 
   const container = document.getElementById("owner-requests-container");
 
-  document.getElementById('log-out-user').addEventListener('click', (e) => {
-    e.preventDefault();
-    locaL.delete('active_user');
+  // ---------- LOGOUT ----------
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
+
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
 
   // Render each request
@@ -164,9 +171,6 @@ export let renderDashboardAdminRequest = (ul, main) => {
       });
     })
     .catch((err) => console.error("Error loading requests:", err));
-
-
-  
 };
 
 

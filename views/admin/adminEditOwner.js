@@ -7,7 +7,7 @@ import { generalFormat } from "../../src/scripts/validationMethods";
 export let renderDashboardAdminEditOwners = (ul, main) => {
     const activeUser = locaL.get("active_user");
   if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    main.innerHTML = `<p>Please log in.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
     return;
   }
   
@@ -26,7 +26,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
             <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
             <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
             <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
     
           </nav>
 
@@ -38,17 +38,17 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         </div>
       </div>
 
-      <!-- MENÚ MÓVIL -->
+      <!-- MOBILE MENU -->
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
         <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
     <div id="top" class="h-16"></div>
   `;
 
@@ -67,7 +67,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
       <input type="text" id="owner-search" placeholder="Search by email..."
         class="w-full max-w-md mb-6 px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-sm sm:text-base"/>
 
-      <!-- Tabla -->
+      <!-- Table -->
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead class="bg-green-500 text-white">
@@ -83,11 +83,11 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         </table>
       </div>
           
-      <!-- FORM EDITAR -->
+      <!-- FORM EDIT -->
       <div id="edit-owner-form-container"
         class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-md p-4">
         <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto transform 
-                    max-h-[100vh] overflow-y-auto">
+          max-h-[100vh] overflow-y-auto">
           
           <h3 class="text-2xl font-bold text-green-600 mb-4 text-center">Editar Owner</h3>
           
@@ -106,13 +106,13 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
             <input type="text" id="edit-id_document" placeholder="ID Document"
               class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
 
-            <!-- Departamento -->
+            <!-- Department -->
             <select id="edit-id_department"
               class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
               <option value="">--Select a department--</option>
             </select>
 
-            <!-- Municipio -->
+            <!-- Municipality -->
             <select id="edit-id_municipality"
               class="w-full px-4 py-2 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300">
               <option value="">Select a municipality</option>
@@ -126,11 +126,11 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
             <div class="flex justify-end gap-4 mt-4">
               <button type="submit"
                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
-                Guardar
+                Save
               </button>
               <button type="button" id="cancel-edit"
                 class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
-                Cancelar
+                Cancel
               </button>   
             </div>
           </form>
@@ -139,7 +139,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
 
 
 
-      <!-- MODAL VER MÁS -->
+     <!-- MODAL SEE MORE -->
       <div id="modal-owner" class="fixed inset-0  bg-opacity-50 hidden items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
         <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
           <h3 class="text-xl font-bold text-green-600 mb-4">Owner Details</h3>
@@ -159,7 +159,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             
-      <!-- DESCRIPCIÓN -->
+      <!-- DESCRIPTION -->
       <div>
         <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
         <p class="text-sm">
@@ -167,7 +167,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         </p>
       </div>
 
-      <!-- ENLACES -->
+      <!-- LINKS -->
       <div>
         <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
         <ul class="space-y-2 text-sm">
@@ -177,7 +177,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         </ul>
       </div>
 
-      <!-- REDES -->
+     <!-- NETWORKS -->
       <div>
         <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
         <div class="flex gap-4">
@@ -194,9 +194,15 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
   `;
 
   // ---------- LOGOUT ----------
-  document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
+
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
 
   let ownersList = [];
