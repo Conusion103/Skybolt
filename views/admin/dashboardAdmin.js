@@ -1,15 +1,15 @@
 import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
-import { locaL } from "../../src/scripts/LocalStorage"
-import { Api } from "../../src/scripts/methodsApi"
+import { locaL } from "../../src/scripts/LocalStorage";
+import { Api } from "../../src/scripts/methodsApi";
 
 export let renderDashboardAdminFields = (ul, main) => {
-    const activeUser = locaL.get("active_user");
-    if (!activeUser) {
-        main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-        return;
-    }
-   document.body.style.background = "white";
-    ul.innerHTML = `
+  const activeUser = locaL.get("active_user");
+  if (!activeUser) {
+    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    return;
+  }
+  document.body.style.background = "white";
+  ul.innerHTML = `
         <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
@@ -35,7 +35,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             </div>
 
             <!-- MENÚ MÓVIL -->
-            <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+            <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
                 <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
                 <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
                 <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
@@ -48,15 +48,17 @@ export let renderDashboardAdminFields = (ul, main) => {
         <div id="top" class="h-16"></div>
 
     `;
-    document.getElementById("menu-btn").addEventListener("click", () => {
-        const menu = document.getElementById("mobile-menu");
-        menu.classList.toggle("hidden");
-    });
+  document.getElementById("menu-btn").addEventListener("click", () => {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("hidden");
+  });
 
-    main.innerHTML = `
+  main.innerHTML = `
         <section class="p-6 sm:p-6">
             <h2 class="text-lg sm:text-2xl font-bold text-green-600 mb-4 text-center sm:text-left">
-                Hello ${locaL.get("active_user").full_name}, you are editing fields
+                Hello ${
+                  locaL.get("active_user").full_name
+                }, you are editing fields
             </h2>
 
             <input type="text" id="field-search" placeholder="Search by field name..."
@@ -88,7 +90,7 @@ export let renderDashboardAdminFields = (ul, main) => {
 
 
             <div id="edit-field-form-container"
-                class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-sm p-4">
+                class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
                 <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-sm sm:max-w-lg md:max-w-2xl mx-auto max-h-[90vh] overflow-y-auto sm:max-h-none sm:overflow-visible">
                     <h3 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4 text-center">
                         Edit Field
@@ -122,7 +124,7 @@ export let renderDashboardAdminFields = (ul, main) => {
         </section>
       
     `;
-    footer.innerHTML = `
+  footer.innerHTML = `
         <!-- FOOTER COMPLETO -->
         <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -162,84 +164,94 @@ export let renderDashboardAdminFields = (ul, main) => {
         </footer>
     `;
 
-    const tbody = main.querySelector("#fields-tbody");
-    const editFormContainer = main.querySelector("#edit-form-container");
+  const tbody = main.querySelector("#fields-tbody");
+  const editFormContainer = main.querySelector("#edit-form-container");
 
-    let games = [];
-    let municipalities = [];
-    let availabilityStates = [];
-    let owners = [];
-    let allFields = [];
-    let allReservations = [];
-    let filterFieldName = "";
-    let filterStatus = "";
+  let games = [];
+  let municipalities = [];
+  let availabilityStates = [];
+  let owners = [];
+  let allFields = [];
+  let allReservations = [];
+  let filterFieldName = "";
+  let filterStatus = "";
 
-    const formatTime = time => time?.slice(0, 5);
+  const formatTime = (time) => time?.slice(0, 5);
 
-    const availabilityLabels = {
-        available: "Available",
-        not_available: "Not available"
-    };
+  const availabilityLabels = {
+    available: "Available",
+    not_available: "Not available",
+  };
 
-    function loadSelectData() {
-        return Promise.all([
-            Api.get("/api/games"),
-            Api.get("/api/municipalities"),
-            Api.get("/api/availability"),
-            Api.get("/api/users?role=owner") 
-        ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
-            games = gamesData;
-            municipalities = municipalitiesData;
-            availabilityStates = availabilityData.map(a => ({
-                id_availability: a.id_availability,
-                estado: `${availabilityLabels[a.estado] || a.estado} - ${a.day_of_week} ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`
-            }));
-            owners = ownersData;
-        });
+  function loadSelectData() {
+    return Promise.all([
+      Api.get("/api/games"),
+      Api.get("/api/municipalities"),
+      Api.get("/api/availability"),
+      Api.get("/api/users?role=owner"),
+    ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
+      games = gamesData;
+      municipalities = municipalitiesData;
+      availabilityStates = availabilityData.map((a) => ({
+        id_availability: a.id_availability,
+        estado: `${availabilityLabels[a.estado] || a.estado} - ${
+          a.day_of_week
+        } ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`,
+      }));
+      owners = ownersData;
+    });
+  }
+
+  function loadFields() {
+    Promise.all([Api.get("/api/fields_"), Api.get("/api/reservations")])
+      .then(([fields, reservations]) => {
+        allFields = fields;
+        allReservations = reservations;
+        renderFields(fields, reservations);
+      })
+      .catch(() => {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
+      });
+  }
+
+  function renderFields(fields, reservations) {
+    let filteredFields = fields.filter((field) => {
+      // filter by name
+      const matchesName =
+        filterFieldName === "" ||
+        field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
+      //filter by state
+      const hasActiveReservation = reservations.some(
+        (r) => r.id_field === field.id_field && r.estado === "active"
+      );
+      let status = hasActiveReservation ? "not_available" : "available";
+      const matchesStatus = filterStatus === "" || filterStatus === status;
+      return matchesName && matchesStatus;
+    });
+
+    if (!filteredFields.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No fields found.</td></tr>`;
+      return;
     }
 
-    function loadFields() {
-        Promise.all([
-            Api.get("/api/fields_"),
-            Api.get("/api/reservations")
-        ])
-        .then(([fields, reservations]) => {
-            allFields = fields;
-            allReservations = reservations;
-            renderFields(fields, reservations);
-        })
-        .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
-        });
-    }
+    tbody.innerHTML = filteredFields
+      .map((field) => {
+        const gameName =
+          games.find((g) => g.id_game === field.id_game)?.name_game || "N/A";
+        const municipalityName =
+          municipalities.find(
+            (m) => m.id_municipality === field.id_municipality
+          )?.name_municipality || "N/A";
+        const ownerName =
+          owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
+        const hasActiveReservation = reservations.some(
+          (r) => r.id_field === field.id_field && r.estado === "active"
+        );
+        const availabilityName = hasActiveReservation
+          ? `<span class="text-red-600 font-bold">Not available</span>`
+          : `<span class="text-green-600 font-bold">Available</span>`;
 
-    function renderFields(fields, reservations) {
-        // Filtrado por nombre y estado
-        let filteredFields = fields.filter(field => {
-            // Filtro por nombre
-            const matchesName = filterFieldName === "" || field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
-            // Filtro por estado
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
-            let status = hasActiveReservation ? "not_available" : "available";
-            const matchesStatus = filterStatus === "" || filterStatus === status;
-            return matchesName && matchesStatus;
-        });
-
-        if (!filteredFields.length) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No fields found.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = filteredFields.map(field => {
-            const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
-            const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-            const ownerName = owners.find(o => o.id_user === field.id_owner)?.full_name || "N/A";
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
-            const availabilityName = hasActiveReservation
-                ? `<span class="text-red-600 font-bold">Not available</span>`
-                : `<span class="text-green-600 font-bold">Available</span>`;
-
-            return `
+        return `
                 <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
                     <td class="p-2 border">${field.name_field}</td>
                     <td class="p-2 border">${gameName}</td>
@@ -252,114 +264,142 @@ export let renderDashboardAdminFields = (ul, main) => {
                     </td>
                 </tr>
         `;
-        }).join("");
-
-        main.querySelector("#field-search").addEventListener("input", (e) => {
-            filterFieldName = e.target.value.trim();
-            renderFields(allFields, allReservations);
-        });
-        main.querySelector("#field-status-filter").addEventListener("change", (e) => {
-            filterStatus = e.target.value;
-            renderFields(allFields, allReservations);
-        });
-
-        // Eventos editar
-        tbody.querySelectorAll(".btn-edit").forEach(btn => {
-            btn.onclick = e => {
-                const id = +e.target.closest("tr").dataset.id;
-                Api.get(`/api/fields_/${id}`)
-                .then(field => {
-                    showEditForm(field);
-                })
-                .catch(() => showError("Error loading field for editing"));
-            };
-        });        
-
-    }
-
-    //eliminar canchas
-tbody.onclick = async function (e) {
-  if (e.target.classList.contains("btn-delete")) {
-    const id = +e.target.closest("tr").dataset.id;
-
-    const confirmed = await showConfirm(
-      "¿Quieres eliminar este campo?",
-      "Eliminar campo",
-      "Sí, borrar",
-      "Cancelar"
-    );
-
-    if (!confirmed) return;
-
-    Api.delete(`/api/fields_/${id}`)
-      .then(() => {
-        showSuccess("Campo eliminado correctamente ✅");
-        loadFields();
-
-        const modal = document.getElementById("edit-field-form-container");
-        if (modal) {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
-        }
       })
-      .catch(() => {
-        showError("Error al eliminar el campo ❌");
+      .join("");
+
+    main.querySelector("#field-search").addEventListener("input", (e) => {
+      filterFieldName = e.target.value.trim();
+      renderFields(allFields, allReservations);
+    });
+    main
+      .querySelector("#field-status-filter")
+      .addEventListener("change", (e) => {
+        filterStatus = e.target.value;
+        renderFields(allFields, allReservations);
       });
+
+    // Edit events
+    tbody.querySelectorAll(".btn-edit").forEach((btn) => {
+      btn.onclick = (e) => {
+        const id = +e.target.closest("tr").dataset.id;
+        Api.get(`/api/fields_/${id}`)
+          .then((field) => {
+            showEditForm(field);
+          })
+          .catch(() => showError("Error loading field for editing"));
+      };
+    });
   }
-};
 
-    function showEditForm(field) {
-        // Llenamos los selects con las opciones actuales
-        const gameOptions = games.map(g => `<option value="${g.id_game}" ${g.id_game === field.id_game ? "selected" : ""}>${g.name_game}</option>`).join("");
-        const municipalityOptions = municipalities.map(m => `<option value="${m.id_municipality}" ${m.id_municipality === field.id_municipality ? "selected" : ""}>${m.name_municipality}</option>`).join("");
-        const availabilityOptions = availabilityStates.map(a => `<option value="${a.id_availability}" ${a.id_availability === field.id_availability ? "selected" : ""}>${a.estado}</option>`).join("");
+  // Delete fields
+  tbody.onclick = async function (e) {
+    if (e.target.classList.contains("btn-delete")) {
+      const id = +e.target.closest("tr").dataset.id;
 
-        // Muestra el modal
-        const modal = document.getElementById("edit-field-form-container");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
+      const confirmed = await showConfirm(
+        "¿Do you want to delete this field?",
+        "Delete field",
+        "Yes, delete",
+        "Cancel"
+      );
 
-        // Llena los campos
-        document.getElementById("edit-field-id").value = field.id_field;
-        document.getElementById("edit-field-name").value = field.name_field;
-        document.getElementById("edit-field-game").innerHTML = gameOptions;
-        document.getElementById("edit-field-municipality").innerHTML = municipalityOptions;
-        document.getElementById("edit-field-availability").innerHTML = availabilityOptions;
+      if (!confirmed) return;
 
-        // Evento submit para editar
-        const editForm = document.getElementById("admin-edit-field-form");
-        editForm.onsubmit = e => {
-            e.preventDefault();
-            const payload = {
-                name_field: document.getElementById("edit-field-name").value.trim(),
-                id_game: +document.getElementById("edit-field-game").value,
-                id_municipality: +document.getElementById("edit-field-municipality").value,
-                id_availability: +document.getElementById("edit-field-availability").value,
-                id_owner: field.id_owner
-            };
-            Api.put(`/api/fields_/${field.id_field}`, payload)
-                .then(res => {
-                    if (res.success) {
-                        showSuccess("Updated field");
-                        modal.classList.add("hidden");
-                        modal.classList.remove("flex");
-                        loadFields();
-                    }
-                })
-            .catch(() => showError("Error updating field"));
-        };
+      Api.delete(`/api/fields_/${id}`)
+        .then(() => {
+          showSuccess("Field successfully deleted");
+          loadFields();
 
-        // Evento cancelar edición
-        document.getElementById("cancel-edit-admin").onclick = () => {
+          const modal = document.getElementById("edit-field-form-container");
+          if (modal) {
             modal.classList.add("hidden");
             modal.classList.remove("flex");
-        };
+          }
+        })
+        .catch(() => {
+          showError("Error deleting field");
+        });
     }
+  };
 
-    document.getElementById('log-out-user').addEventListener('click', (e) => {
-        e.preventDefault();
-        locaL.delete('active_user');
-    });
+  function showEditForm(field) {
 
-    loadSelectData().then(loadFields);
-}
+    const gameOptions = games
+      .map(
+        (g) =>
+          `<option value="${g.id_game}" ${
+            g.id_game === field.id_game ? "selected" : ""
+          }>${g.name_game}</option>`
+      )
+      .join("");
+    const municipalityOptions = municipalities
+      .map(
+        (m) =>
+          `<option value="${m.id_municipality}" ${
+            m.id_municipality === field.id_municipality ? "selected" : ""
+          }>${m.name_municipality}</option>`
+      )
+      .join("");
+    const availabilityOptions = availabilityStates
+      .map(
+        (a) =>
+          `<option value="${a.id_availability}" ${
+            a.id_availability === field.id_availability ? "selected" : ""
+          }>${a.estado}</option>`
+      )
+      .join("");
+
+    // show Modals 
+    const modal = document.getElementById("edit-field-form-container");
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+
+
+    document.getElementById("edit-field-id").value = field.id_field;
+    document.getElementById("edit-field-name").value = field.name_field;
+    document.getElementById("edit-field-game").innerHTML = gameOptions;
+    document.getElementById("edit-field-municipality").innerHTML =
+      municipalityOptions;
+    document.getElementById("edit-field-availability").innerHTML =
+      availabilityOptions;
+
+    // Edit event
+    const editForm = document.getElementById("admin-edit-field-form");
+    editForm.onsubmit = (e) => {
+      e.preventDefault();
+      const payload = {
+        name_field: document.getElementById("edit-field-name").value.trim(),
+        id_game: +document.getElementById("edit-field-game").value,
+        id_municipality: +document.getElementById("edit-field-municipality")
+          .value,
+        id_availability: +document.getElementById("edit-field-availability")
+          .value,
+        id_owner: field.id_owner,
+      };
+
+      Api.put(`/api/fields_/${field.id_field}`, payload)
+        .then((res) => {
+          if (res.success) {
+            showSuccess("Updated field");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            loadFields();
+          }
+        })
+        .catch(() => showError("Error updating field"));
+    };
+
+    // Cancel event
+    document.getElementById("cancel-edit-admin").onclick = () => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    };
+  }
+
+  document.getElementById("log-out-user").addEventListener("click", (e) => {
+    e.preventDefault();
+    locaL.delete("active_user");
+  });
+
+  loadSelectData().then(loadFields);
+};
