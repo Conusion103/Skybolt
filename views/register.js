@@ -80,6 +80,7 @@ export let renderRegister = (ul, main) => {
   // Cambiar fondo y clases del body y main
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
+  document.body.style.background = "white";
   $body.classList.remove("bg-cover", "bg-center", "bg-no-repeat");
   $body.classList.add("bg-gray-100", "min-h-screen");
   main.classList.remove(
@@ -105,7 +106,7 @@ export let renderRegister = (ul, main) => {
         <a href="/skybolt/home#testimonials" class="nav-link" data-link>Testimonials</a>
         <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
         <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
-        <a href="#contact" class="nav-link" data-link>Contact Us</a>
+        <a href="/skybolt/home#contact" class="nav-link" data-link>Contact Us</a>
         <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>
 
       </nav>
@@ -120,12 +121,12 @@ export let renderRegister = (ul, main) => {
 
   <!-- MENÚ MÓVIL -->
     <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
-        <a href="#about-us" class="nav-link">About us</a>
-        <a href="#testimonials" class="nav-link">Testimonials</a>
-        <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#map" class="nav-link">Find Us</a>
-        <a href="#contact" class="nav-link">Contact Us</a>
-        <a href="/skybolt/register" data-link class="btn-primary">Sign up</a>
+        <a href="/skybolt/home#about-us" class="nav-link">About us</a>
+        <a href="/skybolt/home#testimonials" class="nav-link">Testimonials</a>
+        <a href="/skybolt/home#faq" class="nav-link">FAQ</a>
+        <a href="/skybolt/home#map" class="nav-link">Find Us</a>
+        <a href="/skybolt/home#contact" class="nav-link">Contact Us</a>
+        <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
     </div>
 
 </header>
@@ -142,7 +143,7 @@ export let renderRegister = (ul, main) => {
 
   // Formulario de registro
   main.innerHTML = `
-  <section class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <section class="flex flex-col items-center justify-center min-h-screen">
     <div class="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 space-y-6">
       
       <!-- Header -->
