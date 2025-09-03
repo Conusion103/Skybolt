@@ -238,9 +238,9 @@ export let renderDashboardOwner = (ul, main) => {
       Api.get("/api/reservations/full")
     ])
       .then(([fields, reservations]) => {
-        const ownerId = Number(activeUser.id_user);
-        const myFields = fields.filter(f => Number(f.id_owner) === ownerId);
-        renderFields(myFields, reservations);
+        const ownerId = Number(activeUser.id_user); // Get the current owner's ID
+        const myFields = fields.filter(f => Number(f.id_owner) === ownerId); // Filter only the courts that belong to this owner
+        renderFields(myFields, reservations); // Call renderFields with the filtered courts and all reservations
       })
       .catch(() => {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
@@ -255,13 +255,13 @@ export let renderDashboardOwner = (ul, main) => {
   }
 
   tbody.innerHTML = fields.map(field => {
-    const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
-    const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-    const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
+    const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A"; // Find and get the name of the associated game
+    const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A"; // search and get the name of the municipality
+    const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A"; // Search and get the availability status
     
-    // Verificar si la cancha está reservada
-    const isReserved = reservations.some(r => r.id_field === field.id_field);
-    const estado = isReserved ? "Reserved" : "Unreserved";
+    // Check if the court is reserved
+    const isReserved = reservations.some(r => r.id_field === field.id_field); 
+    const estado = isReserved ? "Reserved" : "Unreserved"; // Defines the state text ("Reserved" or "Unreserved")
     const estadoClass = isReserved ? "text-red-600" : "text-green-600";
 
     return `
@@ -272,8 +272,8 @@ export let renderDashboardOwner = (ul, main) => {
         <td class="p-2 border">${availabilityName} </td>
         <td class="p-2 border ${estadoClass}">${estado}</td>
         <td class="p-2 border text-center">
-          <button class="edit-btn text-blue-600 hover:underline mr-2">Edit</button>
-          <button class="delete-btn text-red-600 hover:underline">Delete</button>
+          <button class="edit-btn text-blue-600 hover:underline mr-2">✏️</button>
+          <button class="delete-btn text-red-600 hover:underline">🗑️</button>
         </td>
       </tr>
     `;
