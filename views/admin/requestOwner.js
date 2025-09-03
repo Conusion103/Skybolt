@@ -163,7 +163,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
 
                   card.querySelectorAll("button").forEach((b) => b.remove());
 
-                  showError("Request rejected!");
+                  showSuccess("Request rejected!");
                 })
                 .catch((err) => console.error("Error rejecting request:", err));
             });
