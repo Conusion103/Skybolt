@@ -2,82 +2,20 @@ import { generalFormat } from "../src/scripts/validationMethods";
 import { Api } from "../src/scripts/methodsApi";
 import { showError, showSuccess } from "../src/scripts/alerts";
 
-// Datos de departamentos con sus municipios y IDs
+// data constantly burned 
 export const departamentos = [
   {
     id: 1,
     name: "Atlantico",
     municipios: [
       { id: 1, name: "Barranquilla" },
-  //     { id: 2, name: "Envigado" },
-  //     { id: 3, name: "Bello" },
-  //     { id: 4, name: "Itagüí" },
-  //     { id: 5, name: "Rionegro" },
-  //     { id: 6, name: "Apartadó" },
-  //   ],
-  // },
-  // {
-  //   id: 2,
-  //   name: "Cundinamarca",
-  //   municipios: [
-  //     { id: 7, name: "Bogotá" },
-  //     { id: 8, name: "Soacha" },
-  //     { id: 9, name: "Chía" },
-  //     { id: 10, name: "Zipaquirá" },
-  //     { id: 11, name: "Girardot" },
-  //     { id: 12, name: "Fusagasugá" },
-  //   ],
-  // },
-  // {
-  //   id: 3,
-  //   name: "Valle del Cauca",
-  //   municipios: [
-  //     { id: 13, name: "Cali" },
-  //     { id: 14, name: "Palmira" },
-  //     { id: 15, name: "Buenaventura" },
-  //     { id: 16, name: "Tuluá" },
-  //     { id: 17, name: "Cartago" },
-  //     { id: 18, name: "Yumbo" },
-  //   ],
-  // },
-  // {
-  //   id: 4,
-  //   name: "Atlántico",
-  //   municipios: [
-  //     { id: 19, name: "Barranquilla" },
-  //     { id: 20, name: "Soledad" },
-  //     { id: 21, name: "Malambo" },
-  //     { id: 22, name: "Sabanalarga" },
-  //     { id: 23, name: "Puerto Colombia" },
-  //   ],
-  // },
-  // {
-  //   id: 5,
-  //   name: "Santander",
-  //   municipios: [
-  //     { id: 24, name: "Bucaramanga" },
-  //     { id: 25, name: "Floridablanca" },
-  //     { id: 26, name: "Girón" },
-  //     { id: 27, name: "Piedecuesta" },
-  //     { id: 28, name: "Barrancabermeja" },
-  //   ],
-  // },
-  // {
-  //   id: 6,
-  //   name: "Bolívar",
-  //   municipios: [
-  //     { id: 29, name: "Cartagena" },
-  //     { id: 30, name: "Magangué" },
-  //     { id: 31, name: "Turbaco" },
-  //     { id: 32, name: "Arjona" },
-  //     { id: 33, name: "El Carmen de Bolívar" },
     ],
   },
 ];
 
-// Función para renderizar el formulario de registro
+// Function to render the registration form
 export let renderRegister = (ul, main) => {
-  // Cambiar fondo y clases del body y main
+
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
   $body.classList.remove("bg-cover", "bg-center", "bg-no-repeat");
@@ -90,7 +28,7 @@ export let renderRegister = (ul, main) => {
     "h-[94.570%]"
   );
 
-  // Menú de navegación
+  // Navbar
   ul.innerHTML = `
      <!-- HEADER  -->
 <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
@@ -119,7 +57,7 @@ export let renderRegister = (ul, main) => {
   </div>
 
   <!-- MENÚ MÓVIL -->
-    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="#about-us" class="nav-link">About us</a>
         <a href="#testimonials" class="nav-link">Testimonials</a>
         <a href="#faq" class="nav-link">FAQ</a>
@@ -140,7 +78,7 @@ export let renderRegister = (ul, main) => {
         menu.classList.toggle("hidden");
     });
 
-  // Formulario de registro
+  // Register Form
   main.innerHTML = `
   <section class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
     <div class="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 space-y-6">
@@ -207,12 +145,14 @@ export let renderRegister = (ul, main) => {
   </section>
   `;
 
+
+  // footer
     footer.innerHTML = `
     <!-- FOOTER COMPLETO -->
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            <!-- DESCRIPCIÓN -->
+            <!-- DESCRIPTIÓN -->
             <div>
                 <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
                 <p class="text-sm">
@@ -220,7 +160,7 @@ export let renderRegister = (ul, main) => {
                 </p>
             </div>
 
-            <!-- ENLACES -->
+            <!-- LINK -->
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
                 <ul class="space-y-2 text-sm">
@@ -230,7 +170,7 @@ export let renderRegister = (ul, main) => {
                 </ul>
             </div>
 
-            <!-- REDES -->
+            <!-- NETWORKS -->
             <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
                 <div class="flex gap-4">
@@ -249,38 +189,38 @@ export let renderRegister = (ul, main) => {
     </footer>
 `;
 
-  // Referencias a selects
+  // SELECTS
   const departamentoSelect = document.getElementById("departament-register");
   const municipioSelect = document.getElementById("town-register");
 
-  // Llenar select de departamentos con IDs como value
+  // Fill department selection with IDs as value
   departamentos.forEach((dep) => {
     const option = document.createElement("option");
-    option.value = dep.id; // valor es el ID
-    option.textContent = dep.name; // texto visible es el nombre
+    option.value = dep.id; 
+    option.textContent = dep.name; 
     departamentoSelect.appendChild(option);
   });
 
-  // Evento para actualizar municipios cuando se selecciona un departamento
+  // Event to manage the town
   departamentoSelect.addEventListener("change", (e) => {
     const selectedDepId = Number(e.target.value);
     municipioSelect.innerHTML =
       '<option value="">--Selecciona un municipio--</option>';
 
-    if (!selectedDepId) return; // No seleccionado
+    if (!selectedDepId) return;
 
     const departamento = departamentos.find((dep) => dep.id === selectedDepId);
     if (!departamento) return;
 
     departamento.municipios.forEach((muni) => {
       const option = document.createElement("option");
-      option.value = muni.id; // valor es el id del municipio
-      option.textContent = muni.name; // texto visible es el nombre
+      option.value = muni.id; 
+      option.textContent = muni.name; 
       municipioSelect.appendChild(option);
     });
   });
 
-  // Evento para el botón de registro
+  // Event for the registration button
   document.getElementById("button-register").addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -304,7 +244,7 @@ export let renderRegister = (ul, main) => {
         .getElementById("password-register_")
         .value.trim();
 
-      // Validaciones (ajusta para aceptar números como string si es necesario)
+      // Validations
       generalFormat.nameFormat($name);
       generalFormat.hotmailFormat($email);
       generalFormat.phoneNumber($phone);
@@ -315,7 +255,7 @@ export let renderRegister = (ul, main) => {
       generalFormat.townFormat($town);
       generalFormat.passwordFormat($password, $confirmPassword);
 
-      // Armar el usuario con IDs numéricos para departamento y municipio
+      // Create the users
       let user = {
         full_name: $name,
         email: $email,
@@ -328,7 +268,7 @@ export let renderRegister = (ul, main) => {
         password_: $password
       };
 
-      // Validar si usuario ya existe consultando usuarios
+      // Validate if user already exists by querying users
       Api.get("/api/users")
         .then((users) => {
           let user_exist = users.some(
@@ -343,7 +283,6 @@ export let renderRegister = (ul, main) => {
           return Api.post("/api/users", user);
         })
         .then((res) => {
-          // En tu método Api.request ya devuelves json, no res.ok
           window.location.href = "/skybolt/login";
           showSuccess("Usuario registrado correctamente");
         })

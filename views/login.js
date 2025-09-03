@@ -2,6 +2,7 @@ import { Api } from "../src/scripts/methodsApi";
 import bcrypt from "bcryptjs";
 import { locaL } from "../src/scripts/LocalStorage";
 import { showError } from "../src/scripts/alerts";
+
 export let renderLogin = (ul, main) => {
   let $body = document.getElementById("body");
   $body.style.backgroundImage = "";
@@ -15,8 +16,7 @@ export let renderLogin = (ul, main) => {
     "h-[94.570%]"
   );
 
-
-
+  // Header
   ul.innerHTML = `
   <!-- HEADER  -->
   <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
@@ -44,7 +44,7 @@ export let renderLogin = (ul, main) => {
     </div>
 
     <!-- MENÚ MÓVIL -->
-    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+    <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
       <a href="#about-us" class="nav-link" data-link>About us</a>
       <a href="#testimonials" class="nav-link" data-link>Testimonials</a>
       <a href="#faq" class="nav-link" data-link>FAQ</a>
@@ -60,13 +60,14 @@ export let renderLogin = (ul, main) => {
 
 `;
 
-// Toggle menú móvil
-document.getElementById("menu-btn").addEventListener("click", () => {
-  const menu = document.getElementById("mobile-menu");
-  menu.classList.toggle("hidden");
-});
+  // Toggle menú móvil
+  document.getElementById("menu-btn").addEventListener("click", () => {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("hidden");
+  });
 
-main.innerHTML = `
+  // Main
+  main.innerHTML = `
   <section class="flex flex-col items-center justify-center min-h-screen">
   
     <!-- Card -->
@@ -132,12 +133,13 @@ main.innerHTML = `
   </section>
 `;
 
-footer.innerHTML = `
+  // footer
+  footer.innerHTML = `
   <!-- FOOTER COMPLETO -->
   <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             
-        <!-- DESCRIPCIÓN -->
+        <!-- DESCRIPTIÓN -->
         <div>
           <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
           <p class="text-sm">
@@ -145,7 +147,7 @@ footer.innerHTML = `
           </p>
         </div>
 
-        <!-- ENLACES -->
+        <!-- LINK -->
         <div>
           <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
           <ul class="space-y-2 text-sm">
@@ -156,7 +158,7 @@ footer.innerHTML = `
         </div>
 
             
-        <!-- REDES -->
+        <!-- NETWORKS -->
         <div>
           <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
           <div class="flex gap-4">
@@ -175,52 +177,51 @@ footer.innerHTML = `
   </footer>
 `;
 
+  document.getElementById("login-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    let $email = document.getElementById("email-login").value.trim();
+    let $password = document.getElementById("password-login").value.trim();
+    Api.get("/api/users")
+      .then(async (data) => {
+        // Searh user for email
+        let user = data.find((d) => $email === d.email);
 
-document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        let $email = document.getElementById('email-login').value.trim();
-        let $password = document.getElementById('password-login').value.trim();
-        Api.get('/api/users')
-            .then(async data => {
-                // Buscar usuario por email
-                let user = data.find(d => $email === d.email);
-                // 123456789LUcas@
-                if (user) {
-                    // Verificar contraseña de forma segura
-                    const isPasswordCorrect = await bcrypt.compare($password, user.password_);
+        if (user) {
+          // Check hash password
+          const isPasswordCorrect = await bcrypt.compare(
+            $password,
+            user.password_
+          );
 
-                    if (isPasswordCorrect) {
-                        locaL.post('active_user', user);
+          if (isPasswordCorrect) {
+            locaL.post("active_user", user);
 
-                        switch (user.roles[0].name_role) {
-                            case 'user':
-                                history.pushState(null, null, '/skybolt/dashboarduser');
-                                break;
-                            case 'owner':
-                                history.pushState(null, null, '/skybolt/dashboardowner');
-                                break;
-                            case 'admin':
-                                history.pushState(null, null, '/skybolt/dashboardadmin/fields');
-                                break;
-                            default:
-                                console.log(`This role doesn't exist`);
-                                return;
-                        }
+            // Check the role of the users to redirect
+            switch (user.roles[0].name_role) {
+              case "user":
+                history.pushState(null, null, "/skybolt/dashboarduser");
+                break;
+              case "owner":
+                history.pushState(null, null, "/skybolt/dashboardowner");
+                break;
+              case "admin":
+                history.pushState(null, null, "/skybolt/dashboardadmin/fields");
+                break;
+              default:
+                console.log(`This role doesn't exist`);
+                return;
+            }
 
-                        window.dispatchEvent(new PopStateEvent('popstate'));
-                    } else {
-                        showError("Contraseña incorrecta");
-                    }
-                } else {
-                    showError("Usuario no encontrado");
-                }
-            })
-            .catch(error => {
-                showError("Error al iniciar sesión: " + error.message);
-            });
-
-
-
-
-    })
+            window.dispatchEvent(new PopStateEvent("popstate"));
+          } else {
+            showError("Contraseña incorrecta");
+          }
+        } else {
+          showError("Usuario no encontrado");
+        }
+      })
+      .catch((error) => {
+        showError("Error al iniciar sesión: " + error.message);
+      });
+  });
 };
