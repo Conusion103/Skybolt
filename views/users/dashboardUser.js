@@ -66,7 +66,7 @@ export async function renderDashboardUser(nav, main) {
 
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
-            <label class="block mb-2 font-medium text-gray-600">Lugar</label>
+            <label class="block mb-2 font-medium text-gray-600">Place</label>
             <input type="text" id="placeInput" placeholder="Current address"
               class="w-full p-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" />
           </div>
