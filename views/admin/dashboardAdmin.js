@@ -234,6 +234,7 @@ export let renderDashboardAdminFields = (ul, main) => {
       return;
     }
 
+
     tbody.innerHTML = filteredFields
       .map((field) => {
         const gameName =
@@ -252,6 +253,7 @@ export let renderDashboardAdminFields = (ul, main) => {
           : `<span class="text-green-600 font-bold">Available</span>`;
 
         return `
+
                 <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
                     <td class="p-2 border">${field.name_field}</td>
                     <td class="p-2 border">${gameName}</td>
@@ -296,12 +298,14 @@ export let renderDashboardAdminFields = (ul, main) => {
     if (e.target.classList.contains("btn-delete")) {
       const id = +e.target.closest("tr").dataset.id;
 
+
       const confirmed = await showConfirm(
         "¿Do you want to delete this field?",
         "Delete field",
         "Yes, delete",
         "Cancel"
       );
+
 
       if (!confirmed) return;
 
