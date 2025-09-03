@@ -219,7 +219,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             // Filtro por nombre
             const matchesName = filterFieldName === "" || field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
             // Filtro por estado
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
+            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field);
             let status = hasActiveReservation ? "not_available" : "available";
             const matchesStatus = filterStatus === "" || filterStatus === status;
             return matchesName && matchesStatus;
@@ -234,10 +234,11 @@ export let renderDashboardAdminFields = (ul, main) => {
             const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
             const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
             const ownerName = owners.find(o => o.id_user === field.id_owner)?.full_name || "N/A";
-            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field && r.estado === "active");
+            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field);
             const availabilityName = hasActiveReservation
-                ? `<span class="text-red-600 font-bold">Not available</span>`
-                : `<span class="text-green-600 font-bold">Available</span>`;
+            ? `<span class="text-red-600 font-bold">Not available</span>`
+            : `<span class="text-green-600 font-bold">Available</span>`;
+
 
             return `
                 <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
@@ -278,35 +279,35 @@ export let renderDashboardAdminFields = (ul, main) => {
     }
 
     //eliminar canchas
-tbody.onclick = async function (e) {
-  if (e.target.classList.contains("btn-delete")) {
-    const id = +e.target.closest("tr").dataset.id;
+    tbody.onclick = async function (e) {
+        if (e.target.classList.contains("btn-delete")) {
+            const id = +e.target.closest("tr").dataset.id;
 
-    const confirmed = await showConfirm(
-      "¿Quieres eliminar este campo?",
-      "Eliminar campo",
-      "Sí, borrar",
-      "Cancelar"
-    );
+            const confirmed = await showConfirm(
+            "¿Quieres eliminar este campo?",
+            "Eliminar campo",
+            "Sí, borrar",
+            "Cancelar"
+            );
 
-    if (!confirmed) return;
+            if (!confirmed) return;
 
-    Api.delete(`/api/fields_/${id}`)
-      .then(() => {
-        showSuccess("Campo eliminado correctamente ✅");
-        loadFields();
+            Api.delete(`/api/fields_/${id}`)
+            .then(() => {
+                showSuccess("Campo eliminado correctamente ✅");
+                loadFields();
 
-        const modal = document.getElementById("edit-field-form-container");
-        if (modal) {
-          modal.classList.add("hidden");
-          modal.classList.remove("flex");
+                const modal = document.getElementById("edit-field-form-container");
+                if (modal) {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+                }
+            })
+            .catch(() => {
+                showError("Error al eliminar el campo ❌");
+            });
         }
-      })
-      .catch(() => {
-        showError("Error al eliminar el campo ❌");
-      });
-  }
-};
+    };
 
     function showEditForm(field) {
         // Llenamos los selects con las opciones actuales
