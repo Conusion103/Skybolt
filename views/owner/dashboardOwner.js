@@ -1,5 +1,4 @@
 
-
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
 import { showSuccess, showError, showConfirm } from "../../src/scripts/alerts.js";
@@ -376,7 +375,6 @@ export let renderDashboardOwner = (ul, main) => {
   document.getElementById("log-out-user").addEventListener("click", e => {
     e.preventDefault();
     locaL.delete("active_user");
-    window.location.href = "/skybolt/login";
   });
 
   // INITIAL LOAD OF SELECT DATA AND FIELDS

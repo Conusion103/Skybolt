@@ -1,5 +1,6 @@
 import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts.js";
 import { Api } from "../../src/scripts/methodsApi.js";
+import { locaL } from "../../src/scripts/LocalStorage.js";
 
 export let renderDashboardAdminRequest = (ul, main) => {
   document.body.style.background = "white";
@@ -46,6 +47,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     menu.classList.toggle("hidden");
   });
 
+
   main.innerHTML = `
     <section class="p-6">
       <h2 class="text-2xl font-bold text-green-600 mb-6">
@@ -62,14 +64,19 @@ export let renderDashboardAdminRequest = (ul, main) => {
 
   const container = document.getElementById("owner-requests-container");
 
+  document.getElementById('log-out-user').addEventListener('click', (e) => {
+    e.preventDefault();
+    locaL.delete('active_user');
+  });
+
   // Renderizar cada solicitud
   const renderRequestCard = (req) => {
     const statusClass =
       req.status === "pending"
         ? "text-yellow-600"
         : req.status === "approved"
-        ? "text-green-600"
-        : "text-red-600";
+          ? "text-green-600"
+          : "text-red-600";
 
     // Botones solo si está pendiente
     const actionButtons =
@@ -136,7 +143,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
 
-          showConfirm("❌ Are you sure you want to reject this request?")
+          showConfirm("Are you sure you want to reject this request?")
             .then((confirmed) => {
               if (!confirmed) return;
 
@@ -150,7 +157,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
                   // Quitar botones
                   card.querySelectorAll("button").forEach((b) => b.remove());
 
-                  showError("❌ Request rejected!");
+                  showError("Request rejected!");
                 })
                 .catch((err) => console.error("Error rejecting request:", err));
             });
@@ -158,6 +165,9 @@ export let renderDashboardAdminRequest = (ul, main) => {
       });
     })
     .catch((err) => console.error("Error loading requests:", err));
+
+
+  
 };
 
 

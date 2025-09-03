@@ -124,11 +124,10 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
 
   // Contador de reseñas
   Api.get(`/api/users/${activeUser.id_user}/reviewsowners`)
-    .then((reviews) => {
+    .then((res) => {
      console.log("Respuesta reservas:", res);
-
     // Si usas Axios, la data viene en res.data
-    let count = reviews[0].total_reviews || 0;
+    let count = res[0].total_reviews || 0;
 
     document.getElementById("countReservas").textContent =
       count.toString().padStart(2, "0");
@@ -161,7 +160,6 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
     logoutHeader.addEventListener("click", (e) => {
       e.preventDefault();
       locaL.delete("active_user");
-      window.location.href = "/skybolt/login";
     });
   }
 
