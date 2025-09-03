@@ -403,9 +403,9 @@ function mostrarModalUser(userData, depName, munName) {
           usersList = data;
           renderUsers(usersList);
         })
-        .catch((err) => alert(err.message));
+        .catch((err) => showError(err.message));
     } catch (error) {
-      alert(error.message);
+      showError(error.message);
     }
   });
     
