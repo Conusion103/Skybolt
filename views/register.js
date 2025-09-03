@@ -66,7 +66,6 @@ export let renderRegister = (ul, main) => {
         <a href="/skybolt/home#map" class="nav-link">Find Us</a>
         <a href="/skybolt/home#contact" class="nav-link">Contact Us</a>
         <a href="/skybolt/login" data-link class="btn-primary">Log in</a>
-
     </div>
 
 </header>
