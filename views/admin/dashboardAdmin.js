@@ -255,7 +255,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             const ownerName = owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
             // Check if the field has an active reservation
             const hasActiveReservation = reservations.some(
-            (r) => r.id_field === field.id_field && r.estado === "active"
+                (r) => r.id_field === field.id_field
             );
             // Define the availability status of the field with visual styles
             const availabilityName = hasActiveReservation
