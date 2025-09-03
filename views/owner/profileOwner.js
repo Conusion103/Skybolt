@@ -4,12 +4,14 @@ import { renderDashboardOwner } from "./dashboardOwner";
 import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 
 export let renderDashboardOwnerProfile = (ul, main) => {
+  // Check data in localStorage
   const activeUser = locaL.get("active_user");
   if (!activeUser) {
     main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
     return;
   }
 
+  // Image or default image
   const image =
     (activeUser.image && activeUser.image.trim() !== "" && activeUser.image) ||
     (activeUser.image_path && activeUser.image_path.trim() !== "" && activeUser.image_path) ||
@@ -40,7 +42,7 @@ export let renderDashboardOwnerProfile = (ul, main) => {
       </div>
 
       <!-- MENÚ MÓVIL -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
         <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
         <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
@@ -99,7 +101,7 @@ export let renderDashboardOwnerProfile = (ul, main) => {
         <button class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium hover:bg-blue-500 transition-colors">
           Contact us <span>›</span>
         </button>
-        <button id="delete-account" class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors hover:bg-blue-500 transition-colors">
+        <button id="delete-account" class="w-full text-left px-4 py-3 flex justify-between items-center text-sm font-medium text-red-600 hover:text-red-700  hover:bg-blue-500 transition-colors">
           Delete Account <span>›</span>
         </button>
       </div>
@@ -110,7 +112,6 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
   .then((res) => {
     console.log("Respuesta reservas:", res);
 
-    // Si usas Axios, la data viene en res.data
     let count = res[0].total_reservations || 0;
 
     document.getElementById("countReservas").textContent =
@@ -122,11 +123,10 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
   });
 
 
-  // Contador de reseñas
+  // Count of reviews
   Api.get(`/api/users/${activeUser.id_user}/reviewsowners`)
     .then((res) => {
      console.log("Respuesta reservas:", res);
-    // Si usas Axios, la data viene en res.data
     let count = res[0].total_reviews || 0;
 
     document.getElementById("countReservas").textContent =
@@ -137,7 +137,7 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
     document.getElementById("countReservas").textContent = "00";
   });
 
-  // Delete Account (opcional)
+  // Delete Account 
   const deleteAccountBtn = document.getElementById("delete-account");
   if (deleteAccountBtn) {
     deleteAccountBtn.addEventListener("click", async (e) => {
@@ -154,7 +154,7 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
     });
   }
 
-  // Logout (header)
+  // Logout 
   const logoutHeader = document.getElementById("log-out-user");
   if (logoutHeader) {
     logoutHeader.addEventListener("click", (e) => {
@@ -163,7 +163,7 @@ Api.get(`/api/users/${activeUser.id_user}/reservationsowners`)
     });
   }
 
-  // Atajo de back al dashboardOwner si lo necesitas en algún lugar:
+  // go back
   const backBtn = main.querySelector("#back-dashboard");
   if (backBtn) {
     backBtn.addEventListener("click", (e) => {

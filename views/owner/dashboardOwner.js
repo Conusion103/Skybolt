@@ -35,7 +35,7 @@ export let renderDashboardOwner = (ul, main) => {
       </div>
 
      <!-- MOBILE MENU -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
         <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
         <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
@@ -259,7 +259,7 @@ export let renderDashboardOwner = (ul, main) => {
     const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
     const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
     
-    // Verificar si la cancha está reservada
+    // Verify if fields is reserve
     const isReserved = reservations.some(r => r.id_field === field.id_field);
     const estado = isReserved ? "Reserved" : "Unreserved";
     const estadoClass = isReserved ? "text-red-600" : "text-green-600";
