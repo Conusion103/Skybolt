@@ -76,7 +76,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     });
   });
 
-  // Render each request
+  // RENDER EACH OWNER REQUEST CARD
   const renderRequestCard = (req) => {
     const statusClass =
       req.status === "pending"
@@ -85,7 +85,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
           ? "text-green-600"
           : "text-red-600";
 
-    // Buttons
+      // ACTION BUTTONS ONLY IF STATUS IS PENDING
     const actionButtons =
       req.status === "pending"
         ? `
@@ -111,7 +111,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     `;
   };
 
-  // Upload request 
+  // LOAD REQUESTS FROM API
   Api.get("/api/owner_requests")
     .then((requests) => {
       if (!requests.length) {
@@ -120,7 +120,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
       }
       container.innerHTML = requests.map(renderRequestCard).join("");
 
-      // Event Listeners usando showConfirm con .then()
+       // APPROVE HANDLER
       document.querySelectorAll(".approve-request").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
@@ -136,7 +136,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
                   span.textContent = "approved";
                   span.className = "font-medium text-green-600";
 
-                  // Quitar botones
+                  // Remove buttons
                   card.querySelectorAll("button").forEach((b) => b.remove());
 
                   showSuccess("Request approved!");
@@ -145,7 +145,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
             });
         });
       });
-
+      // REJECT HANDLER
       document.querySelectorAll(".reject-request").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;

@@ -209,12 +209,13 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
   let departmentsList = [];
   let municipalitiesList = [];
 
-  // ---------- Charge deparments ----------
+  // ---------- LOAD DEPARTMENTS ----------
   function loadDepartments(callback) {
     const depSelect = document.getElementById("edit-id_department");
     depSelect.innerHTML = `<option value="">--Select a department--</option>`;
     Api.get("/api/departments").then((deps) => {
       departmentsList = deps;
+      // ADD EACH DEPARTMENT TO THE SELECT DROPDOWN
       deps.forEach(dep => {
         const option = document.createElement("option");
         option.value = dep.id_department;
@@ -225,17 +226,19 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     });
   }
 
-  // ---------- Charge town of deparments ----------
+  // ---------- LOAD MUNICIPALITIES BY DEPARTMENT ----------
   function loadMunicipalities(depId, selectedMuniId) {
     const muniSelect = document.getElementById("edit-id_municipality");
     muniSelect.innerHTML = `<option value="">Select a municipality</option>`;
     if (!depId) return;
+     // FETCH MUNICIPALITIES FOR SELECTED DEPARTMENT
     Api.get(`/api/departments/${depId}/municipalities`).then((res) => {
       municipalitiesList = res.municipalities || [];
       municipalitiesList.forEach(m => {
         const option = document.createElement("option");
         option.value = m.id_municipality;
         option.textContent = m.name_municipality;
+        // MARK SELECTED MUNICIPALITY IF PROVIDED
         if (selectedMuniId && m.id_municipality == selectedMuniId) {
           option.selected = true;
         }
@@ -244,10 +247,10 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     });
   }
 
-  // Upload list of departments
+  // INITIALIZE DEPARTMENTS ON VIEW LOAD
   loadDepartments();
 
-  // ---------- RENDER OWNERS ----------
+  // ---------- LOAD OWNERS ----------
   Api.get("/api/users").then((data) => {
     ownersList = data;
     renderOwners(data);
@@ -258,15 +261,18 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     const tbody = document.getElementById("owner-table-body");
     tbody.innerHTML = "";
 
+     // FILTER USERS WHO HAVE ROLE 'owner'
     const onlyOwners = data.filter((u) =>
       u.roles.some((r) => r.name_role === "owner")
     );
 
+    // IF NO OWNERS FOUND
     if (onlyOwners.length === 0) {
       tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">There are no users with role <strong>owner</strong>.</td></tr>`;
       return;
     }
 
+    // CREATE TABLE ROWS FOR EACH OWNER
     onlyOwners.forEach((owner) => {
       const row = document.createElement("tr");
       row.classList.add("border-b", "hover:bg-gray-50");
@@ -289,17 +295,19 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
   // ---------- SEARCH ----------
   document.getElementById("owner-search").addEventListener("input", (e) => {
     const searchTerm = e.target.value.toLowerCase();
+      // FILTER OWNERS BY EMAIL
     const filtered = ownersList.filter((u) =>
       u.email.toLowerCase().includes(searchTerm)
     );
     renderOwners(filtered);
   });
 
-  // ---------- Table ----------
+  // ---------- TABLE EVENTS ----------
   document.getElementById("owner-table-body").addEventListener("click", (e) => {
     const ownerID = Number(e.target.getAttribute("data-id"));
     if (!ownerID) return;
 
+    // DELETE OWNER
     if (e.target.classList.contains("btn-delete")) {
       if (!showConfirm("¿Eliminar este owner?")) return;
       Api.delete(`/api/users/${ownerID}`)
@@ -311,10 +319,12 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         .catch((err) => showError(err.message));
     }
 
+      // EDIT OWNER
     if (e.target.classList.contains("btn-edit")) {
       const ownerData = ownersList.find((u) => u.id_user === ownerID);
       if (!ownerData) return;
 
+       // FILL EDIT FORM WITH OWNER DATA
       document.getElementById("edit-owner-id").value = ownerData.id_user;
       document.getElementById("edit-full_name").value = ownerData.full_name;
       document.getElementById("edit-email").value = ownerData.email;
@@ -327,10 +337,12 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
       document.getElementById("edit-rol").value = ownerData.roles[0]?.name_role || "";
       document.getElementById("edit-password_").value = "";
 
+       // SHOW EDIT FORM
       document.getElementById("edit-owner-form-container").style.display = "block";
     }
 
 
+     // VIEW OWNER DETAILS
     if (e.target.classList.contains("btn-view")) {
       const ownerData = ownersList.find((u) => u.id_user === ownerID);
       if (!ownerData) return;
@@ -358,6 +370,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     }
   });
 
+  // ---------- SHOW MODAL WITH OWNER INFO ----------
   function mostrarModalOwner(ownerData, depName, muniName) {
     document.getElementById("modal-owner-content").innerHTML = `
       <p class="w-full px-4 py-3 rounded-md bg-gray-200"><strong>ID:</strong> ${ownerData.id_user}</p>
@@ -373,17 +386,20 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     document.getElementById("modal-owner").classList.add("flex");
   }
 
+  // ---------- CANCEL EDIT ----------
   document.getElementById("cancel-edit").addEventListener("click", () => {
     document.getElementById("edit-owner-form").reset();
     document.getElementById("edit-owner-id").value = "";
     document.getElementById("edit-owner-form-container").style.display = "none";
   });
 
+  // ---------- SUBMIT EDIT FORM ----------
   document.getElementById("edit-owner-form").addEventListener("submit", (e) => {
     e.preventDefault();
     try {
       const ownerID = Number(document.getElementById("edit-owner-id").value);
 
+       // VALIDATE FORM INPUTS
       const full_name = generalFormat.nameFormat(document.getElementById("edit-full_name").value.trim());
       const email = generalFormat.hotmailFormat(document.getElementById("edit-email").value.trim());
       const phone = generalFormat.phoneNumber(document.getElementById("edit-phone").value.trim());
@@ -406,11 +422,13 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
         rol
       };
 
+       // ADD PASSWORD IF PROVIDED
       const newPassword = document.getElementById("edit-password_").value;
       if (newPassword) {
         updatedOwner.password_ = generalFormat.passwordFormat(newPassword, newPassword);
       }
 
+        // SEND UPDATE REQUEST TO API
       Api.put(`/api/users/${ownerID}`, updatedOwner)
         .then(() => {
           showSuccess("Owner actualizado correctamente");
@@ -427,11 +445,13 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     }
   });
 
+  // ---------- CLOSE MODAL ----------
   document.getElementById("close-modal").addEventListener("click", () => {
     document.getElementById("modal-owner").classList.add("hidden");
     document.getElementById("modal-owner").classList.remove("flex");
   });
 
+  // ---------- LOAD MUNICIPALITIES ON DEPARTMENT CHANGE ----------
   document.getElementById("edit-id_department").addEventListener("change", (e) => {
     const depId = Number(e.target.value);
     loadMunicipalities(depId);

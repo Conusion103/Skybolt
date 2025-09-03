@@ -160,9 +160,11 @@ export let renderDashboardAdminFields = (ul, main) => {
         </footer>
     `;
 
+    // GET MAIN CONTAINERS
     const tbody = main.querySelector("#fields-tbody");
     const editFormContainer = main.querySelector("#edit-form-container");
 
+    // GLOBAL STATE VARIABLES
     let games = [];
     let municipalities = [];
     let availabilityStates = [];
@@ -172,34 +174,43 @@ export let renderDashboardAdminFields = (ul, main) => {
     let filterFieldName = "";
     let filterStatus = "";
 
+    // FORMAT TIME STRING TO HH:MM
     const formatTime = (time) => time?.slice(0, 5);
 
+    // LABELS FOR AVAILABILITY
     const availabilityLabels = {
         available: "Available",
         not_available: "Not available",
     };
 
+    // ---------- LOAD SELECT OPTIONS FROM API ----------
     function loadSelectData() {
         return Promise.all([
+            // Execute multiple API calls in parallel using Promise.all
             Api.get("/api/games"),
             Api.get("/api/municipalities"),
             Api.get("/api/availability"),
             Api.get("/api/users?role=owner"),
             ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
+                // Assign the obtained data to global variables
                 games = gamesData;
                 municipalities = municipalitiesData;
+                // Transforms availability data into a more readable format
                 availabilityStates = availabilityData.map((a) => ({
                     id_availability: a.id_availability,
                     estado: `${availabilityLabels[a.estado] || a.estado} - ${
                     a.day_of_week
                     } ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`,
             }));
+            // Assign the owners
             owners = ownersData;
         });
     }
 
+    // ---------- LOAD FIELDS AND RESERVATIONS ----------
     function loadFields() {
-        Promise.all([Api.get("/api/fields_"), Api.get("/api/reservations")])
+        Promise.all([Api.get("/api/fields_"), 
+            Api.get("/api/reservations")])
             .then(([fields, reservations]) => {
                 allFields = fields;
                 allReservations = reservations;
@@ -210,13 +221,14 @@ export let renderDashboardAdminFields = (ul, main) => {
         });
     }
 
+    // ---------- RENDER FIELDS INTO TABLE ----------
     function renderFields(fields, reservations) {
         let filteredFields = fields.filter((field) => {
-            // filter by name
+            // FILTER BY NAME 
             const matchesName =
                 filterFieldName === "" ||
                 field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
-            //filter by state
+            // FILTER BY STATE
             const hasActiveReservation = reservations.some(
                 (r) => r.id_field === field.id_field && r.estado === "active"
             );
@@ -230,20 +242,22 @@ export let renderDashboardAdminFields = (ul, main) => {
             return;
         }
 
-
+        // MAP FIELDS TO TABLE ROWS
         tbody.innerHTML = filteredFields
         .map((field) => {
-            const gameName =
-            games.find((g) => g.id_game === field.id_game)?.name_game || "N/A";
-            const municipalityName =
-            municipalities.find(
+           // Search for the name of the game associated with the field
+            const gameName = games.find((g) => g.id_game === field.id_game)?.name_game || "N/A";
+            // The name of the municipality associated with the field is searched
+            const municipalityName = municipalities.find(
                 (m) => m.id_municipality === field.id_municipality
             )?.name_municipality || "N/A";
-            const ownerName =
-            owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
+            // Search for the name of the field owner
+            const ownerName = owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
+            // Check if the field has an active reservation
             const hasActiveReservation = reservations.some(
             (r) => r.id_field === field.id_field && r.estado === "active"
             );
+            // Define the availability status of the field with visual styles
             const availabilityName = hasActiveReservation
             ? `<span class="text-red-600 font-bold">Not available</span>`
             : `<span class="text-green-600 font-bold">Available</span>`;
@@ -265,6 +279,7 @@ export let renderDashboardAdminFields = (ul, main) => {
         })
         .join("");
 
+        // FILTER EVENTS
         main.querySelector("#field-search").addEventListener("input", (e) => {
         filterFieldName = e.target.value.trim();
         renderFields(allFields, allReservations);
@@ -276,7 +291,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             renderFields(allFields, allReservations);
         });
 
-        // Edit events
+        // FILTER EVENTS
         tbody.querySelectorAll(".btn-edit").forEach((btn) => {
         btn.onclick = (e) => {
             const id = +e.target.closest("tr").dataset.id;
@@ -289,27 +304,27 @@ export let renderDashboardAdminFields = (ul, main) => {
         });
     }
 
-    // Delete fields
+    // ---------- DELETE FIELD ----------
     tbody.onclick = async function (e) {
         if (e.target.classList.contains("btn-delete")) {
         const id = +e.target.closest("tr").dataset.id;
 
-
+        // Muestra una ventana de confirmación antes de eliminar
         const confirmed = await showConfirm(
             "¿Do you want to delete this field?",
             "Delete field",
             "Yes, delete",
             "Cancel"
         );
-
-
+        // If the user cancels, execution stops
         if (!confirmed) return;
-
+        // Call the API to delete the field
         Api.delete(`/api/fields_/${id}`)
             .then(() => {
             showSuccess("Field successfully deleted");
             loadFields();
 
+           // Hide the edit form if it is open
             const modal = document.getElementById("edit-field-form-container");
             if (modal) {
                 modal.classList.add("hidden");
@@ -322,8 +337,9 @@ export let renderDashboardAdminFields = (ul, main) => {
         }
     };
 
+    // ---------- SHOW EDIT FORM ----------
     function showEditForm(field) {
-
+        // Generates the <select> options for games
         const gameOptions = games
         .map(
             (g) =>
@@ -332,6 +348,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             }>${g.name_game}</option>`
         )
         .join("");
+         // Generates the <select> options for municipalities
         const municipalityOptions = municipalities
         .map(
             (m) =>
@@ -340,6 +357,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             }>${m.name_municipality}</option>`
         )
         .join("");
+        // Generates the <select> options for availability states
         const availabilityOptions = availabilityStates
         .map(
             (a) =>
@@ -354,7 +372,7 @@ export let renderDashboardAdminFields = (ul, main) => {
         modal.classList.remove("hidden");
         modal.classList.add("flex");
 
-
+        // FILL EDIT FORM
         document.getElementById("edit-field-id").value = field.id_field;
         document.getElementById("edit-field-name").value = field.name_field;
         document.getElementById("edit-field-game").innerHTML = gameOptions;
@@ -363,7 +381,7 @@ export let renderDashboardAdminFields = (ul, main) => {
         document.getElementById("edit-field-availability").innerHTML =
         availabilityOptions;
 
-        // Edit event
+        // SUBMIT EDIT
         const editForm = document.getElementById("admin-edit-field-form");
         editForm.onsubmit = (e) => {
         e.preventDefault();
@@ -389,13 +407,14 @@ export let renderDashboardAdminFields = (ul, main) => {
             .catch(() => showError("Error updating field"));
         };
 
-        // Cancel event
+        // CANCEL EDIT EVENT
         document.getElementById("cancel-edit-admin").onclick = () => {
         modal.classList.add("hidden");
         modal.classList.remove("flex");
         };
     }
 
+    // ---------- LOGOUT ----------
     document.querySelectorAll(".log-out-user").forEach(btn => {
         btn.addEventListener("click", e => {
         e.preventDefault();
@@ -406,6 +425,6 @@ export let renderDashboardAdminFields = (ul, main) => {
         window.dispatchEvent(new PopStateEvent("popstate"));
     });
   });
-
+  // ---------- LOGOUT ----------
   loadSelectData().then(loadFields);
 };
