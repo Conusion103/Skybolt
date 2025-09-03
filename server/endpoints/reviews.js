@@ -10,23 +10,23 @@ router.get('/reviews', async (_req, res) => {
     const [rows] = await pool.query('SELECT * FROM reviews');
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reviews', err.message);
+    sendError(res, 500, 'Error getting reviews', err.message);
   }
 });
 
 router.get('/reviews/:id_review', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM reviews WHERE id_review = ?', [req.params.id_review]);
-    if (!rows.length) return sendError(res, 404, 'Review no encontrada');
+    if (!rows.length) return sendError(res, 404, 'Review  not found');
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener review', err.message);
+    sendError(res, 500, 'Error getting review', err.message);
   }
 });
 
 router.post('/reviews', async (req, res) => {
   const { id_user, id_field, rating, comment } = req.body;
-  if (!id_user || !id_field || !rating) return sendError(res, 400, 'id_user, id_field y rating son requeridos');
+  if (!id_user || !id_field || !rating) return sendError(res, 400, 'id_user, id_field and rating are required');
   try {
     const [result] = await pool.query(
       'INSERT INTO reviews (id_user, id_field, rating, comment) VALUES (?, ?, ?, ?)',
@@ -34,7 +34,7 @@ router.post('/reviews', async (req, res) => {
     );
     res.status(201).json({ id_review: result.insertId });
   } catch (err) {
-    sendError(res, 500, 'Error al crear review', err.message);
+    sendError(res, 500, 'Error creating review', err.message);
   }
 });
 
@@ -42,7 +42,7 @@ router.put('/reviews/:id_review', async (req, res) => {
   const { id_user, id_field, rating, comment } = req.body;
   try {
     const [currRows] = await pool.query('SELECT * FROM reviews WHERE id_review = ?', [req.params.id_review]);
-    if (!currRows.length) return sendError(res, 404, 'Review no encontrada');
+    if (!currRows.length) return sendError(res, 404, 'Review  not found');
     const curr = currRows[0];
     const [result] = await pool.query(
       'UPDATE reviews SET id_user = ?, id_field = ?, rating = ?, comment = ? WHERE id_review = ?',
@@ -54,20 +54,20 @@ router.put('/reviews/:id_review', async (req, res) => {
         req.params.id_review
       ]
     );
-    if (!result.affectedRows) return sendError(res, 404, 'Review no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Review  not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al actualizar review', err.message);
+    sendError(res, 500, 'Error updating review', err.message);
   }
 });
 
 router.delete('/reviews/:id_review', async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM reviews WHERE id_review = ?', [req.params.id_review]);
-    if (!result.affectedRows) return sendError(res, 404, 'Review no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Review  not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al eliminar review', err.message);
+    sendError(res, 500, 'Error deleting review', err.message);
   }
 });
 

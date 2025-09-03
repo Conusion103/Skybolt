@@ -30,7 +30,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
       </div>
 
       <!-- MENÚ MÓVIL -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6  flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
@@ -69,7 +69,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     locaL.delete('active_user');
   });
 
-  // Renderizar cada solicitud
+  // Render each request
   const renderRequestCard = (req) => {
     const statusClass =
       req.status === "pending"
@@ -78,7 +78,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
           ? "text-green-600"
           : "text-red-600";
 
-    // Botones solo si está pendiente
+    // Buttons
     const actionButtons =
       req.status === "pending"
         ? `
@@ -104,7 +104,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
     `;
   };
 
-  // Cargar solicitudes desde API
+  // Upload request 
   Api.get("/api/owner_requests")
     .then((requests) => {
       if (!requests.length) {
@@ -113,12 +113,12 @@ export let renderDashboardAdminRequest = (ul, main) => {
       }
       container.innerHTML = requests.map(renderRequestCard).join("");
 
-      // ✅ Event Listeners usando showConfirm con .then()
+      // Event Listeners usando showConfirm con .then()
       document.querySelectorAll(".approve-request").forEach((btn) => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
 
-          showConfirm("✅ Are you sure you want to approve this request?")
+          showConfirm("Are you sure you want to approve this request?")
             .then((confirmed) => {
               if (!confirmed) return;
 
@@ -132,7 +132,7 @@ export let renderDashboardAdminRequest = (ul, main) => {
                   // Quitar botones
                   card.querySelectorAll("button").forEach((b) => b.remove());
 
-                  showSuccess("✅ Request approved!");
+                  showSuccess("Request approved!");
                 })
                 .catch((err) => console.error("Error approving request:", err));
             });
@@ -154,7 +154,6 @@ export let renderDashboardAdminRequest = (ul, main) => {
                   span.textContent = "rejected";
                   span.className = "font-medium text-red-600";
 
-                  // Quitar botones
                   card.querySelectorAll("button").forEach((b) => b.remove());
 
                   showError("Request rejected!");

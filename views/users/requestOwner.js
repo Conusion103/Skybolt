@@ -32,7 +32,7 @@ export let renderResgiterRequestOwner = (ul, main) => {
         </div>
 
         <!-- MOBILE MENU -->
-        <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+        <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
           <a href="/skybolt/dashboarduser/profile" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Back</a>
           <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
         </div>

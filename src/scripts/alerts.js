@@ -1,7 +1,8 @@
+// import librery SweetAlert2 for alerts
 import Swal from "sweetalert2";
 
-// ✅ Alerta de éxito (toast en la esquina superior derecha)
-export const showSuccess = (message, title = "Éxito") => {
+// Message of success
+export const showSuccess = (message, title = "success") => {
   Swal.fire({
     title: title,
     text: message,
@@ -14,7 +15,7 @@ export const showSuccess = (message, title = "Éxito") => {
   });
 };
 
-// ❌ Alerta de error (toast en la esquina superior derecha)
+// Message of error (toast in the upper right corner)
 export const showError = (message, title = "Error") => {
   Swal.fire({
     title: title,
@@ -28,12 +29,12 @@ export const showError = (message, title = "Error") => {
   });
 };
 
-// ⚠️ Confirmación (modal en el centro, NO toast)
+// Message of confirmation with "Yes" and "Cancel" buttons
 export const showConfirm = async (
   message,
-  title = "¿Estás seguro?",
-  confirmText = "Sí",
-  cancelText = "Cancelar"
+  title = "¿Are you Sure?",
+  confirmText = "Yes",
+  cancelText = "Cancel"
 ) => {
   const result = await Swal.fire({
     title: title,
@@ -44,8 +45,8 @@ export const showConfirm = async (
     cancelButtonColor: "#d33",
     confirmButtonText: confirmText,
     cancelButtonText: cancelText,
-    allowOutsideClick: false, // evita que se cierre al hacer click fuera
-    allowEscapeKey: false, // evita que se cierre con ESC
+    allowOutsideClick: false, 
+    allowEscapeKey: false, 
   });
   return result.isConfirmed;
 };

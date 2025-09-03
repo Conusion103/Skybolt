@@ -5,15 +5,12 @@ import { sendError, validateUserFields, getUserRoles, bcrypt } from "../utils.js
 
 const router = express.Router();
 
-/* ==========================
-   📌 Listar usuarios (con filtro opcional por rol)
-   ========================== */
+
 router.get("/users", async (req, res) => {
   const { role } = req.query;
 
   try {
     if (role) {
-      // 🔍 Filtrar por rol
       const [rows] = await pool.query(
         `
         SELECT u.*, r.name_role 
@@ -27,7 +24,6 @@ router.get("/users", async (req, res) => {
       return res.json(rows);
     }
 
-    // 🔍 Si no hay role, devolver todos con array de roles
     const [rows] = await pool.query("SELECT * FROM users");
     const withRoles = await Promise.all(
       rows.map(async (u) => ({
@@ -37,11 +33,11 @@ router.get("/users", async (req, res) => {
     );
     res.json(withRoles);
   } catch (err) {
-    sendError(res, 500, "Error al obtener usuarios", err.message);
+    sendError(res, 500, "Error getting usuarios", err.message);
   }
 });
 
-//Adding endpoint " reviews counter for user profile"
+//reviews counter for user profile
 router.get('/users/:id_user/reviews', async (req, res) => {
   try {
     const { id_user } = req.params;
@@ -51,11 +47,11 @@ router.get('/users/:id_user/reviews', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reviews del usuario', err.message);
+    sendError(res, 500, 'Error getting user reviews', err.message);
   }
 });
 
-//Adding endpoint " reservations counter for user profile"
+//reservations counter for user profile
 router.get('/users/:id_user/reservations', async (req, res) => {
   try {
     const { id_user } = req.params;
@@ -65,7 +61,7 @@ router.get('/users/:id_user/reservations', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+    sendError(res, 500, 'Error getting reservations from user', err.message);
   }
 });
 
@@ -78,7 +74,7 @@ router.get('/users/:id_user/reviewsowners', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+    sendError(res, 500, 'Error getting reservations from user', err.message);
   }
 });
 
@@ -91,19 +87,16 @@ router.get('/users/:id_user/reservationsowners', async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reservations del usuario', err.message);
+    sendError(res, 500, 'Error getting reservations from user', err.message);
   }
 });
 
 
-
-/* ==========================
-   📌 Crear usuario (rol "user" por defecto)
-   ========================== */
+// Create default user rols 
 router.post("/users", async (req, res) => {
   const missing = validateUserFields(req.body);
   if (missing.length > 0) {
-    return sendError(res, 400, "Faltan campos requeridos", missing);
+    return sendError(res, 400, "Required fields are missing", missing);
   }
 
   try {
@@ -118,10 +111,9 @@ router.post("/users", async (req, res) => {
       password_,
     } = req.body;
 
-    // Encriptar contraseña
+    // Encrypt password
     const hashedPassword = await bcrypt.hash(password_, 10);
 
-    // Insertar usuario
     const [result] = await pool.query(
       `INSERT INTO users (full_name, email, phone, birthdate, document_type, id_document, id_municipality, password_)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -139,7 +131,6 @@ router.post("/users", async (req, res) => {
 
     const newUserId = result.insertId;
 
-    // ✅ Asignar rol "user" por defecto
     await pool.query(
       `INSERT INTO user_roles (id_user, id_role)
        VALUES (?, (SELECT id_role FROM roles WHERE name_role = 'user'))`,
@@ -147,18 +138,16 @@ router.post("/users", async (req, res) => {
     );
 
     res.status(201).json({
-      message: "Usuario creado con rol user",
+      message: "User created with user role",
       id_user: newUserId,
     });
   } catch (error) {
     console.error(error);
-    return sendError(res, 500, "Error al crear el usuario", error.message);
+    return sendError(res, 500, "Error creating user", error.message);
   }
 });
 
-/* ==========================
-   📌 Actualizar usuario
-   ========================== */
+
 router.put("/users/:id_user", async (req, res) => {
   const {
     full_name,
@@ -182,7 +171,7 @@ router.put("/users/:id_user", async (req, res) => {
       return sendError(
         res,
         404,
-        `Usuario con id ${req.params.id_user} no encontrado`
+        `User with id ${req.params.id_user} not found`
       );
     const curr = currRows[0];
 
@@ -209,7 +198,6 @@ router.put("/users/:id_user", async (req, res) => {
       ]
     );
 
-    // ✅ Actualizar roles si vienen en el body
     if (Array.isArray(roles)) {
       await pool.query("DELETE FROM user_roles WHERE id_user = ?", [
         req.params.id_user,
@@ -234,27 +222,25 @@ router.put("/users/:id_user", async (req, res) => {
     }
 
     if (result.affectedRows === 0)
-      return sendError(res, 404, "Usuario no encontrado");
+      return sendError(res, 404, "User not found");
 
-    res.json({ status: 200, message: "Usuario actualizado correctamente" });
+    res.json({ status: 200, message: "Successfully updated user" });
   } catch (err) {
-    sendError(res, 500, "Error al actualizar usuario", err.message);
+    sendError(res, 500, "Error updating user", err.message);
   }
 });
 
-/* ==========================
-   📌 Eliminar usuario
-   ========================== */
+
 router.delete("/users/:id_user", async (req, res) => {
   try {
     const [result] = await pool.query("DELETE FROM users WHERE id_user = ?", [
       req.params.id_user,
     ]);
     if (result.affectedRows === 0)
-      return sendError(res, 404, "Usuario no encontrado");
+      return sendError(res, 404, "User not found");
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, "Error al eliminar usuario", err.message);
+    sendError(res, 500, "Error deleting user", err.message);
   }
 });
 

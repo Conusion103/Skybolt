@@ -5,7 +5,7 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// Obtener todas las reservas con JOIN (usuario y cancha)
+// Get all reservations with JOIN (user and court)
 router.get('/reservations/full', async (_req, res) => {
   try {
     const [rows] = await pool.query(
@@ -19,11 +19,11 @@ router.get('/reservations/full', async (_req, res) => {
     res.json(rows);
   } catch (err) {
     console.error('Error en /reservations/full:', err);
-    sendError(res, 500, 'Error al obtener reservas con detalles', err.message);
+    sendError(res, 500, 'Error getting reservations with details', err.message);
   }
 });
 
-// Obtener reserva específica con JOIN
+// Get specific reservation with JOIN
 router.get('/reservations/full/:id_reserve', async (req, res) => {
   try {
     const [rows] = await pool.query(
@@ -36,21 +36,21 @@ router.get('/reservations/full/:id_reserve', async (req, res) => {
        WHERE r.id_reserve = ?`,
       [req.params.id_reserve]
     );
-    if (!rows.length) return sendError(res, 404, 'Reserva no encontrada');
+    if (!rows.length) return sendError(res, 404, 'Reserva not found');
     res.json(rows[0]);
   } catch (err) {
     console.error('Error en /reservations/full/:id_reserve:', err);
-    sendError(res, 500, 'Error al obtener reserva con detalles', err.message);
+    sendError(res, 500, 'Error getting reservation with details', err.message);
   }
 });
 
-// ✅ CRUD básico (lo que ya tienes)
+
 router.get('/reservations', async (_req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM reservations');
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reservations', err.message);
+    sendError(res, 500, 'Error getting reservations', err.message);
   }
 });
 
@@ -60,10 +60,10 @@ router.get('/reservations/:id_reserve', async (req, res) => {
       'SELECT * FROM reservations WHERE id_reserve = ?', 
       [req.params.id_reserve]
     );
-    if (!rows.length) return sendError(res, 404, 'Reservation no encontrada');
+    if (!rows.length) return sendError(res, 404, 'Reservation not found');
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener reservation', err.message);
+    sendError(res, 500, 'Error getting reservation', err.message);
   }
 });
 
@@ -73,13 +73,13 @@ router.post('/reservations', async (req, res) => {
     return sendError(res, 400, 'reserve_schedule, id_user e id_field son requeridos');
   }
   try {
-    // Validar si ya existe reserva en ese horario y cancha
+
     const [conflict] = await pool.query(
       'SELECT * FROM reservations WHERE id_field = ? AND reserve_schedule = ?',
       [id_field, reserve_schedule]
     );
     if (conflict.length) {
-      return sendError(res, 409, 'El horario ya está reservado para esta cancha');
+      return sendError(res, 409, 'The schedule is already reserved for this court');
     }
 
     const [result] = await pool.query(
@@ -88,7 +88,7 @@ router.post('/reservations', async (req, res) => {
     );
     res.status(201).json({ id_reserve: result.insertId });
   } catch (err) {
-    sendError(res, 500, 'Error al crear reservation', err.message);
+    sendError(res, 500, 'Error creating reservation', err.message);
   }
 });
 
@@ -99,9 +99,8 @@ router.put('/reservations/:id_reserve', async (req, res) => {
       'SELECT * FROM reservations WHERE id_reserve = ?', 
       [req.params.id_reserve]
     );
-    if (!currRows.length) return sendError(res, 404, 'Reservation no encontrada');
+    if (!currRows.length) return sendError(res, 404, 'Reservation not found');
 
-    // Validar conflicto solo si cambió horario o cancha
     const curr = currRows[0];
     if (
       (reserve_schedule && reserve_schedule !== curr.reserve_schedule) ||
@@ -112,7 +111,7 @@ router.put('/reservations/:id_reserve', async (req, res) => {
         [id_field ?? curr.id_field, reserve_schedule ?? curr.reserve_schedule, req.params.id_reserve]
       );
       if (conflict.length) {
-        return sendError(res, 409, 'El horario ya está reservado para esta cancha');
+        return sendError(res, 409, 'The schedule is already reserved for this court');
       }
     }
 
@@ -125,10 +124,10 @@ router.put('/reservations/:id_reserve', async (req, res) => {
         req.params.id_reserve
       ]
     );
-    if (!result.affectedRows) return sendError(res, 404, 'Reservation no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Reservation not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al actualizar reservation', err.message);
+    sendError(res, 500, 'Error updating reservation', err.message);
   }
 });
 
@@ -138,10 +137,10 @@ router.delete('/reservations/:id_reserve', async (req, res) => {
       'DELETE FROM reservations WHERE id_reserve = ?', 
       [req.params.id_reserve]
     );
-    if (!result.affectedRows) return sendError(res, 404, 'Reservation no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Reservation not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al eliminar reservation', err.message);
+    sendError(res, 500, 'Error deleting reservation', err.message);
   }
 });
 

@@ -1,21 +1,23 @@
+// API methods for CRUD operations
 export let Api = {
+    // Base URL for the API in production and development
     base: 'https://skybolt-production.up.railway.app',
     // base: 'http://localhost:3000',
 
-    // Función para manejar la lógica repetida
+    // Function to handle repeated logic
     request: (method, param, pack = null) => {
         const options = {
             method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: pack ? JSON.stringify(pack) : null  // Solo agrega body si pack no es null
+            body: pack ? JSON.stringify(pack) : null
         };
 
         return fetch(`${Api.base}${param}`, options)
             .then(res => {
                 if (!res.ok) throw new Error(`Error HTTP ${res.status}`);
-                return res.json();  // Retorna el cuerpo de la respuesta parseado como JSON
+                return res.json(); 
             })
             .catch(error => {
                 console.error(error.message);
@@ -23,21 +25,21 @@ export let Api = {
             });
     },
 
-    // Métodos HTTP usando la función request común
+    // Methods for HTTP requests
     get: (param) => {
-        return Api.request('GET', param);  // Llama a request con el método GET
+        return Api.request('GET', param);  // Call request with GET method
     },
 
     post: (param, pack) => {
-        return Api.request('POST', param, pack);  // Llama a request con el método POST
+        return Api.request('POST', param, pack);  // Call request with POST method
     },
 
     put: (param, pack) => {
-        return Api.request('PUT', param, pack);  // Llama a request con el método PUT
+        return Api.request('PUT', param, pack);  // Call request with PUT method
     },
 
     delete: (param) => {
-        return Api.request('DELETE', param);  // Llama a request con el método DELETE
+        return Api.request('DELETE', param);  // Call request with DELETE method
     }
 };
 

@@ -4,7 +4,7 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// Obtener todas las canchas con información básica y joins
+// Get all courts with basic information and joins
 router.get('/fields_', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -28,11 +28,11 @@ router.get('/fields_', async (_req, res) => {
     `);
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener fields_', err.message);
+    sendError(res, 500, 'Error getting fields_', err.message);
   }
 });
 
-// Obtener canchas detalladas con joins adicionales
+// Get detailed courts with additional joins
 router.get('/fields/detailed', async (_req, res) => {
   try {
     const [rows] = await pool.query(`
@@ -58,22 +58,22 @@ router.get('/fields/detailed', async (_req, res) => {
     `);
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener canchas detalladas', err.message);
+    sendError(res, 500, 'Error getting detailed courts', err.message);
   }
 });
 
-// Obtener cancha específica por ID
+// Get specific court by ID
 router.get('/fields_/:id_field', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!rows.length) return sendError(res, 404, 'Field no encontrada');
+    if (!rows.length) return sendError(res, 404, 'Field not found');
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, 'Error al obtener field', err.message);
+    sendError(res, 500, 'Error getting field', err.message);
   }
 });
 
-// Crear cancha nueva
+// Create a new field
 router.post('/fields_', async (req, res) => {
   const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
   if (!name_field || !id_municipality || !id_game || !id_availability) {
@@ -87,16 +87,16 @@ router.post('/fields_', async (req, res) => {
     );
     res.status(201).json({ id_field: result.insertId });
   } catch (err) {
-    sendError(res, 500, 'Error al crear field', err.message);
+    sendError(res, 500, 'Error creating field', err.message);
   }
 });
 
-// Actualizar cancha existente
+// Update fields
 router.put('/fields_/:id_field', async (req, res) => {
   const { name_field, id_municipality, id_game, id_availability, id_owner, image_path } = req.body;
   try {
     const [currRows] = await pool.query('SELECT * FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!currRows.length) return sendError(res, 404, 'Field no encontrada');
+    if (!currRows.length) return sendError(res, 404, 'Field not found');
     const curr = currRows[0];
     const [result] = await pool.query(
       `UPDATE fields_ SET name_field = ?, id_municipality = ?, id_game = ?, id_availability = ?, id_owner = ?, image_path = ?
@@ -111,34 +111,32 @@ router.put('/fields_/:id_field', async (req, res) => {
         req.params.id_field
       ]
     );
-    if (!result.affectedRows) return sendError(res, 404, 'Field no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Field not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al actualizar field', err.message);
+    sendError(res, 500, 'Error updating field', err.message);
   }
 });
 
-// Eliminar cancha
+// delete fields
 router.delete('/fields_/:id_field', async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM fields_ WHERE id_field = ?', [req.params.id_field]);
-    if (!result.affectedRows) return sendError(res, 404, 'Field no encontrada');
+    if (!result.affectedRows) return sendError(res, 404, 'Field not found');
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al eliminar field', err.message);
+    sendError(res, 500, 'Error deleting field', err.message);
   }
 });
 
 
-// NUEVO ENDPOINT: Obtener canchas disponibles en un datetime específico
-// GET /fields_/available?datetime=2025-08-30T15:00:00
 router.get('/fields_/available', async (req, res) => {
   const { datetime } = req.query;
-  if (!datetime) return sendError(res, 400, 'datetime es requerido en formato ISO');
+  if (!datetime) return sendError(res, 400, 'datetime is required in ISO format');
 
   try {
     const requestedDate = new Date(datetime);
-    if (isNaN(requestedDate)) return sendError(res, 400, 'datetime inválido');
+    if (isNaN(requestedDate)) return sendError(res, 400, 'datetime inválid');
 
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayOfWeek = daysOfWeek[requestedDate.getUTCDay()];
@@ -169,7 +167,7 @@ router.get('/fields_/available', async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error('Error en /fields_/available:', err);
-    sendError(res, 500, 'Error al obtener canchas disponibles', err.message);
+    sendError(res, 500, 'Error getting available courts', err.message);
   }
 });
 

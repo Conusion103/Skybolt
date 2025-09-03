@@ -39,7 +39,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
       </div>
 
       <!-- MENÚ MÓVIL -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
@@ -85,7 +85,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
           
       <!-- FORM EDITAR -->
       <div id="edit-owner-form-container"
-        class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 backdrop-blur-md p-4">
+        class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-md p-4">
         <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-md mx-auto transform 
                     max-h-[100vh] overflow-y-auto">
           
@@ -140,7 +140,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
 
 
       <!-- MODAL VER MÁS -->
-      <div id="modal-owner" class="fixed inset-0  bg-opacity-50 hidden flex items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
+      <div id="modal-owner" class="fixed inset-0  bg-opacity-50 hidden items-center justify-center z-40 bg-white/50 backdrop-blur-md p-6 rounded-lg">
         <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
           <h3 class="text-xl font-bold text-green-600 mb-4">Owner Details</h3>
           <div id="modal-owner-content" class="space-y-2 text-gray-700"></div>
@@ -203,7 +203,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
   let departmentsList = [];
   let municipalitiesList = [];
 
-  // ---------- CARGAR DEPARTAMENTOS ----------
+  // ---------- Charge deparments ----------
   function loadDepartments(callback) {
     const depSelect = document.getElementById("edit-id_department");
     depSelect.innerHTML = `<option value="">--Select a department--</option>`;
@@ -219,7 +219,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     });
   }
 
-  // ---------- CARGAR MUNICIPIOS POR DEPARTAMENTO ----------
+  // ---------- Charge town of deparments ----------
   function loadMunicipalities(depId, selectedMuniId) {
     const muniSelect = document.getElementById("edit-id_municipality");
     muniSelect.innerHTML = `<option value="">Select a municipality</option>`;
@@ -238,10 +238,10 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     });
   }
 
-  // Inicializar departamentos al cargar la vista
+  // Upload list of departments
   loadDepartments();
 
-  // ---------- CARGAR OWNERS ----------
+  // ---------- RENDER OWNERS ----------
   Api.get("/api/users").then((data) => {
     ownersList = data;
     renderOwners(data);
@@ -289,7 +289,7 @@ export let renderDashboardAdminEditOwners = (ul, main) => {
     renderOwners(filtered);
   });
 
-  // ---------- EVENTOS TABLA ----------
+  // ---------- Table ----------
   document.getElementById("owner-table-body").addEventListener("click", (e) => {
     const ownerID = Number(e.target.getAttribute("data-id"));
     if (!ownerID) return;

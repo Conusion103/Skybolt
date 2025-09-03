@@ -43,7 +43,7 @@ export let renderDashboardUserProfile = (ul, main) => {
       </div>
 
       <!-- MENÚ MÓVIL -->
-      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
+      <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <!--- <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Payments</a>
         <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Contact us</a> --->
@@ -116,14 +116,14 @@ export let renderDashboardUserProfile = (ul, main) => {
     .then((reservations) => {
       console.log("Respuesta reservas:", reservations);
 
+
+      // count of reserves
       let count = 0;
       if (Array.isArray(reservations) && reservations.length > 0) {
-        // Si devuelve un arreglo de objetos con reservas
         count = reservations[0].total_reservations || 0;
       } else if (Array.isArray(reservations?.data)) {
         count = reservations.data.length;
       } else if (reservations?.total !== undefined) {
-        // Si devuelve un objeto con propiedad total
         count = reservations.total;
       }
 
@@ -135,15 +135,13 @@ export let renderDashboardUserProfile = (ul, main) => {
     });
 
 
-  // Contador de reseñas
+  // Count of reviews
   Api.get(`/api/users/${activeUser.id_user}/reviews`)
     .then((reviews) => {
       console.log("Respuesta del endpoint:", reviews);
 
-      // Si la respuesta es un arreglo con objetos que tienen total
       let count = reviews[0].total_reviews;
       if (Array.isArray(reviews) && reviews.length > 0) {
-        // asumimos que el primer elemento tiene el total real
         count = reviews[0].total || 0;
       } else if (reviews?.data && Array.isArray(reviews.data)) {
         count = reviews.data.length;
@@ -173,7 +171,7 @@ export let renderDashboardUserProfile = (ul, main) => {
         .catch((err) => showError(err.message));
     });
 
-  // Logout dinámico
+  // Logout
   const logoutBtn = document.getElementById('log-out-user');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
@@ -187,7 +185,7 @@ export let renderDashboardUserProfile = (ul, main) => {
     locaL.delete("active_user");
   });
 
-  // Back dinámico
+  //  go Back 
   const backBtn = main.querySelector('#back-dashboard');
   if (backBtn) {
     backBtn.addEventListener('click', (e) => {

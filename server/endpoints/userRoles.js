@@ -5,18 +5,18 @@ import { sendError } from '../utils.js';
 
 const router = express.Router();
 
-// Asignar / remover roles a usuario
+// Assign / remove roles to user
 router.post('/users/change-role', async (req, res) => {
   const { target_user_id, role, action } = req.body;
   if (!target_user_id || !role || !['assign', 'remove'].includes(action)) {
-    return sendError(res, 400, 'target_user_id, role y action son requeridos');
+    return sendError(res, 400, 'target_user_id, role y action are requerids');
   }
   try {
     let id_role = null;
     if (typeof role === 'number') id_role = role;
     else {
       const [r] = await pool.query('SELECT id_role FROM roles WHERE name_role = ?', [role]);
-      if (!r.length) return sendError(res, 404, 'Rol no existe');
+      if (!r.length) return sendError(res, 404, 'Rol dont exist');
       id_role = r[0].id_role;
     }
     if (action === 'assign') {
@@ -26,7 +26,7 @@ router.post('/users/change-role', async (req, res) => {
     }
     res.json({ success: true });
   } catch (err) {
-    sendError(res, 500, 'Error al cambiar rol', err.message);
+    sendError(res, 500, 'Error changin rol', err.message);
   }
 });
 

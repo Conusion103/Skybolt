@@ -5,39 +5,42 @@ import { sendError } from "../utils.js";
 
 const router = express.Router();
 
-// 📌 Obtener todos los departamentos
+// Get all departments
 router.get("/departments", async (_req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM departments");
     res.json(rows);
   } catch (err) {
-    sendError(res, 500, "Error al obtener departamentos", err.message);
+    sendError(res, 500, "Error getting departments", err.message);
   }
 });
 
-// 📌 Obtener un departamento por ID
+// Get a department by ID
 router.get("/departments/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query("SELECT * FROM departments WHERE id_department = ?", [id]);
+    const [rows] = await pool.query(
+      "SELECT * FROM departments WHERE id_department = ?",
+      [id]
+    );
 
     if (rows.length === 0) {
-      return sendError(res, 404, "Departamento no encontrado");
+      return sendError(res, 404, "Departament not found");
     }
 
     res.json(rows[0]);
   } catch (err) {
-    sendError(res, 500, "Error al obtener el departamento", err.message);
+    sendError(res, 500, "Error getting the department", err.message);
   }
 });
 
-// 📌 Crear un nuevo departamento
+// Create a new department
 router.post("/departments", async (req, res) => {
   try {
     const { name_department } = req.body;
 
     if (!name_department) {
-      return sendError(res, 400, "El nombre del departamento es obligatorio");
+      return sendError(res, 400, "The department name is required");
     }
 
     const [result] = await pool.query(
@@ -47,11 +50,11 @@ router.post("/departments", async (req, res) => {
 
     res.status(201).json({ id: result.insertId, name_department });
   } catch (err) {
-    sendError(res, 500, "Error al crear el departamento", err.message);
+    sendError(res, 500, "Error creating department", err.message);
   }
 });
 
-// 📌 Actualizar un departamento
+// Update deparments
 router.put("/departments/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,44 +66,49 @@ router.put("/departments/:id", async (req, res) => {
     );
 
     if (result.affectedRows === 0) {
-      return sendError(res, 404, "Departamento no encontrado");
+      return sendError(res, 404, "Departamento not found");
     }
 
-    res.json({ message: "Departamento actualizado correctamente" });
+    res.json({ message: "Department updated correctly" });
   } catch (err) {
-    sendError(res, 500, "Error al actualizar el departamento", err.message);
+    sendError(res, 500, "Error updating department", err.message);
   }
 });
 
-// 📌 Eliminar un departamento
+// delete deparment
 router.delete("/departments/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await pool.query("DELETE FROM departments WHERE id_department = ?", [id]);
+    const [result] = await pool.query(
+      "DELETE FROM departments WHERE id_department = ?",
+      [id]
+    );
 
     if (result.affectedRows === 0) {
-      return sendError(res, 404, "Departamento no encontrado");
+      return sendError(res, 404, "Departamento not found");
     }
 
-    res.json({ message: "Departamento eliminado correctamente" });
+    res.json({ message: "Department deleted successfully" });
   } catch (err) {
-    sendError(res, 500, "Error al eliminar el departamento", err.message);
+    sendError(res, 500, "Error deleting department", err.message);
   }
 });
 
-
-// 📌 Obtener un departamento con sus municipios
+// Obtain a department with its municipalities
 router.get("/departments/:id/municipalities", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Primero, verificar si el departamento existe
-    const [deptRows] = await pool.query("SELECT * FROM departments WHERE id_department = ?", [id]);
+    // First, check if the department exists
+    const [deptRows] = await pool.query(
+      "SELECT * FROM departments WHERE id_department = ?",
+      [id]
+    );
     if (deptRows.length === 0) {
-      return sendError(res, 404, "Departamento no encontrado");
+      return sendError(res, 404, "Departamento not found");
     }
 
-    // Luego, obtener los municipios relacionados con ese departamento
+    // Then, get the municipalities related to that department
     const [municipalities] = await pool.query(
       "SELECT id_municipality, name_municipality FROM municipalities WHERE id_department = ?",
       [id]
@@ -108,12 +116,16 @@ router.get("/departments/:id/municipalities", async (req, res) => {
 
     res.json({
       department: deptRows[0],
-      municipalities
+      municipalities,
     });
   } catch (err) {
-    sendError(res, 500, "Error al obtener el departamento con sus municipios", err.message);
+    sendError(
+      res,
+      500,
+      "Error getting the department with its municipalities",
+      err.message
+    );
   }
 });
-
 
 export default router;
