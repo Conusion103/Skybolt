@@ -31,7 +31,7 @@ export let renderDashboardUserProfile = (ul, main) => {
             <!--- <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Payments</a>
             <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Contact us</a> --->
             <a href="/skybolt/dashboarduser/profile/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Be Owners</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -42,17 +42,17 @@ export let renderDashboardUserProfile = (ul, main) => {
         </div>
       </div>
 
-      <!-- MENÚ MÓVIL -->
+      <!-- MOBILE MENU -->
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
         <!--- <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Payments</a>
         <a href="" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Contact us</a> --->
         <a href="/skybolt/dashboarduser/profile/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Be Owners</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
     <div id="top" class="h-16"></div>
 
   `;
@@ -80,7 +80,7 @@ export let renderDashboardUserProfile = (ul, main) => {
             <img src="../../img/bookings.png" alt="Reservations Icon" class="w-8 h-8" />
           </div>
           <span id="countReservas" class="font-semibold text-lg">00</span>
-          <span class="text-gray-500 text-xs">reservations</span>
+          <span class="text-gray-500 text-xs">Reservations</span>
         </div>
 
         <!-- Reseñas -->
@@ -89,7 +89,7 @@ export let renderDashboardUserProfile = (ul, main) => {
             <img src="../../img/reviews.png" alt="Reviews Icon" class="w-8 h-8" />
           </div>
           <span id="countReviews" class="font-semibold text-lg">00</span>
-          <span class="text-gray-500 text-xs">reviews</span>
+          <span class="text-gray-500 text-xs">Reviews</span>
         </div>
       </div>
 
@@ -114,7 +114,7 @@ export let renderDashboardUserProfile = (ul, main) => {
 
   Api.get(`/api/users/${activeUser.id_user}/reservations`)
     .then((reservations) => {
-      console.log("Respuesta reservas:", reservations);
+      console.log("Reservations response:", reservations);
 
 
       // count of reserves
@@ -130,7 +130,7 @@ export let renderDashboardUserProfile = (ul, main) => {
       document.getElementById("countReservas").textContent = count.toString().padStart(2, "0");
     })
     .catch((err) => {
-      console.error("Error cargando reservas:", err);
+      console.error("Error loading reservations:", err);
       document.getElementById("countReservas").textContent = "00";
     });
 
@@ -138,7 +138,7 @@ export let renderDashboardUserProfile = (ul, main) => {
   // Count of reviews
   Api.get(`/api/users/${activeUser.id_user}/reviews`)
     .then((reviews) => {
-      console.log("Respuesta del endpoint:", reviews);
+      console.log("Endpoint response:", reviews);
 
       let count = reviews[0].total_reviews;
       if (Array.isArray(reviews) && reviews.length > 0) {
@@ -148,10 +148,10 @@ export let renderDashboardUserProfile = (ul, main) => {
       }
 
       document.getElementById("countReviews").textContent = count.toString().padStart(2, "0");
-      console.log("Cantidad de reseñas:", count);
+      console.log("Number of reviews:", count);
     })
     .catch((err) => {
-      console.error("Error cargando reseñas:", err);
+      console.error("Error loading reviews:", err);
       document.getElementById("countReviews").textContent = "00";
     });
 
@@ -172,17 +172,15 @@ export let renderDashboardUserProfile = (ul, main) => {
     });
 
   // Logout
-  const logoutBtn = document.getElementById('log-out-user');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', (e) => {
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
       e.preventDefault();
-      locaL.remove('active_user');
-    });
-  }
+      locaL.delete("active_user");
 
-  document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
 
   //  go Back 

@@ -3,13 +3,13 @@ import { locaL } from "../../src/scripts/LocalStorage";
 import { Api } from "../../src/scripts/methodsApi";
 
 export let renderDashboardAdminFields = (ul, main) => {
-  const activeUser = locaL.get("active_user");
-  if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-    return;
-  }
-  document.body.style.background = "white";
-  ul.innerHTML = `
+    const activeUser = locaL.get("active_user");
+    if (!activeUser) {
+        main.innerHTML = `<p>Please log in</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+        return;
+    }
+    document.body.style.background = "white";
+    ul.innerHTML = `
         <header class="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
@@ -22,7 +22,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                         <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
                         <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
                         <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-                        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+                        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
                 
                     </nav>
 
@@ -34,26 +34,26 @@ export let renderDashboardAdminFields = (ul, main) => {
                 </div>
             </div>
 
-            <!-- MENÚ MÓVIL -->
+            <!-- MOBILE MENU -->
             <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
                 <a href="/skybolt/dashboardadmin/fields" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Fields</a>
                 <a href="/skybolt/dashboardadmin/owners" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Owners</a>
                 <a href="/skybolt/dashboardadmin/users" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Users</a>
                 <a href="/skybolt/dashboardadmin/request" data-link class="block sm:inline text-green-600 hover:text-green-800 font-semibold px-2">Requests</a>
-                <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+                <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
             </div>
         </header>
 
-        <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+        <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
         <div id="top" class="h-16"></div>
 
     `;
-  document.getElementById("menu-btn").addEventListener("click", () => {
-    const menu = document.getElementById("mobile-menu");
-    menu.classList.toggle("hidden");
-  });
+    document.getElementById("menu-btn").addEventListener("click", () => {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+    });
 
-  main.innerHTML = `
+    main.innerHTML = `
         <section class="p-6 sm:p-6">
             <h2 class="text-lg sm:text-2xl font-bold text-green-600 mb-4 text-center sm:text-left">
                 Hello ${
@@ -68,7 +68,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                 <option value="available">Available</option>
                 <option value="not_available">Not available</option>
             </select>
-            <!-- Tabla -->
+            <!-- Table -->
             <div id="fields-list-section" class="overflow-x-auto">
                 <h3 class="text-xl font-semibold mb-4">Courts of all owners</h3>
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
@@ -85,10 +85,6 @@ export let renderDashboardAdminFields = (ul, main) => {
                     <tbody id="fields-tbody"></tbody>
                 </table>
             </div>
-        
-
-
-
             <div id="edit-field-form-container"
                 class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 backdrop-blur-sm p-4">
                 <div class="bg-white p-4 rounded-lg shadow-md w-full max-w-sm sm:max-w-lg md:max-w-2xl mx-auto max-h-[90vh] overflow-y-auto sm:max-h-none sm:overflow-visible">
@@ -124,12 +120,12 @@ export let renderDashboardAdminFields = (ul, main) => {
         </section>
       
     `;
-  footer.innerHTML = `
-        <!-- FOOTER COMPLETO -->
+    footer.innerHTML = `
+         <!-- FULL FOOTER -->
         <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 
-                <!-- DESCRIPCIÓN -->
+                <!-- DESCRIPTION -->
                 <div>
                     <h3 class="text-xl font-bold text-white mb-4">SKYBOLT</h3>
                     <p class="text-sm">
@@ -137,7 +133,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                     </p>
                 </div>
 
-                <!-- ENLACES -->
+                <!-- LINKS -->
                 <div>
                     <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
                     <ul class="space-y-2 text-sm">
@@ -147,7 +143,7 @@ export let renderDashboardAdminFields = (ul, main) => {
                     </ul>
                 </div>
 
-                <!-- REDES -->
+                <!-- NETWORKS -->
                 <div>
                 <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
                 <div class="flex gap-4">
@@ -164,246 +160,271 @@ export let renderDashboardAdminFields = (ul, main) => {
         </footer>
     `;
 
-  const tbody = main.querySelector("#fields-tbody");
-  const editFormContainer = main.querySelector("#edit-form-container");
+    // GET MAIN CONTAINERS
+    const tbody = main.querySelector("#fields-tbody");
+    const editFormContainer = main.querySelector("#edit-form-container");
 
-  let games = [];
-  let municipalities = [];
-  let availabilityStates = [];
-  let owners = [];
-  let allFields = [];
-  let allReservations = [];
-  let filterFieldName = "";
-  let filterStatus = "";
+    // GLOBAL STATE VARIABLES
+    let games = [];
+    let municipalities = [];
+    let availabilityStates = [];
+    let owners = [];
+    let allFields = [];
+    let allReservations = [];
+    let filterFieldName = "";
+    let filterStatus = "";
 
-  const formatTime = (time) => time?.slice(0, 5);
+    // FORMAT TIME STRING TO HH:MM
+    const formatTime = (time) => time?.slice(0, 5);
 
-  const availabilityLabels = {
-    available: "Available",
-    not_available: "Not available",
-  };
+    // LABELS FOR AVAILABILITY
+    const availabilityLabels = {
+        available: "Available",
+        not_available: "Not available",
+    };
 
-  function loadSelectData() {
-    return Promise.all([
-      Api.get("/api/games"),
-      Api.get("/api/municipalities"),
-      Api.get("/api/availability"),
-      Api.get("/api/users?role=owner"),
-    ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
-      games = gamesData;
-      municipalities = municipalitiesData;
-      availabilityStates = availabilityData.map((a) => ({
-        id_availability: a.id_availability,
-        estado: `${availabilityLabels[a.estado] || a.estado} - ${
-          a.day_of_week
-        } ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`,
-      }));
-      owners = ownersData;
-    });
-  }
-
-  function loadFields() {
-    Promise.all([Api.get("/api/fields_"), Api.get("/api/reservations")])
-      .then(([fields, reservations]) => {
-        allFields = fields;
-        allReservations = reservations;
-        renderFields(fields, reservations);
-      })
-      .catch(() => {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
-      });
-  }
-
-  function renderFields(fields, reservations) {
-    let filteredFields = fields.filter((field) => {
-      // filter by name
-      const matchesName =
-        filterFieldName === "" ||
-        field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
-      //filter by state
-      const hasActiveReservation = reservations.some(
-        (r) => r.id_field === field.id_field && r.estado === "active"
-      );
-      let status = hasActiveReservation ? "not_available" : "available";
-      const matchesStatus = filterStatus === "" || filterStatus === status;
-      return matchesName && matchesStatus;
-    });
-
-    if (!filteredFields.length) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No fields found.</td></tr>`;
-      return;
-    }
-
-
-    tbody.innerHTML = filteredFields
-      .map((field) => {
-        const gameName =
-          games.find((g) => g.id_game === field.id_game)?.name_game || "N/A";
-        const municipalityName =
-          municipalities.find(
-            (m) => m.id_municipality === field.id_municipality
-          )?.name_municipality || "N/A";
-        const ownerName =
-          owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
-        const hasActiveReservation = reservations.some(
-          (r) => r.id_field === field.id_field && r.estado === "active"
-        );
-        const availabilityName = hasActiveReservation
-          ? `<span class="text-red-600 font-bold">Not available</span>`
-          : `<span class="text-green-600 font-bold">Available</span>`;
-
-        return `
-
-                <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
-                    <td class="p-2 border">${field.name_field}</td>
-                    <td class="p-2 border">${gameName}</td>
-                    <td class="p-2 border">${municipalityName}</td>
-                    <td class="p-2 border">${availabilityName}</td>
-                    <td class="p-2 border">${ownerName}</td>
-                    <td class="p-2 border text-center">
-                        <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">✏️</button>
-                        <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️</button>
-                    </td>
-                </tr>
-        `;
-      })
-      .join("");
-
-    main.querySelector("#field-search").addEventListener("input", (e) => {
-      filterFieldName = e.target.value.trim();
-      renderFields(allFields, allReservations);
-    });
-    main
-      .querySelector("#field-status-filter")
-      .addEventListener("change", (e) => {
-        filterStatus = e.target.value;
-        renderFields(allFields, allReservations);
-      });
-
-    // Edit events
-    tbody.querySelectorAll(".btn-edit").forEach((btn) => {
-      btn.onclick = (e) => {
-        const id = +e.target.closest("tr").dataset.id;
-        Api.get(`/api/fields_/${id}`)
-          .then((field) => {
-            showEditForm(field);
-          })
-          .catch(() => showError("Error loading field for editing"));
-      };
-    });
-  }
-
-  // Delete fields
-  tbody.onclick = async function (e) {
-    if (e.target.classList.contains("btn-delete")) {
-      const id = +e.target.closest("tr").dataset.id;
-
-
-      const confirmed = await showConfirm(
-        "¿Do you want to delete this field?",
-        "Delete field",
-        "Yes, delete",
-        "Cancel"
-      );
-
-
-      if (!confirmed) return;
-
-      Api.delete(`/api/fields_/${id}`)
-        .then(() => {
-          showSuccess("Field successfully deleted");
-          loadFields();
-
-          const modal = document.getElementById("edit-field-form-container");
-          if (modal) {
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-          }
-        })
-        .catch(() => {
-          showError("Error deleting field");
+    // ---------- LOAD SELECT OPTIONS FROM API ----------
+    function loadSelectData() {
+        return Promise.all([
+            // Execute multiple API calls in parallel using Promise.all
+            Api.get("/api/games"),
+            Api.get("/api/municipalities"),
+            Api.get("/api/availability"),
+            Api.get("/api/users?role=owner"),
+            ]).then(([gamesData, municipalitiesData, availabilityData, ownersData]) => {
+                // Assign the obtained data to global variables
+                games = gamesData;
+                municipalities = municipalitiesData;
+                // Transforms availability data into a more readable format
+                availabilityStates = availabilityData.map((a) => ({
+                    id_availability: a.id_availability,
+                    estado: `${availabilityLabels[a.estado] || a.estado} - ${
+                    a.day_of_week
+                    } ${formatTime(a.hora_inicio)} - ${formatTime(a.hora_final)}`,
+            }));
+            // Assign the owners
+            owners = ownersData;
         });
     }
-  };
 
-  function showEditForm(field) {
+    // ---------- LOAD FIELDS AND RESERVATIONS ----------
+    function loadFields() {
+        Promise.all([Api.get("/api/fields_"), 
+            Api.get("/api/reservations")])
+            .then(([fields, reservations]) => {
+                allFields = fields;
+                allReservations = reservations;
+                renderFields(fields, reservations);
+            })
+            .catch(() => {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
+        });
+    }
 
-    const gameOptions = games
-      .map(
-        (g) =>
-          `<option value="${g.id_game}" ${
-            g.id_game === field.id_game ? "selected" : ""
-          }>${g.name_game}</option>`
-      )
-      .join("");
-    const municipalityOptions = municipalities
-      .map(
-        (m) =>
-          `<option value="${m.id_municipality}" ${
-            m.id_municipality === field.id_municipality ? "selected" : ""
-          }>${m.name_municipality}</option>`
-      )
-      .join("");
-    const availabilityOptions = availabilityStates
-      .map(
-        (a) =>
-          `<option value="${a.id_availability}" ${
-            a.id_availability === field.id_availability ? "selected" : ""
-          }>${a.estado}</option>`
-      )
-      .join("");
+    // ---------- RENDER FIELDS INTO TABLE ----------
+    function renderFields(fields, reservations) {
+        let filteredFields = fields.filter((field) => {
+            // FILTER BY NAME 
+            const matchesName =
+                filterFieldName === "" ||
+                field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
+            // FILTER BY STATE
+            const hasActiveReservation = reservations.some(
+                (r) => r.id_field === field.id_field && r.estado === "active"
+            );
+            let status = hasActiveReservation ? "not_available" : "available";
+            const matchesStatus = filterStatus === "" || filterStatus === status;
+            return matchesName && matchesStatus;
+        });
 
-    // show Modals 
-    const modal = document.getElementById("edit-field-form-container");
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+        if (!filteredFields.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No fields found.</td></tr>`;
+            return;
+        }
 
+        // MAP FIELDS TO TABLE ROWS
+        tbody.innerHTML = filteredFields
+        .map((field) => {
+           // Search for the name of the game associated with the field
+            const gameName = games.find((g) => g.id_game === field.id_game)?.name_game || "N/A";
+            // The name of the municipality associated with the field is searched
+            const municipalityName = municipalities.find(
+                (m) => m.id_municipality === field.id_municipality
+            )?.name_municipality || "N/A";
+            // Search for the name of the field owner
+            const ownerName = owners.find((o) => o.id_user === field.id_owner)?.full_name || "N/A";
+            // Check if the field has an active reservation
+            const hasActiveReservation = reservations.some(
+            (r) => r.id_field === field.id_field && r.estado === "active"
+            );
+            // Define the availability status of the field with visual styles
+            const availabilityName = hasActiveReservation
+            ? `<span class="text-red-600 font-bold">Not available</span>`
+            : `<span class="text-green-600 font-bold">Available</span>`;
 
-    document.getElementById("edit-field-id").value = field.id_field;
-    document.getElementById("edit-field-name").value = field.name_field;
-    document.getElementById("edit-field-game").innerHTML = gameOptions;
-    document.getElementById("edit-field-municipality").innerHTML =
-      municipalityOptions;
-    document.getElementById("edit-field-availability").innerHTML =
-      availabilityOptions;
+            return `
 
-    // Edit event
-    const editForm = document.getElementById("admin-edit-field-form");
-    editForm.onsubmit = (e) => {
-      e.preventDefault();
-      const payload = {
-        name_field: document.getElementById("edit-field-name").value.trim(),
-        id_game: +document.getElementById("edit-field-game").value,
-        id_municipality: +document.getElementById("edit-field-municipality")
-          .value,
-        id_availability: +document.getElementById("edit-field-availability")
-          .value,
-        id_owner: field.id_owner,
-      };
-
-      Api.put(`/api/fields_/${field.id_field}`, payload)
-        .then((res) => {
-          if (res.success) {
-            showSuccess("Updated field");
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-            loadFields();
-          }
+                    <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
+                        <td class="p-2 border">${field.name_field}</td>
+                        <td class="p-2 border">${gameName}</td>
+                        <td class="p-2 border">${municipalityName}</td>
+                        <td class="p-2 border">${availabilityName}</td>
+                        <td class="p-2 border">${ownerName}</td>
+                        <td class="p-2 border text-center">
+                            <button class="btn-edit bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition">✏️</button>
+                            <button class="btn-delete bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">🗑️</button>
+                        </td>
+                    </tr>
+            `;
         })
-        .catch(() => showError("Error updating field"));
+        .join("");
+
+        // FILTER EVENTS
+        main.querySelector("#field-search").addEventListener("input", (e) => {
+        filterFieldName = e.target.value.trim();
+        renderFields(allFields, allReservations);
+        });
+        main
+        .querySelector("#field-status-filter")
+        .addEventListener("change", (e) => {
+            filterStatus = e.target.value;
+            renderFields(allFields, allReservations);
+        });
+
+        // FILTER EVENTS
+        tbody.querySelectorAll(".btn-edit").forEach((btn) => {
+        btn.onclick = (e) => {
+            const id = +e.target.closest("tr").dataset.id;
+            Api.get(`/api/fields_/${id}`)
+            .then((field) => {
+                showEditForm(field);
+            })
+            .catch(() => showError("Error loading field for editing"));
+        };
+        });
+    }
+
+    // ---------- DELETE FIELD ----------
+    tbody.onclick = async function (e) {
+        if (e.target.classList.contains("btn-delete")) {
+        const id = +e.target.closest("tr").dataset.id;
+
+        // Muestra una ventana de confirmación antes de eliminar
+        const confirmed = await showConfirm(
+            "¿Do you want to delete this field?",
+            "Delete field",
+            "Yes, delete",
+            "Cancel"
+        );
+        // If the user cancels, execution stops
+        if (!confirmed) return;
+        // Call the API to delete the field
+        Api.delete(`/api/fields_/${id}`)
+            .then(() => {
+            showSuccess("Field successfully deleted");
+            loadFields();
+
+           // Hide the edit form if it is open
+            const modal = document.getElementById("edit-field-form-container");
+            if (modal) {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }
+            })
+            .catch(() => {
+            showError("Error deleting field");
+            });
+        }
     };
 
-    // Cancel event
-    document.getElementById("cancel-edit-admin").onclick = () => {
-      modal.classList.add("hidden");
-      modal.classList.remove("flex");
-    };
-  }
+    // ---------- SHOW EDIT FORM ----------
+    function showEditForm(field) {
+        // Generates the <select> options for games
+        const gameOptions = games
+        .map(
+            (g) =>
+            `<option value="${g.id_game}" ${
+                g.id_game === field.id_game ? "selected" : ""
+            }>${g.name_game}</option>`
+        )
+        .join("");
+         // Generates the <select> options for municipalities
+        const municipalityOptions = municipalities
+        .map(
+            (m) =>
+            `<option value="${m.id_municipality}" ${
+                m.id_municipality === field.id_municipality ? "selected" : ""
+            }>${m.name_municipality}</option>`
+        )
+        .join("");
+        // Generates the <select> options for availability states
+        const availabilityOptions = availabilityStates
+        .map(
+            (a) =>
+            `<option value="${a.id_availability}" ${
+                a.id_availability === field.id_availability ? "selected" : ""
+            }>${a.estado}</option>`
+        )
+        .join("");
 
-  document.getElementById("log-out-user").addEventListener("click", (e) => {
-    e.preventDefault();
-    locaL.delete("active_user");
+        // show Modals 
+        const modal = document.getElementById("edit-field-form-container");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        // FILL EDIT FORM
+        document.getElementById("edit-field-id").value = field.id_field;
+        document.getElementById("edit-field-name").value = field.name_field;
+        document.getElementById("edit-field-game").innerHTML = gameOptions;
+        document.getElementById("edit-field-municipality").innerHTML =
+        municipalityOptions;
+        document.getElementById("edit-field-availability").innerHTML =
+        availabilityOptions;
+
+        // SUBMIT EDIT
+        const editForm = document.getElementById("admin-edit-field-form");
+        editForm.onsubmit = (e) => {
+        e.preventDefault();
+        const payload = {
+            name_field: document.getElementById("edit-field-name").value.trim(),
+            id_game: +document.getElementById("edit-field-game").value,
+            id_municipality: +document.getElementById("edit-field-municipality")
+            .value,
+            id_availability: +document.getElementById("edit-field-availability")
+            .value,
+            id_owner: field.id_owner,
+        };
+
+        Api.put(`/api/fields_/${field.id_field}`, payload)
+            .then((res) => {
+            if (res.success) {
+                showSuccess("Updated field");
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+                loadFields();
+            }
+            })
+            .catch(() => showError("Error updating field"));
+        };
+
+        // CANCEL EDIT EVENT
+        document.getElementById("cancel-edit-admin").onclick = () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        };
+    }
+
+    // ---------- LOGOUT ----------
+    document.querySelectorAll(".log-out-user").forEach(btn => {
+        btn.addEventListener("click", e => {
+        e.preventDefault();
+        locaL.delete("active_user");
+
+        // Redirect manually
+        window.history.pushState(null, null, "/skybolt/login");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
-
+  // ---------- LOGOUT ----------
   loadSelectData().then(loadFields);
 };

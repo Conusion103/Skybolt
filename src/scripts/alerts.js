@@ -32,7 +32,7 @@ export const showError = (message, title = "Error") => {
 // Message of confirmation with "Yes" and "Cancel" buttons
 export const showConfirm = async (
   message,
-  title = "¿Are you Sure?",
+  title = "Are you Sure?",
   confirmText = "Yes",
   cancelText = "Cancel"
 ) => {

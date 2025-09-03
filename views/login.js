@@ -52,7 +52,6 @@ export let renderLogin = (ul, main) => {
       <a href="/skybolt/home#faq" class="nav-link" data-link>FAQ</a>
       <a href="/skybolt/home#map" class="nav-link" data-link>Find Us</a>
       <a href="/skybolt/home#contact" class="nav-link" data-link>Contact Us</a>
-
       <a href="/skybolt/register" data-link class="btn-primary" data-link>Sign up</a>
     </div>
 
