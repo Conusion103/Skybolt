@@ -23,7 +23,7 @@ export let renderDashboardOwner = (ul, main) => {
           <nav class="hidden md:flex space-x-6">
             <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
             <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
-            <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+            <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
           </nav>
 
           <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -38,7 +38,7 @@ export let renderDashboardOwner = (ul, main) => {
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
         <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
-        <a href="/skybolt/login" id="log-out-user" data-link class="block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
+        <a href="/skybolt/login" class="log-out-user block sm:inline text-red-500 hover:text-red-700 font-semibold px-2">Log out</a>
       </div>
     </header>
 
@@ -372,10 +372,17 @@ export let renderDashboardOwner = (ul, main) => {
   };
 
   // LOGOUT BUTTON HANDLER TO DELETE ACTIVE USER AND REDIRECT TO LOGIN
-  document.getElementById("log-out-user").addEventListener("click", e => {
-    e.preventDefault();
-    locaL.delete("active_user");
+  document.querySelectorAll(".log-out-user").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.preventDefault();
+      locaL.delete("active_user");
+
+      // Redirect manually
+      window.history.pushState(null, null, "/skybolt/login");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
   });
+
 
   // INITIAL LOAD OF SELECT DATA AND FIELDS
   loadSelectData().then(loadFields);
