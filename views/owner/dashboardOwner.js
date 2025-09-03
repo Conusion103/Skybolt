@@ -1,23 +1,4 @@
-// import { locaL } from "../../src/scripts/LocalStorage"
 
-// export let renderDashboardOwner = (ul, main) => {
-
-//     // nav.innerHTML = `
-//     // <img src="./img/skybolt.webp" alt="Skybolt Logo">
-//     // `
-//     ul.innerHTML = `
-//     <a href="/skybolt/dashboardadmin/users" data-link>Users</a>
-//     <a href="/skybolt/dashboardadmin/owners" data-link>Owners</a>
-//     <a href="/skybolt/login" id="log-out-user" data-link>Log out</a>
-//     `
-//     main.innerHTML = `
-//     <h2>Hola Admin ${locaL.get('active_user').full_name}</h2>
-//     `
-//     document.getElementById('log-out-user').addEventListener('click', (e) => {
-//         e.preventDefault();
-//         locaL.delete('active_user');
-//     })
-// }
 
 import { Api } from "../../src/scripts/methodsApi.js";
 import { locaL } from "../../src/scripts/LocalStorage.js";
@@ -26,7 +7,7 @@ import { showSuccess, showError, showConfirm } from "../../src/scripts/alerts.js
 export let renderDashboardOwner = (ul, main) => {
   const activeUser = locaL.get("active_user");
   if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
+    main.innerHTML = `<p>Please log in</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
     return;
   }
    document.body.style.background = "white";
@@ -54,7 +35,7 @@ export let renderDashboardOwner = (ul, main) => {
         </div>
       </div>
 
-      <!-- MENÚ MÓVIL -->
+     <!-- MOBILE MENU -->
       <div id="mobile-menu" class="hidden md:hidden w-full bg-white px-6 pb-6 flex flex-col items-center space-y-4 text-center">
         <a href="/skybolt/dashboardowner" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Dashboard</a>
         <a href="/skybolt/dashboardowner/profile" data-link class="block sm:inline text-blue-600 hover:text-blue-800 font-semibold px-2">Profile</a>
@@ -62,7 +43,7 @@ export let renderDashboardOwner = (ul, main) => {
       </div>
     </header>
 
-    <!-- ESPACIO PARA QUE EL HEADER NO TAPE EL CONTENIDO -->
+    <!-- SPACE SO THE HEADER DOESN'T COVER THE CONTENT -->
     <div id="top" class="h-16"></div>
   `;
   document.getElementById("menu-btn").addEventListener("click", () => {
@@ -73,17 +54,17 @@ export let renderDashboardOwner = (ul, main) => {
   main.innerHTML = `
     <section class="p-6 max-w-6xl mx-auto">
     <h2 class="text-2xl font-bold text-blue-600 mb-6">
-      Hola Propietario ${activeUser.full_name}
+      Hello Owner ${activeUser.full_name}
     </h2>
 
-      <!-- Formulario -->
+      <!-- Form -->
       <section id="form-section" class="mb-8 p-4 bg-gray-100 rounded-lg shadow-sm">
-        <h3 class="text-xl font-semibold mb-4">Agregar / Editar Cancha</h3>
+        <h3 class="text-xl font-semibold mb-4">Add/Edit Court</h3>
         <form id="field-form" class="grid gap-4 max-w-2xl mx-auto sm:grid-cols-2">
           <input type="hidden" id="field-id" value="" />
 
           <label class="flex flex-col col-span-2">
-            Nombre de la cancha:
+           Name of the field:
             <input
               type="text"
               id="field-name"
@@ -93,7 +74,7 @@ export let renderDashboardOwner = (ul, main) => {
           </label>
 
           <label class="flex flex-col col-span-2 sm:col-span-1">
-            Juego:
+            Game:
             <select
               id="field-game"
               required
@@ -102,7 +83,7 @@ export let renderDashboardOwner = (ul, main) => {
           </label>
 
           <label class="flex flex-col col-span-2 sm:col-span-1">
-            Municipio:
+            Municipality:
             <select
               id="field-municipality"
               required
@@ -111,7 +92,7 @@ export let renderDashboardOwner = (ul, main) => {
           </label>
 
           <label class="flex flex-col col-span-2">
-            Disponibilidad:
+           Availability:
             <select
               id="field-availability"
               required
@@ -124,32 +105,33 @@ export let renderDashboardOwner = (ul, main) => {
               type="submit"
               class="bg-blue-600 text-white px-6 py-3 text-lg rounded hover:bg-blue-700"
             >
-              Guardar cancha
+             Save field
             </button>
             <button
               type="button"
               id="cancel-edit"
               class="hidden bg-gray-400 text-white px-6 py-3 text-lg rounded hover:bg-gray-500"
             >
-              Cancelar
+              Cancel
             </button>
           </div>
         </form>
 
       </section>
 
-      <!-- Tabla responsive -->
+      <!-- Responsive table -->
       <section id="fields-list-section">
-        <h3 class="text-xl font-semibold mb-4">Dashboard Registradas</h3>
+        <h3 class="text-xl font-semibold mb-4">Registered Dashboard</h3>
         <div class="overflow-x-auto">
           <table class="w-full border-collapse min-w-[600px]">
             <thead>
               <tr class="bg-blue-600 text-white text-sm sm:text-base">
-                <th class="p-2 border">Nombre</th>
-                <th class="p-2 border">Juego</th>
-                <th class="p-2 border">Municipio</th>
-                <th class="p-2 border">Disponibilidad</th>
-                <th class="p-2 border">Acciones</th>
+                <th class="p-2 border">Name</th>
+                <th class="p-2 border">Game</th>
+                <th class="p-2 border">Municipality</th>
+                <th class="p-2 border">Availability</th>
+                <th class="p-2 border">State</th>
+                <th class="p-2 border">Actions</th>
               </tr>
             </thead>
             <tbody id="fields-tbody" class="text-sm sm:text-base"></tbody>
@@ -160,7 +142,7 @@ export let renderDashboardOwner = (ul, main) => {
 
   `;
   footer.innerHTML = `
-    <!-- FOOTER COMPLETO -->
+    <!-- FULL FOOTER -->
     <footer id="contact" class="bg-[#111827] text-green-100 py-10 px-6 sm:px-10 w-full mt-30">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             
@@ -172,7 +154,7 @@ export let renderDashboardOwner = (ul, main) => {
           </p>
         </div>
 
-        <!-- ENLACES -->
+        <!-- LINKS -->
         <div>
           <h4 class="text-lg font-semibold text-white mb-3">Useful Links</h4>
           <ul class="space-y-2 text-sm">
@@ -182,7 +164,7 @@ export let renderDashboardOwner = (ul, main) => {
           </ul>
         </div>
 
-        <!-- REDES -->
+       <!-- NETWORKS -->
         <div>
           <h4 class="text-lg font-semibold text-white mb-3">Follow Us</h4>
           <div class="flex gap-4">
@@ -199,7 +181,7 @@ export let renderDashboardOwner = (ul, main) => {
     </footer>
   `;
 
-  // Referencias DOM
+  // DOM REFERENCES
   const fieldForm = main.querySelector("#field-form");
   const fieldIdInput = main.querySelector("#field-id");
   const fieldNameInput = main.querySelector("#field-name");
@@ -209,26 +191,26 @@ export let renderDashboardOwner = (ul, main) => {
   const cancelEditBtn = main.querySelector("#cancel-edit");
   const tbody = main.querySelector("#fields-tbody");
 
-  // Variables para guardar datos traídos del backend
+  // VARIABLES TO STORE DATA FETCHED FROM BACKEND
   let games = [];
   let municipalities = [];
   let availabilityStates = [];
 
-  // Formato de hora legible
+  // FUNCTION TO FORMAT TIME TO A READABLE FORMAT
   const formatTime = time => time?.slice(0, 5);
 
-  // Estados legibles
+  // READABLE LABELS FOR AVAILABILITY STATES
   const availabilityLabels = {
-    available: "Disponible",
-    not_available: "No disponible"
+    available: "Available",
+    not_available: "Not available"
   };
 
-  // Función para llenar selects
+  // ASYNC FUNCTION TO LOAD DATA FOR GAMES, MUNICIPALITIES AND AVAILABILITY FROM API
   function loadSelectOptions(select, items, valueKey, textKey) {
     select.innerHTML = items.map(item => `<option value="${item[valueKey]}">${item[textKey]}</option>`).join("");
   }
 
-  // Cargar datos de juegos, municipios y disponibilidad desde API
+// ASYNC FUNCTION TO LOAD DATA FOR GAMES, MUNICIPALITIES AND AVAILABILITY FROM API
   async function loadSelectData() {
     try {
       games = await Api.get("/api/games");
@@ -244,50 +226,62 @@ export let renderDashboardOwner = (ul, main) => {
       loadSelectOptions(fieldMunicipalitySelect, municipalities, "id_municipality", "name_municipality");
       loadSelectOptions(fieldAvailabilitySelect, availabilityStates, "id_availability", "estado");
     } catch (error) {
-      showError("Error cargando datos para los selects");
-      console.error("Error al cargar selects:", error);
+      showError("Error loading data for selects");
+      console.error("Error loading selects:", error);
     }
   }
 
-  // Cargar canchas del propietario
+  // FUNCTION TO LOAD OWNER'S FIELDS FROM API
   function loadFields() {
-    Api.get("/api/fields_")
-      .then(fields => {
+   // Make two requests simultaneously
+    Promise.all([
+      Api.get("/api/fields_"),
+      Api.get("/api/reservations/full")
+    ])
+      .then(([fields, reservations]) => {
         const ownerId = Number(activeUser.id_user);
         const myFields = fields.filter(f => Number(f.id_owner) === ownerId);
-        renderFields(myFields);
+        renderFields(myFields, reservations);
       })
       .catch(() => {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-600">Error cargando canchas</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-600">Error loading fields</td></tr>`;
       });
   }
 
-  function renderFields(fields) {
-    if (!fields.length) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4">No tienes canchas registradas.</td></tr>`;
-      return;
-    }
+  // FUNCTION TO RENDER THE FIELDS TABLE
+  function renderFields(fields, reservations) {
+  if (!fields.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4">You have no registered fields</td></tr>`;
+    return;
+  }
 
-    tbody.innerHTML = fields.map(field => {
-      const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
-      const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
-      const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
+  tbody.innerHTML = fields.map(field => {
+    const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
+    const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
+    const availabilityName = availabilityStates.find(a => a.id_availability === field.id_availability)?.estado || "N/A";
+    
+    // Verificar si la cancha está reservada
+    const isReserved = reservations.some(r => r.id_field === field.id_field);
+    const estado = isReserved ? "Reserved" : "Unreserved";
+    const estadoClass = isReserved ? "text-red-600" : "text-green-600";
 
-      return `
-        <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
-          <td class="p-2 border">${field.name_field}</td>
-          <td class="p-2 border">${gameName}</td>
-          <td class="p-2 border">${municipalityName}</td>
-          <td class="p-2 border">${availabilityName}</td>
-          <td class="p-2 border text-center">
-            <button class="edit-btn text-blue-600 hover:underline mr-2">Editar</button>
-            <button class="delete-btn text-red-600 hover:underline">Eliminar</button>
-          </td>
-        </tr>
-      `;
-    }).join("");
+    return `
+      <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
+        <td class="p-2 border">${field.name_field}</td>
+        <td class="p-2 border">${gameName}</td>
+        <td class="p-2 border">${municipalityName}</td>
+        <td class="p-2 border">${availabilityName} </td>
+        <td class="p-2 border ${estadoClass}">${estado}</td>
+        <td class="p-2 border text-center">
+          <button class="edit-btn text-blue-600 hover:underline mr-2">Edit</button>
+          <button class="delete-btn text-red-600 hover:underline">Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join("");
 
-    // Eventos editar
+
+    // ADD EVENT LISTENERS FOR EDIT BUTTONS
     tbody.querySelectorAll(".edit-btn").forEach(btn => {
       btn.onclick = e => {
         const id = +e.target.closest("tr").dataset.id;
@@ -300,29 +294,35 @@ export let renderDashboardOwner = (ul, main) => {
             fieldAvailabilitySelect.value = field.id_availability;
             cancelEditBtn.classList.remove("hidden");
           })
-          .catch(() => showError("Error al cargar cancha para editar"));
+          .catch(() => showError("Error loading field for editing"));
       };
     });
 
-    // Eventos eliminar
+     // ADD EVENT LISTENERS FOR DELETE BUTTONS
     tbody.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.onclick = e => {
+      btn.onclick = async e => {
         const id = +e.target.closest("tr").dataset.id;
-        if (!showConfirm("¿Eliminar esta cancha?")) return;
-        Api.delete(`/api/fields_/${id}`)
-          .then(res => {
-            if (res.success) {
-              showSuccess("Cancha eliminada");
-              loadFields();
-              if (fieldIdInput.value == id) cancelEditBtn.click();
-            }
-          })
-          .catch(() => showError("Error al eliminar cancha"));
+
+        // Wait for user confirmation
+        const confirmed = await showConfirm("Delete this field?");
+        if (!confirmed) return;
+
+        try {
+          const res = await Api.delete(`/api/fields_/${id}`);
+          if (res.success) {
+            showSuccess("Field eliminated");
+            loadFields();
+            if (fieldIdInput.value == id) cancelEditBtn.click();
+          }
+        } catch (err) {
+          showError("Error deleting field");
+        }
       };
     });
+
   }
 
-  // Submit form (crear o actualizar)
+ // FORM SUBMIT HANDLER FOR CREATING OR UPDATING A FIELD
   fieldForm.onsubmit = e => {
     e.preventDefault();
 
@@ -336,7 +336,7 @@ export let renderDashboardOwner = (ul, main) => {
     };
 
     if (!payload.name_field) {
-      showError("El nombre de la cancha es obligatorio");
+      showError("The name of the field is mandatory");
       return;
     }
 
@@ -344,41 +344,41 @@ export let renderDashboardOwner = (ul, main) => {
       Api.put(`/api/fields_/${id}`, payload)
         .then(res => {
           if (res.success) {
-            showSuccess("Cancha actualizada");
+            showSuccess("Updated field");
             fieldForm.reset();
             fieldIdInput.value = "";
             cancelEditBtn.classList.add("hidden");
             loadFields();
           }
         })
-        .catch(() => showError("Error al actualizar cancha"));
+        .catch(() => showError("Error updating field"));
     } else {
       Api.post("/api/fields_", payload)
         .then(res => {
           if (res.id_field) {
-            showSuccess("Cancha creada");
+            showSuccess("Field created");
             fieldForm.reset();
             loadFields();
           }
         })
-        .catch(() => showError("Error al crear cancha"));
+        .catch(() => showError("Error creating field"));
     }
   };
 
-  // Cancelar edición
+  // CANCEL EDIT BUTTON HANDLER TO RESET FORM AND HIDE BUTTON
   cancelEditBtn.onclick = () => {
     fieldForm.reset();
     fieldIdInput.value = "";
     cancelEditBtn.classList.add("hidden");
   };
 
-  // Logout
+  // LOGOUT BUTTON HANDLER TO DELETE ACTIVE USER AND REDIRECT TO LOGIN
   document.getElementById("log-out-user").addEventListener("click", e => {
     e.preventDefault();
     locaL.delete("active_user");
     window.location.href = "/skybolt/login";
   });
 
-  // Cargar datos iniciales
+  // INITIAL LOAD OF SELECT DATA AND FIELDS
   loadSelectData().then(loadFields);
 };
