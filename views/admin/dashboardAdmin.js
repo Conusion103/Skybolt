@@ -220,9 +220,7 @@ export let renderDashboardAdminFields = (ul, main) => {
             const matchesName = filterFieldName === "" || field.name_field.toLowerCase().includes(filterFieldName.toLowerCase());
             // Filtro por estado
             const hasActiveReservation = reservations.some(r => r.id_field === field.id_field);
-    const availabilityName = hasActiveReservation
-        ? `<span class="text-red-600 font-bold">Not available</span>`
-        : `<span class="text-green-600 font-bold">Available</span>`;
+            let status = hasActiveReservation ? "not_available" : "available";
             const matchesStatus = filterStatus === "" || filterStatus === status;
             return matchesName && matchesStatus;
         });
@@ -236,10 +234,11 @@ export let renderDashboardAdminFields = (ul, main) => {
             const gameName = games.find(g => g.id_game === field.id_game)?.name_game || "N/A";
             const municipalityName = municipalities.find(m => m.id_municipality === field.id_municipality)?.name_municipality || "N/A";
             const ownerName = owners.find(o => o.id_user === field.id_owner)?.full_name || "N/A";
-             const hasActiveReservation = reservations.some(r => r.id_field === field.id_field);
-             const availabilityName = hasActiveReservation
-        ? `<span class="text-red-600 font-bold">Not available</span>`
-        : `<span class="text-green-600 font-bold">Available</span>`;
+            const hasActiveReservation = reservations.some(r => r.id_field === field.id_field);
+            const availabilityName = hasActiveReservation
+            ? `<span class="text-red-600 font-bold">Not available</span>`
+            : `<span class="text-green-600 font-bold">Available</span>`;
+
 
             return `
                 <tr data-id="${field.id_field}" class="border-b hover:bg-gray-100 cursor-pointer">
