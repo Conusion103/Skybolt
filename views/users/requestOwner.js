@@ -128,9 +128,9 @@ export let renderResgiterRequestOwner = (ul, main) => {
      // COLLECT FORM DATA INTO AN OBJECT
     const formData = {
       id_user: locaL.get('active_user').id_user, // GET CURRENT USER ID FROM LOCAL STORAGE
-      field_name: document.getElementById("field-name").value.trim(), // GET CURRENT USER ID FROM LOCAL STORAGE
-      field_location: document.getElementById("field-location").value.trim(), // GET AND TRIM LOCATION
-      field_description: document.getElementById("field-description").value.trim(), // GET AND TRIM DESCRIPTION
+      cancha_name: document.getElementById("field-name").value.trim(), // GET CURRENT USER ID FROM LOCAL STORAGE
+      cancha_location: document.getElementById("field-location").value.trim(), // GET AND TRIM LOCATION
+      cancha_description: document.getElementById("field-description").value.trim(), // GET AND TRIM DESCRIPTION
     };
 
     // VALIDATION FLAG
