@@ -1,7 +1,7 @@
 
 // functions to validate owner request form fields
 export const ownerRequestValidators = {
-  field_name: (value) => {
+  cancha_name: (value) => {
     if (!value || typeof value !== "string") {
       return "Field Name is required.";
     }
@@ -11,7 +11,7 @@ export const ownerRequestValidators = {
     return null;
   },
 
-  field_location: (value) => {
+  cancha_location: (value) => {
     if (!value || typeof value !== "string") {
       return "Location is required.";
     }
@@ -21,7 +21,7 @@ export const ownerRequestValidators = {
     return null;
   },
 
-  field_description: (value) => {
+  cancha_description: (value) => {
     if (!value) return null;
     if (value.length > 500) {
       return "Description cannot exceed 500 characters.";
