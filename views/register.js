@@ -130,7 +130,7 @@ export let renderRegister = (ul, main) => {
         <div class="relative w-full">
           <input type="password" id="password-register" placeholder="Password" required
             class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300 pr-10"/>
-          <img id="toggle-password" src="../public/img/ojoCerrado.png" alt="Mostrar contraseña"
+          <img id="toggle-password" src="../../img/ojoCerrado.png" alt="Show password"
             class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"/>
         </div>
 
@@ -138,7 +138,7 @@ export let renderRegister = (ul, main) => {
         <div class="relative w-full">
           <input type="password" id="password-register_" placeholder="Confirm Password" required
             class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300 pr-10"/>
-          <img id="toggle-password-confirm" src="../public/img/ojoCerrado.png" alt="Mostrar contraseña"
+          <img id="toggle-password-confirm" src="../../img/ojoCerrado.png" alt="Show password"
             class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"/>
         </div>
 
@@ -164,7 +164,7 @@ export let renderRegister = (ul, main) => {
   togglePassword.addEventListener("click", () => {
     const isHidden = passwordInput.type === "password";
     passwordInput.type = isHidden ? "text" : "password";
-    togglePassword.src = isHidden ? "../public/img/ojo.png" : "../public/img/ojoCerrado.png";
+    togglePassword.src = isHidden ? "../../img/ojo.png" : "../../img/ojoCerrado.png";
   });
 
   const togglePasswordConfirm = document.getElementById("toggle-password-confirm");
@@ -173,7 +173,7 @@ export let renderRegister = (ul, main) => {
   togglePasswordConfirm.addEventListener("click", () => {
     const isHidden = confirmInput.type === "password";
     confirmInput.type = isHidden ? "text" : "password";
-    togglePasswordConfirm.src = isHidden ? "../public/img/ojo.png" : "../public/img/ojoCerrado.png";
+    togglePasswordConfirm.src = isHidden ? "../../img/ojo.png" : "../../img/ojoCerrado.png";
   });
 
 
