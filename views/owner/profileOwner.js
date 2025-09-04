@@ -6,10 +6,7 @@ import { showConfirm, showError, showSuccess } from "../../src/scripts/alerts";
 export let renderDashboardOwnerProfile = (ul, main) => {
   // Check data in localStorage
   const activeUser = locaL.get("active_user");
-  if (!activeUser) {
-    main.innerHTML = `<p>Por favor inicia sesión.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-    return;
-  }
+
 
   // Image or default image
   const image =
