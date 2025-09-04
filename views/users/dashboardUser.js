@@ -4,10 +4,7 @@ import { Api } from "../../src/scripts/methodsApi";
 
 export async function renderDashboardUser(nav, main) {
   const activeUser = locaL.get("active_user");
-  if (!activeUser) {
-    main.innerHTML = `<p>Please log in.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-    return;
-  }
+
    document.body.style.background = "white";
  // Navigation
   nav.innerHTML = `

@@ -5,11 +5,6 @@ import { generalFormat } from "../../src/scripts/validationMethods";
 import { showConfirm, showSuccess, showError } from "../../src/scripts/alerts";
 
 export let renderDashboardAdminEditUsers = (ul, main) => {
-  const activeUser = locaL.get("active_user");
-  if (!activeUser) {
-    main.innerHTML = `<p>Please log in.</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-    return;
-  }
    document.body.style.background = "white";
 
   // ---------- NAV ----------
