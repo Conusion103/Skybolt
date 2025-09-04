@@ -109,7 +109,7 @@ export let renderLogin = (ul, main) => {
             <!-- Ícono para mostrar/ocultar -->
             <img 
               id="toggle-password-login" 
-              src=".../../img/ojoCerrado.png" 
+              src="../../img/ojoCerrado.png" 
               alt="Show password" 
               class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"
             />
