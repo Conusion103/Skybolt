@@ -126,13 +126,23 @@ export let renderRegister = (ul, main) => {
           <option value="">--Select a municipality--</option>
         </select>
 
-        <input type="password" id="password-register" placeholder="Password" required
-          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+        <!-- Password with icon -->
+        <div class="relative w-full">
+          <input type="password" id="password-register" placeholder="Password" required
+            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300 pr-10"/>
+          <img id="toggle-password" src="../../img/ojoCerrado.png" alt="Show password"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"/>
+        </div>
 
-        <input type="password" id="password-register_" placeholder="Confirm Password" required
-          class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300"/>
+        <!-- Confirmation with icon -->
+        <div class="relative w-full">
+          <input type="password" id="password-register_" placeholder="Confirm Password" required
+            class="w-full px-4 py-3 rounded-md bg-gray-200 focus:outline-none focus:ring-2 focus:ring-green-300 pr-10"/>
+          <img id="toggle-password-confirm" src="../../img/ojoCerrado.png" alt="Show password"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"/>
+        </div>
 
-        <!-- Botón -->
+        <!-- Button -->
         <button type="submit" id="button-register"
           class="w-full py-3 bg-green-400 text-white font-bold rounded-full hover:bg-green-500 transition flex items-center justify-center gap-2">
           REGISTER
@@ -146,6 +156,25 @@ export let renderRegister = (ul, main) => {
     </div>
   </section>
   `;
+
+  // --- Show/Hide Passwords ---
+  const togglePassword = document.getElementById("toggle-password");
+  const passwordInput = document.getElementById("password-register");
+
+  togglePassword.addEventListener("click", () => {
+    const isHidden = passwordInput.type === "password";
+    passwordInput.type = isHidden ? "text" : "password";
+    togglePassword.src = isHidden ? "../../img/ojo.png" : "../../img/ojoCerrado.png";
+  });
+
+  const togglePasswordConfirm = document.getElementById("toggle-password-confirm");
+  const confirmInput = document.getElementById("password-register_");
+
+  togglePasswordConfirm.addEventListener("click", () => {
+    const isHidden = confirmInput.type === "password";
+    confirmInput.type = isHidden ? "text" : "password";
+    togglePasswordConfirm.src = isHidden ? "../../img/ojo.png" : "../../img/ojoCerrado.png";
+  });
 
 
   // footer
