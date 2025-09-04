@@ -5,10 +5,6 @@ import { showSuccess, showError, showConfirm } from "../../src/scripts/alerts.js
 
 export let renderDashboardOwner = (ul, main) => {
   const activeUser = locaL.get("active_user");
-  if (!activeUser) {
-    main.innerHTML = `<p>Please log in</p> <a href="/skybolt/login" data-link class="btn-primary" data-link>Log in</a>`;
-    return;
-  }
    document.body.style.background = "white";
 
   // Navbar
