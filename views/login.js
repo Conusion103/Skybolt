@@ -106,10 +106,10 @@ export let renderLogin = (ul, main) => {
               required
               class="w-full px-4 py-3 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-300 pr-10"
             />
-            <!-- 👁️ Ícono para mostrar/ocultar -->
+            <!-- Ícono para mostrar/ocultar -->
             <img 
               id="toggle-password-login" 
-              src="../public/img/ojoCerrado.png" 
+              src=".../../img/ojoCerrado.png" 
               alt="Show password" 
               class="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"
             />
@@ -198,8 +198,8 @@ export let renderLogin = (ul, main) => {
 
     // toggle image
     togglePasswordLogin.src = isHidden 
-      ? "../public/img/ojo.png"          
-      : "../public/img/ojoCerrado.png";  
+      ? "../../img/ojo.png"          
+      : "../../img/ojoCerrado.png";  
   });
 
   document.getElementById("login-form").addEventListener("submit", (e) => {
