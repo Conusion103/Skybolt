@@ -29,20 +29,5 @@ export let locaL = {
     delete: (nickname) => {
         let nick = locaL.get(nickname)
         if (nick) localStorage.removeItem(nickname);
-    },
-
-    verification: () => {
-        Api.get('/api/users')
-            .then(data => {
-                let user_found = data.find((d) => user.email === d.email);
-                let user_verfication = user_found && JSON.stringify(user_found) === JSON.stringify(user)
-                if (user_verfication) {
-                    return true;
-                }
-            })
-            .catch(err => {
-                console.error("Error, user is not verified")
-                return false
-            })
     }
 }
